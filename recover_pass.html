@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Recuperar contraseña</title>
+
+    <!-- Referencia al diseño -->
+    <link rel="stylesheet" href="style_login.css">
+
+    <!-- Íconos -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+
+<body>
+    <main class="login_container">
+
+        <!-- Título del programa -->
+        <section class="program_info">
+            <h1>Título del programa</h1>
+        </section>
+
+
+        <!-- Tarjeta -->
+        <section class="graphic_card">
+            <h2 class="recover_title">
+                Recuperar contraseña
+            </h2>
+
+            <p class="recover_text">
+                Ingrese el correo electrónico asociado a su cuenta.
+            </p>
+
+
+            <form id="form_recover">
+
+                <!-- Correo -->
+                <div class="form_group">
+
+                    <label for="correo">
+                        Correo electrónico:
+                    </label>
+
+                    <div class="input_container">
+                        <i class="fa-solid fa-envelope"></i>
+
+                        <input
+                            type="email"
+                            id="correo"
+                            name="correo"
+                            placeholder="Ingrese su correo"
+                            required>
+
+                    </div>
+                </div>
+
+
+                <!-- Botón -->
+                <button
+                    type="submit"
+                    class="contact_button">
+                    Recuperar
+                </button>
+
+
+                <!-- Regresar -->
+                <div class="forgot_pass">
+                    <a href="login.html">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Regresar a iniciar sesión
+                    </a>
+                </div>
+            </form>
+        </section>
+    </main>
+
+
+    <script>
+        const form =
+            document.getElementById("form_recover");
+
+        form.addEventListener(
+            "submit",
+            function(event) {
+                event.preventDefault();
+                alert(
+                    "Por favor, comuníquese con un administrador de TI para proporcionarle una nueva contraseña."
+                );
+            }
+        );
+    </script>
+</body>
+</html>

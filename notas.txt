@@ -1,0 +1,4 @@
+Pruebas 
+1. El ojo no cierra 
+2. Si ingresas el usuario mal pero la contraseña esta bien truena 
+3. Edge con un click afuera oculta el ojo 

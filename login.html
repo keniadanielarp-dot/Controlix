@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inicio de sesión</title> <!-- Agrega el titulo en la pestaña del buscador -->
+
+    <!-- Hace referencia al CSS -->
+    <link rel="stylesheet" href="style_login.css">      
+
+    <!-- Referencia para poder usar los Íconos Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <main class="login_container"> <!-- Contenido de la página de Login-->
+
+        <!-- Título del Programa -->
+        <section class="program_info">
+            <h1>Controlix :D</h1>
+        </section>
+
+        <!-- Inicio de la tarjeta grafica de "Inicio de Sesión" -->
+        <section class="graphic_card">
+
+            <!-- Titulo de la tarjeta-->
+            <h2 class="title_login">
+                Iniciar sesión
+            </h2>
+
+
+            <!-- Formulario que permite a los usuarios introducir y enviar datos a un servidor web para su procesamiento.--> 
+            <form class="login_form" method="post" action="connection_login.php">
+
+                
+                <!-- <div> Contenedor genérico utilizado para agrupar elementos HTML y estructurar contenido en una página web. Es extremadamente útil cuando se combina con CSS o JavaScript para diseño y manipulación.-->
+                
+                <!-- Agrupamiento Usuario -->
+                <div class="form_group">
+                    <label for="user">
+                        Usuario:
+                    </label>
+
+                    <div class="input_container"> <!-- Agrupación del TextBox-->
+
+                        <i class="fa-solid fa-user"></i> <!-- Muestra el texto diferente al texto normal-->
+                        <input
+                            type="text" 
+                            id="user"
+                            name="user_login"
+                            placeholder="Ingrese su usuario"
+                            required>
+
+                    </div>
+                </div> <!-- Finalización del agrupamiento de Usuario-->
+
+                <!-- Agrupamiento Contraseña -->
+                <div class="form_group">
+
+                    <label for="pass">
+                        Contraseña:
+                    </label>
+
+                    <div class="input_container">
+
+                        <i class="fa-solid fa-lock"></i>
+                        <i class="fa-solid fa-eye-slash eye_pass"></i>
+                        <input
+                            type="password"
+                            id="pass"
+                            name="pass_login"
+                            placeholder="Ingrese su contraseña" 
+                            required>
+                            
+                    </div>
+                </div> <!-- Finalización del agrupamiento de Contraseña-->
+
+
+                <!-- Botón Ingresar -->
+                <button
+                    type="submit"
+                    class="contact_button">
+                    Ingresar
+                </button> <!-- Fin Boton-->
+
+
+                <!-- Recuperar Contraseña -->
+                <div class="forgot_pass">
+
+                    <a href="recover_pass.html">
+                        ¿Olvidaste tu contraseña?
+                    </a>
+                </div> <!-- Fin Recuperar Contraseña-->
+
+            </form> <!-- Fin del formulario-->
+
+        </section> <!-- Fin de la tarjeta grafica -->
+    </main> <!-- Fin del contenido de la pagina Login -->
+
+    <script>
+     // Buscamos el input de contraseña por su ID 
+     const pass_js = document.getElementById("pass");
+
+     //Buscamos nuestro ícono del ojo por su clase
+     const eye = document.querySelector(".eye_pass");
+
+     // Cada vez que se haga click en el ojo 
+     eye.addEventListener("click", function () {
+        
+        //Mostramos en la consola el tipo actual del input 
+        console.log("Antes del cambio:", pass_js.type);
+
+        // Si está oculta...
+        if (pass_js.type === "password") {
+
+            // La mostramos 
+            pass_js.type = "text";
+            console.log("Ahora se muestra");
+
+            //Cambiar a ojo abierto
+            eye.classList.remove("fa-eye-slash");
+            eye.classList.add("fa-eye");
+
+        } else {  //Si no...
+
+            // Se vuelve a ocultar 
+            pass_js.type = "password";
+            console.log("Ahora se oculta");
+
+            //Se oculta nuevamente el ojo 
+            eye.classList.remove("fa-eye");
+            eye.classList.add("fa-eye-slash");
+        }
+
+        // Mostramos qué quedó después del cambio
+        console.log("Después del cambio:", pass_js.type);
+    });
+    </script>
+</body>
+</html>
