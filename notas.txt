@@ -1,4 +1,5 @@
-Pruebas 
-1. El ojo no cierra 
-2. Si ingresas el usuario mal pero la contraseña esta bien truena 
-3. Edge con un click afuera oculta el ojo 
+Notas 
+2. Revisión en relación de tablas 
+3. Empezar a diseñar interfaz 
+
+
