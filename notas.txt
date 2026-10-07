@@ -1,5 +1,5 @@
 Notas 
-2. Revisión en relación de tablas 
-3. Empezar a diseñar interfaz 
+1. Usuario bien, pero contraseña mal truena
+3. Empezar a diseñar dashboard
 
 
