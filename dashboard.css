@@ -1,6 +1,6 @@
-/* =========================================
+/* =====================================
    CONFIGURACIÓN GENERAL
-========================================= */
+===================================== */
 
 * {
     margin: 0;
@@ -8,180 +8,279 @@
     box-sizing: border-box;
 }
 
-
 body {
-    min-height: 100vh;
-
     font-family: Arial, Helvetica, sans-serif;
-
     background-color: #f4f7fb;
 }
 
 
-/* =========================================
+/* =====================================
    BARRA SUPERIOR
-========================================= */
+===================================== */
 
 .barra_superior {
-
     width: 100%;
-    height: 72px;
+    height: 100px;
 
     background: linear-gradient(
         90deg,
-        #073d73 0%,
+        #073b70 0%,
         #063567 50%,
         #032b57 100%
     );
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
-    padding-left: 28px;
-    padding-right: 28px;
+    padding: 0 26px;
 
     color: white;
 }
 
 
-/* =========================================
-   LOGO CONTROLIX
-========================================= */
+/* =====================================
+   MARCA CONTROLIX
+===================================== */
 
-.barra_logo {
-
+.contenedor_marca {
     display: flex;
-
     align-items: center;
-
+    min-width: 0;
+    gap: 18px;
 }
 
+.contenedor_logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
 .logo_controlix {
-
-    width: 225px;
-
-    height: auto;
-
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
     display: block;
+}
 
+.contenedor_marca {
+    cursor: pointer;
+}
+
+/* SEPARADOR DEL LOGO */
+
+.separador_logo {
+    width: 1px;
+    height: 48px;
+    background-color: rgba(255, 255, 255, 0.5);
 }
 
 
-/* =========================================
-   ÁREA DEL USUARIO
-========================================= */
+/* TEXTO CONTROLIX */
 
-.barra_usuario {
+.marca_texto h1 {
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -1px;
+    color: white;
+}
 
-    height: 100%;
+.marca_texto h1 span {
+    color: #3399ff;
+}
 
+.marca_texto p {
+    font-size: 10px;
+    margin-top: 5px;
+    white-space: nowrap;
+    color: #e3ebf5;
+}
+
+
+/* =====================================
+   CONTENEDOR DEL USUARIO
+===================================== */
+
+.contenedor_usuario {
     display: flex;
-
     align-items: center;
-
-    gap: 12px;
-
+    height: 100%;
 }
 
 
-/* =========================================
-   LÍNEA SEPARADORA
-========================================= */
+/* SEPARADOR */
 
 .separador_usuario {
-
     width: 1px;
+    height: 40px;
 
-    height: 32px;
+    background-color: rgba(255, 255, 255, 0.5);
 
-    background-color: rgba(255, 255, 255, 0.40);
-
-    margin-right: 5px;
-
+    margin-right: 20px;
 }
 
 
-/* =========================================
-   ICONO DEL USUARIO
-========================================= */
+/* =====================================
+   BOTÓN DEL USUARIO
+===================================== */
+
+.usuario_menu {
+    position: relative;
+}
+
+.usuario_boton {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    background: transparent;
+    border: none;
+    color: white;
+
+    cursor: pointer;
+    font-family: inherit;
+}
+
+
+/* ICONO CIRCULAR */
 
 .usuario_icono {
-
-    width: 40px;
-    height: 40px;
+    width: 46px;
+    height: 46px;
 
     border-radius: 50%;
 
     background-color: white;
-
-    color: #06407b;
+    color: #063567;
 
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
-    font-size: 21px;
-
+    font-size: 24px;
 }
 
 
-/* =========================================
-   NOMBRE Y ROL
-========================================= */
+/* INFORMACIÓN DEL USUARIO */
 
 .usuario_datos {
-
     display: flex;
-
     flex-direction: column;
-
-    justify-content: center;
-
-    line-height: 1.3;
-
+    align-items: flex-start;
+    gap: 4px;
 }
-
 
 .usuario_nombre {
-
     font-size: 14px;
-
-    font-weight: 600;
-
-    color: white;
-
+    font-weight: bold;
 }
-
 
 .usuario_rol {
-
-    margin-top: 2px;
-
     font-size: 12px;
-
-    color: #d9e4ef;
-
+    color: #e0e9f5;
 }
 
 
-/* =========================================
-   FLECHA DEL USUARIO
-========================================= */
+/* FLECHA */
 
 .usuario_flecha {
-
+    font-size: 11px;
     margin-left: 12px;
+}
 
-    font-size: 10px;
 
-    color: white;
+/* =====================================
+   MENÚ DESPLEGABLE
+===================================== */
 
-    cursor: pointer;
+.usuario_desplegable {
+    position: absolute;
+    top: calc(100% + 15px);
+    right: 0;
 
+    width: 190px;
+
+    background-color: white;
+    border-radius: 8px;
+
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+
+    padding: 8px 0;
+    z-index: 1000;
+}
+
+.usuario_desplegable[hidden] {
+    display: none;
+}
+
+.usuario_desplegable a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    padding: 12px 16px;
+
+    color: #063567;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.usuario_desplegable a:hover {
+    background-color: #edf4fc;
+}
+
+
+/* =====================================
+   PANTALLAS PEQUEÑAS
+===================================== */
+
+@media (max-width: 650px) {
+
+    .barra_superior {
+        padding: 0 12px;
+    }
+
+    .contenedor_marca {
+        gap: 8px;
+    }
+
+    .logo_controlix {
+        width: 50px;
+        height: 50px;
+    }
+
+    .marca_texto h1 {
+        font-size: 22px;
+    }
+
+    .marca_texto p {
+        font-size: 7px;
+    }
+
+    .separador_logo {
+        height: 35px;
+    }
+
+    .separador_usuario {
+        margin-right: 10px;
+    }
+
+    .usuario_icono {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+    }
+
+    .usuario_datos {
+        display: none;
+    }
+
+    .usuario_boton {
+        gap: 5px;
+    }
+
+    .usuario_flecha {
+        margin-left: 0;
+    }
 }

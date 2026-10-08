@@ -2,93 +2,122 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
     <title>Controlix | Dashboard</title>
 
-    <!-- CSS DEL DASHBOARD -->
+    <!-- CSS -->
     <link rel="stylesheet" href="dashboard.css">
 
-    <!-- FONT AWESOME -->
+    <!-- ICONOS -->
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
 </head>
-
 
 <body>
 
-    <!-- =========================================
-         BARRA SUPERIOR
-    ========================================== -->
-
+    <!-- BARRA SUPERIOR -->
     <header class="barra_superior">
 
+        <!-- LADO IZQUIERDO -->
+        <div class="contenedor_marca" onclick="window.location.href= 'dashboard.html#dashboard'">
 
-        <!-- ===============================
-             LOGO CONTROLIX
-        ================================ -->
+            <!-- LOGO -->
+            <div class="contenedor_logo">
+                <img src="img/controlix.png"
+                     alt="Logo Controlix"
+                     class="logo_controlix">
+            </div>
 
-        <div class="barra_logo">
+            <!-- SEPARADOR -->
+            <div class="separador_logo"></div>
 
-            <img src="img/controlix.png"
-                 alt="Controlix"
-                 class="logo_controlix">
+            <!-- NOMBRE -->
+            <div class="marca_texto">
+                <h1>Control<span>ix</span></h1>
+                <p>GESTIÓN Y CONTROL EMPRESARIAL</p>
+            </div>
 
         </div>
 
 
-        <!-- ===============================
-             INFORMACIÓN DEL USUARIO
-        ================================ -->
+        <!-- LADO DERECHO -->
+        <div class="contenedor_usuario">
 
-        <div class="barra_usuario">
-
-
-            <!-- LÍNEA SEPARADORA -->
-
+            <!-- SEPARADOR -->
             <div class="separador_usuario"></div>
 
+            <!-- MENÚ DEL USUARIO -->
+            <div class="usuario_menu">
 
-            <!-- ICONO DEL USUARIO -->
+                <button class="usuario_boton"
+                        id="usuario_boton"
+                        type="button"
+                        aria-expanded="false"
+                        aria-controls="usuario_desplegable">
 
-            <div class="usuario_icono">
+                    <div class="usuario_icono">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
 
-                <i class="fa-solid fa-user"></i>
+                    <div class="usuario_datos">
+                        <span class="usuario_nombre">
+                            Kenia Ramírez
+                        </span>
+
+                        <span class="usuario_rol">
+                            Administrador
+                        </span>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-down usuario_flecha"></i>
+
+                </button>
+
+                <!-- OPCIONES DESPLEGABLES -->
+                <div class="usuario_desplegable"
+                     id="usuario_desplegable"
+                     hidden>
+
+                    <a href="perfil.html">
+                        <i class="fa-solid fa-user-gear"></i>
+                        Mi perfil
+                    </a>
+
+                    <a href="login.html">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Cerrar sesión
+                    </a>
+
+                </div>
 
             </div>
-
-
-            <!-- NOMBRE Y ROL -->
-
-            <div class="usuario_datos">
-
-                <span class="usuario_nombre">
-                    Kenia Ramírez
-                </span>
-
-                <span class="usuario_rol">
-                    Administrador
-                </span>
-
-            </div>
-
-
-            <!-- FLECHA -->
-
-            <i class="fa-solid fa-chevron-down usuario_flecha"></i>
-
 
         </div>
-
 
     </header>
 
 
-</body>
+    <script>
+        const botonUsuario = document.getElementById("usuario_boton");
+        const menuUsuario = document.getElementById("usuario_desplegable");
 
+        botonUsuario.addEventListener("click", function () {
+            const abierto = !menuUsuario.hidden;
+
+            menuUsuario.hidden = abierto;
+            botonUsuario.setAttribute("aria-expanded", String(!abierto));
+        });
+
+        document.addEventListener("click", function (evento) {
+            if (!evento.target.closest(".usuario_menu")) {
+                menuUsuario.hidden = true;
+                botonUsuario.setAttribute("aria-expanded", "false");
+            }
+        });
+    </script>
+
+</body>
 </html>

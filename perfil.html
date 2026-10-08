@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Mi perfil | Controlix</title>
+
+    <link rel="stylesheet" href="perfil.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- BARRA SUPERIOR -->
+    <header class="barra_superior">
+
+        <div class="contenedor_marca"
+             role="link"
+             tabindex="0"
+             onclick="window.location.href='dash.html#dashboard'"
+             onkeydown="if(event.key==='Enter') window.location.href='dash.html#dashboard'">
+
+            <img src="img/logo_controlix.png"
+                 alt="Logo Controlix"
+                 class="logo_controlix">
+
+            <div class="separador_logo"></div>
+
+            <div class="marca_texto">
+                <h1>Control<span>ix</span></h1>
+                <p>GESTIÓN Y CONTROL EMPRESARIAL</p>
+            </div>
+
+        </div>
+
+        <div class="contenedor_usuario">
+            <i class="fa-solid fa-circle-user"></i>
+
+            <div class="usuario_texto">
+                <strong>Kenia Ramírez</strong>
+                <span>Administrador</span>
+            </div>
+        </div>
+
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="perfil_contenedor">
+
+        <!-- TARJETA IZQUIERDA -->
+        <aside class="perfil_lateral">
+
+            <div class="foto_contenedor">
+
+                <img id="foto_perfil"
+                     alt="Fotografía del usuario"
+                     class="foto_perfil"
+                     hidden>
+
+                <div id="foto_predeterminada"
+                     class="foto_predeterminada">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+
+                <label for="subir_foto"
+                       class="boton_foto"
+                       title="Cambiar fotografía">
+                    <i class="fa-solid fa-camera"></i>
+                </label>
+
+                <input type="file"
+                       id="subir_foto"
+                       accept="image/png,image/jpeg,image/webp"
+                       hidden>
+            </div>
+
+            <h2 id="nombre_lateral">Kenia Ramírez</h2>
+
+            <div class="separador_lateral"></div>
+
+            <div class="fecha_miembro">
+                <i class="fa-regular fa-calendar"></i>
+
+                <div>
+                    <span>Miembro desde</span>
+                    <strong>15 de enero de 2024</strong>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- SECCIÓN DERECHA -->
+        <section class="perfil_principal">
+
+            <div class="perfil_encabezado">
+                <h2>Mi perfil</h2>
+
+                <a href="dash.html#dashboard"
+                   class="volver_dashboard">
+                    <i class="fa-solid fa-house"></i>
+                    / Mi perfil
+                </a>
+            </div>
+
+            <!-- PESTAÑAS -->
+            <nav class="perfil_pestanas"
+                 aria-label="Secciones del perfil">
+
+                <button type="button"
+                        class="pestana activa"
+                        data-pestana="datos">
+                    <i class="fa-solid fa-user"></i>
+                    Datos personales
+                </button>
+
+                <button type="button"
+                        class="pestana"
+                        data-pestana="actividad">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    Mi actividad
+                </button>
+
+                <button type="button"
+                        class="pestana"
+                        data-pestana="permisos">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    Permisos
+                </button>
+
+            </nav>
+
+            <!-- DATOS PERSONALES -->
+            <section id="datos"
+                     class="contenido_pestana activa">
+
+                <div class="tarjeta">
+
+                    <div class="tarjeta_encabezado">
+
+                        <h3>
+                            <i class="fa-solid fa-user"></i>
+                            Información personal
+                        </h3>
+
+                        <button type="button"
+                                id="btn_editar"
+                                class="boton_editar">
+                            <i class="fa-solid fa-pencil"></i>
+                            Editar información
+                        </button>
+
+                    </div>
+
+                    <form id="form_perfil">
+
+                        <div class="campos_fila">
+
+                            <div class="campo">
+                                <label for="nombre">Nombre(s)</label>
+                                <input type="text"
+                                       id="nombre"
+                                       value="Kenia"
+                                       maxlength="80"
+                                       disabled>
+                            </div>
+
+                            <div class="campo">
+                                <label for="apellidos">Apellidos</label>
+                                <input type="text"
+                                       id="apellidos"
+                                       value="Ramírez"
+                                       maxlength="120"
+                                       disabled>
+                            </div>
+
+                        </div>
+
+                        <div class="campo">
+                            <label for="correo">
+                                Correo electrónico
+                            </label>
+
+                            <input type="email"
+                                   id="correo"
+                                   value="kenia.ramirez@controlix.com"
+                                   disabled>
+                        </div>
+
+                        <div class="acciones_formulario"
+                             id="acciones_formulario"
+                             hidden>
+
+                            <button type="button"
+                                    id="btn_cancelar"
+                                    class="boton_cancelar">
+                                Cancelar
+                            </button>
+
+                            <button type="submit"
+                                    class="boton_guardar">
+                                Guardar cambios
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+            <!-- MI ACTIVIDAD -->
+            <section id="actividad"
+                     class="contenido_pestana"
+                     hidden>
+
+                <div class="tarjeta">
+
+                    <div class="tarjeta_encabezado">
+
+                        <h3>
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                            Mi actividad
+                        </h3>
+
+                        <div class="filtro_contenedor">
+
+                            <label for="filtro_actividad">
+                                Filtrar por fecha
+                            </label>
+
+                            <input type="date"
+                                   id="filtro_actividad">
+
+                        </div>
+
+                    </div>
+
+                    <div class="tabla_responsive">
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Información 1</th>
+                                    <th>Información 2</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="tabla_actividad">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <p id="mensaje_actividad"
+                       class="mensaje_vacio"
+                       hidden>
+                        No hay registros para mostrar.
+                    </p>
+
+                </div>
+
+            </section>
+
+            <!-- PERMISOS -->
+            <section id="permisos"
+                     class="contenido_pestana"
+                     hidden>
+
+                <div class="tarjeta">
+
+                    <div class="tarjeta_encabezado">
+
+                        <h3>
+                            <i class="fa-solid fa-shield-halved"></i>
+                            Permisos
+                        </h3>
+
+                    </div>
+
+                    <div class="tabla_responsive">
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Módulo</th>
+                                    <th>Permisos asignados</th>
+                                    <th>Acceso</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="tabla_permisos">
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <script src="perfil.js"></script>
+
+</body>
+</html>
