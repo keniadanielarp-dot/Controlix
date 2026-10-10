@@ -2,93 +2,68 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
     <title>Controlix | Dashboard</title>
 
-    <!-- CSS DEL DASHBOARD -->
-    <link rel="stylesheet" href="dashboard.css">
-
-    <!-- FONT AWESOME -->
+    <!-- Bootstrap 5 local -->
     <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+          href="./bootstrap/css/bootstrap.min.css">
 
+    <!-- Cargar íconos de bootstrap locales  -->
+    <link rel="stylesheet" href="./css/bootstrap-icons.css">
+
+    <!-- Referencia a css -->
+    <link rel="stylesheet" href="dashboard.css">
 </head>
 
-
 <body>
+     
+ <!-- Panel lateral azul  -->
+ <aside class="panel">
 
-    <!-- =========================================
-         BARRA SUPERIOR
-    ========================================== -->
+    <!-- Nombre del proyecto -->
+    <div class="project_title">
 
-    <header class="barra_superior">
+        <h2>Control<span>ix</span></h2>
+     </div>
 
+    <!-- Menú de navegación -->
+    <nav class="menu" aria-label="Menu principal">
 
-        <!-- ===============================
-             LOGO CONTROLIX
-        ================================ -->
+        <a href="dashboard.html" class="option_menu activo" aria-current="page">
+       
+            <!-- Opcion Dashboard -->
+            <i class="bi bi-house-door-fill" aria-hidden="true"></i>
+            <span>Dashboard</span>
+        </a>
 
-        <div class="barra_logo">
+        <!-- Opcion Usuario -->
+        <a href="#" class="option_menu">
+            <i class="bi bi-people" aria-hidden="true"></i>
+            <span>Usuarios</span>
+        </a>
+    </nav>
+ </aside>
 
-            <img src="img/controlix.png"
-                 alt="Controlix"
-                 class="logo_controlix">
+ <!-- Contenido -->        
+ <main class="content">
+ <!-- barra superior --> 
+       <header class="top_bar">
+          <button class="button_menu" type="button" aria-label="Abrir menu">
+             <i class="bi bi-list"></i>
+            </button>
+        </header>
+        <nav class="route_nav" aria-label="Ruta de navegación">
+           <a href="dashboard.html" class="home_route" aria-label="Inicio">
+              <i class="bi bi-house-door"></i>
+            </a>
+         <span class="line"></span>
+         <span class="current_route" aria-current="page">Dashboard</span>
 
-        </div>
-
-
-        <!-- ===============================
-             INFORMACIÓN DEL USUARIO
-        ================================ -->
-
-        <div class="barra_usuario">
-
-
-            <!-- LÍNEA SEPARADORA -->
-
-            <div class="separador_usuario"></div>
-
-
-            <!-- ICONO DEL USUARIO -->
-
-            <div class="usuario_icono">
-
-                <i class="fa-solid fa-user"></i>
-
-            </div>
-
-
-            <!-- NOMBRE Y ROL -->
-
-            <div class="usuario_datos">
-
-                <span class="usuario_nombre">
-                    Kenia Ramírez
-                </span>
-
-                <span class="usuario_rol">
-                    Administrador
-                </span>
-
-            </div>
-
-
-            <!-- FLECHA -->
-
-            <i class="fa-solid fa-chevron-down usuario_flecha"></i>
-
-
-        </div>
-
-
-    </header>
-
-
+</main>
+ </nav>
 </body>
-
 </html>
