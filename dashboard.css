@@ -44,8 +44,8 @@ body {
         #103d7b 48%,
         #061d3d 100%
     );
-    
     isolation: isolate; /*Aislar las capas del panel*/
+    transition: transform 0.3s ease; /*Animación plegar y desplegar */   
 }
 
 .panel::before {
@@ -64,6 +64,11 @@ body {
 
     pointer-events: none; /*Evita bloquear los clicks*/
     z-index: -1; /*Coloca la figura detrás del contenido*/
+}
+
+/* Ocultar panel */
+body.folded_panel .panel{
+    transform: translateY(-100%);
 }
 
 /* Encabezado */
@@ -132,6 +137,12 @@ body {
     min-height: 100vh;
     min-height: 100dvh;
     background-color: #f4f6f9;
+    transition: margin-left 0.3s ease;
+}
+
+/* Expandir panel */
+body.folded_panel .panel{
+    margin-left: 0;
 }
 
 /* Barra superior */
@@ -201,9 +212,12 @@ body {
 }
 
 /* Línea separadora */
-.line {
+.divider {
+    display: inline-block; 
     color: #34466a;
-    font-size: 18px;
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
 }
 
 /* Ruta actual */ 
@@ -212,6 +226,8 @@ body {
     font-size: 14px;
     font-weight: 400;
 }
+
+
 
 /* Pantallas mas pequeñas */
 @media (max-width: 768px) {

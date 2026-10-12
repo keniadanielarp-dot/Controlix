@@ -24,28 +24,38 @@ $user = $_POST["user_login"] ?? "";
 $pass = $_POST["pass_login"] ?? "";
 
 //Búsqueda del usuario en la BD 
-$sql = "SELECT id_user, name_user, passwd_user, rol_user,
-        status_user, created_by, created_at, updated_by, updated_at
+$sql = "SELECT name_user, passwd_user, status_user
        FROM myr_users 
-       WHERE name_user = ?";
+       WHERE name_user = ? AND status_user = 1";
 
 $query = $connection -> prepare($sql);
-$query -> bind_param("s", $user);
+$query -> bind_param("s", $user); 
 $query -> execute();
 $res = $query -> get_result();
 
-//Comprobación
-if($res -> num_rows === 1){
-    $row = $res -> fetch_assoc();
+// Comprobación.
+if ($res->num_rows === 1) {
+    $row = $res->fetch_assoc();
 
-    //Comparar contraseña
-    if($pass === $row["passwd_user"]) {
-        echo "Inicio de sesión exitoso :)";
-    } else{
-        "Usuario o contraseña incorrectos";
+    // Comparación.
+    if ($pass === $row["passwd_user"]) {
+
+        // Comparación de status activo
+        if ((int)$row["status_user"] === 1) {
+            echo "Inicio de sesion exitoso :)";
+        // Comparación de status inactivo
+        } else if((int)$row["status_user"] === 0) {
+            echo "Acceso no autorizado";
+        }
+
+    } else {
+        // La contraseña es incorrecta.
+        header("Location: login.html?error=credentials");
+        exit;
     }
-} else{
-    echo "Usuario o contraseña incorrectos";
+
+} else {
+    // El usuario no se encuentra.
+        echo "El usuario no se encuentra.";
 }
 ?>
-

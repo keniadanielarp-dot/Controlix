@@ -1,0 +1,14 @@
+/* Mensaje de alerta */
+.error_msg{
+    color: #e53935;
+    font-size: 14px;
+    font-weight: 500; /*Grosor*/
+    text-align: center;
+    margin-top: 8px; /*Separa el mensaje del titulo*/
+    margin-bottom: 20px; /*Espacio antes del formulario*/
+
+}
+/* Ocultar mensaje de error cuando no lo encuentra */
+.error_msg{
+    display: none;
+}

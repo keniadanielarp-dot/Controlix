@@ -19,10 +19,10 @@
     <link rel="stylesheet" href="dashboard.css">
 </head>
 
-<body>
-     
+
+<body> 
  <!-- Panel lateral azul  -->
- <aside class="panel">
+ <aside class="panel" id="side_panel">
 
     <!-- Nombre del proyecto -->
     <div class="project_title">
@@ -52,15 +52,26 @@
  <main class="content">
  <!-- barra superior --> 
        <header class="top_bar">
-          <button class="button_menu" type="button" aria-label="Abrir menu">
-             <i class="bi bi-list"></i>
+
+        <!--Boton plegar y desplegar el panel lateral -->
+          <button class="button_menu" id="button_line" type="button" aria-label="Ocultar menu" aria-controls="side_panel" aria-expanded="true">
+        
+              <!-- Icono tres lineas -->
+              <i class="bi bi-list"></i>
+
             </button>
         </header>
         <nav class="route_nav" aria-label="Ruta de navegación">
+
+            <!--icono casa-->
            <a href="dashboard.html" class="home_route" aria-label="Inicio">
               <i class="bi bi-house-door"></i>
             </a>
-         <span class="line"></span>
+
+        <!--icono linea-->    
+         <span class="divider">/</span>
+
+         <!--Nombre pagina actual-->
          <span class="current_route" aria-current="page">Dashboard</span>
 
 </main>

@@ -94,6 +94,20 @@ body:before {
     margin-bottom: 35px;
 }
 
+/* Mensaje de alerta */
+.error_msg{
+    display: block;
+    width: 100%;
+    color: #e53935;
+    font-size: 14px;
+    font-weight: 500; /*Grosor*/
+    text-align: center;
+    margin: 8px 0 20px; /*Separa el mensaje del titulo y del formulario*/
+}
+/* Ocultar mensaje de error cuando no lo encuentra */
+.error_msg[hidden]{
+    display: none;
+}
 
 /* Formulario */
 .login_form {
@@ -283,4 +297,5 @@ body:before {
     .title_login {
         font-size: 26px;
     }
+
 }

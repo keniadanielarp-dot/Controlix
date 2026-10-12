@@ -1,5 +1,4 @@
 Notas 
-1. Usuario bien, pero contraseña mal truena
-3. Empezar a diseñar dashboard
+1. 
 
 

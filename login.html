@@ -7,16 +7,12 @@
 
     <title>Inicio de sesión</title> <!-- Agrega el titulo en la pestaña del buscador -->
 
-    <!-- Hace referencia al CSS -->
-    <link rel="stylesheet" href="style_login.css">     
-    
-     <!-- Bootstrap Local -->
-    <link rel="stylesheet"
-          href="bootstrap/css/bootstrap.min.css">
-
     <!-- Referencia para poder usar los Íconos Font Awesome -->
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- Referencia a css -->
+    <link rel="stylesheet" href="style_login.css">
 </head>
 
 <body>
@@ -42,6 +38,11 @@
             <h2 class="title_login">
                 Iniciar sesión
             </h2>
+
+            <!--Mensaje cuando el usuario y/o la contraseña sean incorrectos -->
+            <p id="error_msg" class="error_msg" role="alert" hidden>
+            Usuario y/o contraseña incorrectos. Inténtelo de nuevo. 
+            </p>
 
 
             <!-- Formulario que permite a los usuarios introducir y enviar datos a un servidor web para su procesamiento.--> 
@@ -112,6 +113,8 @@
         </section> <!-- Fin de la tarjeta grafica -->
     </main> <!-- Fin del contenido de la pagina Login -->
 
+
+    <!--Javascript para el ícono del ojo -->
     <script>
      // Buscamos el input de contraseña por su ID 
      const pass_js = document.getElementById("pass");
@@ -151,5 +154,17 @@
         console.log("Después del cambio:", pass_js.type);
     });
     </script>
+
+    <!-- Javascript para mostrar el mensaje de error-->
+     <script>
+        //Si se encontró un error...
+        const error_found = new URLSearchParams(window.location.search);
+
+        //Si lo encontró muestra el mensaje
+        if(error_found.get("error") === "credentials"){
+            document.getElementById("error_msg").hidden = false;
+        }
+     </script>
+
 </body>
 </html>
