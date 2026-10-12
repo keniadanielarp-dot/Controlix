@@ -38,15 +38,27 @@ if ($res->num_rows === 1) {
     $row = $res->fetch_assoc();
 
     // Comparación.
-    if ($pass === $row["passwd_user"]) {
+    if(password_verify($pass, $row["passwd_user"])){
 
         // Comparación de status activo
         if ((int)$row["status_user"] === 1) {
             echo "Inicio de sesion exitoso :)";
+
         // Comparación de status inactivo
         } else if((int)$row["status_user"] === 0) {
             echo "Acceso no autorizado";
         }
+    }
+
+
+
+
+
+
+
+    if ($pass === $row["passwd_user"]) {
+
+        
 
     } else {
         // La contraseña es incorrecta.
