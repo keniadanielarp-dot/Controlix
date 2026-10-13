@@ -1,4 +1,7 @@
 Notas 
-1. 
+1. Arreglar el borrado de datos de los input
+2. Arreglar la alerta de Incio de sesion 
+3. Ordenar documentos por carpeta de lenguaje 
+4. Arreglar errores que puedan llegar a ocurrir conforme el acomodo 
 
 

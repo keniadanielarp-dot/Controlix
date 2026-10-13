@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Controlix | Dashboard</title>
+
+    <!-- Bootstrap 5 local -->
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+
+    <!-- Cargar íconos de bootstrap locales  -->
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+
+    <!-- BOOTSTRAP JAVASCRIPT -->
+    <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Referencia a css -->
+    <link rel="stylesheet" href="../css/dashboard_admin.css">
+
+</head>
+
+
+<body>
+    <!-- Panel lateral azul  -->
+    <aside class="panel" id="side_panel">
+
+        <!-- Nombre del proyecto -->
+        <div class="project_title">
+
+            <h2>Control<span>ix</span></h2>
+        </div>
+
+        <!-- Menú de navegación -->
+        <nav class="menu" aria-label="Menu principal">
+
+            <a href="dashboard_admin.html" class="option_menu activo" aria-current="page">
+
+                <!-- Opcion Dashboard -->
+                <i class="bi bi-house-door-fill" aria-hidden="true"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- Opcion Usuario -->
+            <a href="#" class="option_menu">
+                <i class="bi bi-people" aria-hidden="true"></i>
+                <span>Usuarios</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Contenido -->
+    <main class="content">
+        <!-- barra superior -->
+        <header class="top_bar">
+
+            <!--Barra superior izquierda-->
+
+            <!--Boton plegar y desplegar el panel lateral -->
+            <button class="button_menu" id="button_line" type="button" aria-label="Ocultar menu"
+                aria-controls="side_panel" aria-expanded="true">
+                <!-- Icono tres lineas -->
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!--Barra superior derecha-->
+
+            <!--CHAT GPT -->
+            <!--Perfil del usuario -->
+            <div class="dropdown user_profile">
+
+
+                <button class="btn button_profile dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+
+                    <!-- icono perfil -->
+                    <i class="bi bi-person-circle profile_ic"></i>
+
+                    <span class="profile_info">
+                        <strong>Hola, Kenia Ramírez</strong>
+                        <small>Administrador</small>
+                    </span>
+                </button>
+
+                <!-- MENU DESPLEGABLE -->
+                <div class="dropdown-menu dropdown-menu-end profile_menu">
+
+                    <!-- INFORMACION DEL USUARIO -->
+                    <div class="perfil_encabezado">
+
+                        <!-- ICONO DE PERFIL -->
+                        <i class="bi bi-person-circle profile_ic"></i>
+
+                        <div>
+                            <strong>Kenia Ramírez Peña</strong>
+                            <small>kenia.ramirez@controlix.com</small>
+                        </div>
+
+                    </div>
+
+                    <hr class="dropdown-divider">
+
+                    <!-- OPCIONES DEL PERFIL -->
+                    <a class="dropdown-item" href="#">
+                        <i class="bi bi-person"></i>
+                        Mi Perfil
+                    </a>
+
+                    <a class="dropdown-item" href="#">
+                        <i class="bi bi-gear"></i>
+                        Configuración
+                    </a>
+
+                    <hr class="dropdown-divider">
+
+                    <!-- CERRAR SESION -->
+                    <a class="dropdown-item" href="#">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Cerrar Sesión
+                    </a>
+
+                </div>
+            </div>
+
+            <!-- TERMINA CHAT GPT-->
+
+
+
+        </header>
+        <nav class="route_nav" aria-label="Ruta de navegación">
+
+            <!--icono casa-->
+            <a href="dashboard_admin.html" class="home_route" aria-label="Inicio">
+                <i class="bi bi-house-door"></i>
+            </a>
+
+            <!--icono linea-->
+            <span class="divider">/</span>
+
+            <!--Nombre pagina actual-->
+            <span class="current_route" aria-current="page">Dashboard</span>
+
+    </main>
+    </nav>
+    <!-- Referencia a js -->
+    <script src="../js/dashboard_admin.js"></script>
+</body>
+</html>

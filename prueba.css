@@ -1,21 +1,94 @@
-if ($pass === $row["passwd_user"]) {
+/* ==================================
+   MENU DESPLEGABLE
+================================== */
 
-        // Comparación de status activo
-        if ((int)$row["status_user"] === 1) {
-            echo "Inicio de sesion exitoso :)";
+.perfil_menu {
+    width: 260px;
+    padding: 12px;
+    border: 1px solid #e3eaf5;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 30, 80, 0.15);
+}
 
-        // Comparación de status inactivo
-        } else if((int)$row["status_user"] === 0) {
-            echo "Acceso no autorizado";
-        }
+/* ==================================
+   ENCABEZADO DEL MENU
+================================== */
 
-    } else {
-        // La contraseña es incorrecta.
-        header("Location: login.html?error=credentials");
-        exit;
-    }
+.perfil_encabezado {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 4px;
+}
 
-} else {
-    // El usuario no se encuentra.
-        echo "El usuario no se encuentra.";
+.perfil_encabezado div {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.perfil_encabezado strong {
+    font-size: 12px;
+    color: #0b2857;
+}
+
+.perfil_encabezado small {
+    font-size: 10px;
+    color: #617494;
+    overflow-wrap: anywhere;
+}
+
+/* ==================================
+   OPCIONES DEL MENU
+================================== */
+
+.perfil_menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    font-size: 13px;
+    color: #0b2857;
+    border-radius: 6px;
+}
+
+.perfil_menu .dropdown-item i {
+    font-size: 17px;
+}
+
+.perfil_menu .dropdown-item:hover {
+    background: #eef4ff;
+    color: #1264dc;
+}
+
+/* ICONO DE PERFIL */
+.profile_ic {
+    font-size: 36px;
+    color: #0b2857;
+}
+
+/* PERFIL SIEMPRE VISIBLE EN LA BARRA SUPERIOR */
+.user_profile {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* MENU DESPLEGABLE */
+.perfil_menu {
+    z-index: 1050;
+}
+
+/* PERFIL: NOMBRE ARRIBA Y ROL ABAJO */
+.top_bar .user_profile .profile_info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+}
+
+/* NOMBRE Y ROL EN LINEAS SEPARADAS */
+.top_bar .user_profile .profile_info strong,
+.top_bar .user_profile .profile_info small {
+    display: block;
+    width: 100%;
 }

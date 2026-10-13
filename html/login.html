@@ -7,12 +7,15 @@
 
     <title>Inicio de sesión</title> <!-- Agrega el titulo en la pestaña del buscador -->
 
-    <!-- Referencia para poder usar los Íconos Font Awesome -->
+    <!-- Bootstrap 5 local -->
     <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    
+          href="../bootstrap/css/bootstrap.min.css">
+
+    <!-- Cargar íconos de bootstrap locales  -->
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+
     <!-- Referencia a css -->
-    <link rel="stylesheet" href="style_login.css">
+    <link rel="stylesheet" href="../css/login.css">
 </head>
 
 <body>
@@ -23,7 +26,7 @@
         <section class="program_info">
             <div class="program_title">
                 <img
-                    src="img/controlix.png"
+                    src="../img/controlix.png"
                     alt="Logo"
                     class="controlix_logo">
 
@@ -39,14 +42,12 @@
                 Iniciar sesión
             </h2>
 
-            <!--Mensaje cuando el usuario y/o la contraseña sean incorrectos -->
-            <p id="error_msg" class="error_msg" role="alert" hidden>
-            Usuario y/o contraseña incorrectos. Inténtelo de nuevo. 
-            </p>
-
+            <div id="alert_login" class="alert alert-danger text-center d-none" role="alert">
+                Usuario y/o contraseña incorrectos. Inténtelo de nuevo.
+            </div>
 
             <!-- Formulario que permite a los usuarios introducir y enviar datos a un servidor web para su procesamiento.--> 
-            <form class="login_form" method="post" action="connection_login.php">
+            <form id="form_alert" class="login_form" method="post" action="../php/connection_login.php">
 
                 
                 <!-- <div> Contenedor genérico utilizado para agrupar elementos HTML y estructurar contenido en una página web. Es extremadamente útil cuando se combina con CSS o JavaScript para diseño y manipulación.-->
@@ -59,7 +60,7 @@
 
                     <div class="input_container"> <!-- Agrupación del TextBox-->
 
-                        <i class="fa-solid fa-user"></i> <!-- Muestra el texto diferente al texto normal-->
+                        <i class="bi bi-person-fill"></i> <!-- Muestra el texto diferente al texto normal-->
                         <input
                             type="text" 
                             id="user"
@@ -79,8 +80,8 @@
 
                     <div class="input_container">
 
-                        <i class="fa-solid fa-lock"></i>
-                        <i class="fa-solid fa-eye-slash eye_pass"></i>
+                        <i class="bi bi-lock-fill"></i>
+                        <i class="bi bi-eye-slash eye_pass"></i>
                         <input
                             type="password"
                             id="pass"
@@ -136,8 +137,8 @@
             console.log("Ahora se muestra");
 
             //Cambiar a ojo abierto
-            eye.classList.remove("fa-eye-slash");
-            eye.classList.add("fa-eye");
+            eye.classList.remove("bi-eye-slash");
+            eye.classList.add("bi-eye");
 
         } else {  //Si no...
 
@@ -146,8 +147,8 @@
             console.log("Ahora se oculta");
 
             //Se oculta nuevamente el ojo 
-            eye.classList.remove("fa-eye");
-            eye.classList.add("fa-eye-slash");
+            eye.classList.remove("bi-eye");
+            eye.classList.add("bi-eye-slash");
         }
 
         // Mostramos qué quedó después del cambio
@@ -155,16 +156,17 @@
     });
     </script>
 
-    <!-- Javascript para mostrar el mensaje de error-->
-     <script>
-        //Si se encontró un error...
-        const error_found = new URLSearchParams(window.location.search);
+    <!--Mensaje de alerta para usuario o contraseña incorrectos-->
+    <script>
+    // DETECTAR ERROR ENVIADO POR PHP
+    const errorLogin = new URLSearchParams(window.location.search);
 
-        //Si lo encontró muestra el mensaje
-        if(error_found.get("error") === "credentials"){
-            document.getElementById("error_msg").hidden = false;
-        }
-     </script>
+    // MOSTRAR ALERTA EN EL FORMULARIO
+    if (errorLogin.get("error") === "credentials") {
+        document.getElementById("alert_login")
+                .classList.remove("d-none");
+    }
+</script>
 
 </body>
 </html>

@@ -1,5 +1,7 @@
 <?php
 //Iniciar sesión
+session_start();
+
 //Datos de conexión a mysql
 $host = "localhost";
 $user = "root"; 
@@ -20,54 +22,50 @@ if($connection -> connect_error){
 }
 
 //Recibir datos del formulario 
-$user = $_POST["user_login"] ?? "";
+$user = trim($_POST["user_login"] ?? "");
 $pass = $_POST["pass_login"] ?? "";
 
 //Búsqueda del usuario en la BD 
-$sql = "SELECT name_user, passwd_user, status_user
+$sql = "SELECT user, passwd_user, status_user
        FROM myr_users 
-       WHERE name_user = ? AND status_user = 1";
+       WHERE user = ? AND status_user = 1";
 
 $query = $connection -> prepare($sql);
 $query -> bind_param("s", $user); 
 $query -> execute();
 $res = $query -> get_result();
 
-// Comprobación.
+
+// Comprueba que se encontro exactamente un usuario.
 if ($res->num_rows === 1) {
+    //Si lo encontró...
+
+    // Recupera los datos del usuario.
     $row = $res->fetch_assoc();
 
-    // Comparación.
-    if(password_verify($pass, $row["passwd_user"])){
+   //Comparación de contraseña.
+   if ($pass === $row["passwd_user"]) {
+    //Si es correcta...
 
         // Comparación de status activo
         if ((int)$row["status_user"] === 1) {
-            echo "Inicio de sesion exitoso :)";
+            header("Location: dashboard_admin.html");
 
         // Comparación de status inactivo
-        } else if((int)$row["status_user"] === 0) {
-            echo "Acceso no autorizado";
+        } else if((int)$row["status_user"] === 0) { //NO ENTRA AL IF 
+            echo "<script>
+            alert('Usuario inactivo');
+            window.location.href = 'login.html';
+            </script>";
         }
-    }
-
-
-
-
-
-
-
-    if ($pass === $row["passwd_user"]) {
-
-        
 
     } else {
         // La contraseña es incorrecta.
-        header("Location: login.html?error=credentials");
-        exit;
+        header("Location: login.html?error.credentials");
     }
 
 } else {
-    // El usuario no se encuentra.
-        echo "El usuario no se encuentra.";
+    // El usuario es incorrecto.
+        header("Location: login.html?error.credentials");
 }
 ?>

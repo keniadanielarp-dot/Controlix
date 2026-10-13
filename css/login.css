@@ -21,7 +21,7 @@ body:before {
     content: "";
     position: fixed;
     inset: 0;
-    background-image: url("img/Myr.jpg");
+    background-image: url("../img/Myr.jpg");
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -92,21 +92,6 @@ body:before {
     color: #1f2937;
     margin-top: 10px;
     margin-bottom: 35px;
-}
-
-/* Mensaje de alerta */
-.error_msg{
-    display: block;
-    width: 100%;
-    color: #e53935;
-    font-size: 14px;
-    font-weight: 500; /*Grosor*/
-    text-align: center;
-    margin: 8px 0 20px; /*Separa el mensaje del titulo y del formulario*/
-}
-/* Ocultar mensaje de error cuando no lo encuentra */
-.error_msg[hidden]{
-    display: none;
 }
 
 /* Formulario */
@@ -192,7 +177,7 @@ body:before {
 }
 
 
-/* Botón INGRESAR*/
+/* Botón Ingresar*/
 .contact_button {
     width: 100%;
     height: 50px;
