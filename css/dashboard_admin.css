@@ -287,24 +287,6 @@ body.folded_panel .content{
     color: #617494;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*Opciones del menu usuario */
 .profile_menu {
     width: 260px;
@@ -337,7 +319,8 @@ body.folded_panel .content{
     color: #1264dc;
 }
 
-.profile_menu {
+/* Propiedades menu */
+.profile_header {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -350,24 +333,32 @@ body.folded_panel .content{
     min-width: 0;
 }
 
+/* Propiedades nombre usuario */
 .profile_menu strong {
     font-size: 12px;
     color: #0b2857;
 }
 
-/* ICONO DE PERFIL */
+/* Icono de perfil */
 .profile_ic {
     font-size: 36px;
     color: #0b2857;
 }
 
-/* PERFIL SIEMPRE VISIBLE EN LA BARRA SUPERIOR */
+/* Icono de perfil */
+.profile_icmenu {
+    align-items: center;
+    font-size: 36px;
+    color: #0b2857;
+}
+
+/* Mantenerlo siempre visible */
 .user_profile {
     margin-left: auto;
     flex-shrink: 0;
 }
 
-/* PERFIL: NOMBRE ARRIBA Y ROL ABAJO */
+/* Nombre arriba. rol abajo en la barra superior */
 .top_bar .user_profile .profile_info {
     display: flex;
     flex-direction: column;
@@ -375,21 +366,12 @@ body.folded_panel .content{
     text-align: left;
 }
 
-/* NOMBRE Y ROL EN LINEAS SEPARADAS */
+/* Separación entre el nombre y el rol  */
 .top_bar .user_profile .profile_info strong,
 .top_bar .user_profile .profile_info small {
     display: block;
     width: 100%;
 }
-
-
-
-
-
-
-
-
-
 
 /* Pantallas mas pequeñas */
 @media (max-width: 768px) {

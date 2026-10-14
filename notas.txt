@@ -1,7 +1,18 @@
 Notas 
+
+Presentacion
 1. Arreglar el borrado de datos de los input
-2. Arreglar la alerta de Incio de sesion 
-3. Ordenar documentos por carpeta de lenguaje 
-4. Arreglar errores que puedan llegar a ocurrir conforme el acomodo 
+2. Empezar diseño de interfaz de usuarios 
+3. Diseñar despliegue del perfil {
+    - Mi perfil 
+    - Configuracion
+    -Cerrar sesion 
+}
+
+
+
+Base de datos
+3. Arreglar el rol para ejecutarlo desde la base de datos
+
 
 
