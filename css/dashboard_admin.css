@@ -324,9 +324,15 @@ body.folded_panel .content{
     color: #1264dc;
 }
 
-/* ==================================
-   ENCABEZADO DEL MENU
-================================== */
+
+
+
+
+
+
+
+
+
 
 .perfil_encabezado {
     display: flex;
@@ -345,14 +351,6 @@ body.folded_panel .content{
     font-size: 12px;
     color: #0b2857;
 }
-
-.perfil_encabezado small {
-    font-size: 10px;
-    color: #617494;
-    overflow-wrap: anywhere;
-}
-
-
 
 /* ICONO DE PERFIL */
 .profile_ic {
@@ -381,7 +379,12 @@ body.folded_panel .content{
     width: 100%;
 }
 
-/*TERMINA CHAT */
+
+
+
+
+
+
 
 
 

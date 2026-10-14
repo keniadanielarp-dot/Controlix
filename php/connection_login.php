@@ -26,9 +26,9 @@ $user = trim($_POST["user_login"] ?? "");
 $pass = $_POST["pass_login"] ?? "";
 
 //Búsqueda del usuario en la BD 
-$sql = "SELECT user, passwd_user, status_user
+$sql = "SELECT user, passwd_user, name_user, status_user
        FROM myr_users 
-       WHERE user = ? AND status_user = 1";
+       WHERE user = ?";
 
 $query = $connection -> prepare($sql);
 $query -> bind_param("s", $user); 
@@ -49,23 +49,24 @@ if ($res->num_rows === 1) {
 
         // Comparación de status activo
         if ((int)$row["status_user"] === 1) {
-            header("Location: dashboard_admin.html");
+            header("Location: ../html/dashboard_admin.html");
+            $_SESSION["name_user"] = $row["name_user"];
 
         // Comparación de status inactivo
-        } else if((int)$row["status_user"] === 0) { //NO ENTRA AL IF 
-            echo "<script>
-            alert('Usuario inactivo');
-            window.location.href = 'login.html';
-            </script>";
+        } else{  
+            header("Location: ../html/login.html?error=inac_user");
+            exit;
         }
 
     } else {
         // La contraseña es incorrecta.
-        header("Location: login.html?error.credentials");
+        header("Location: ../html/login.html?error=credentials");
+        exit;
     }
 
 } else {
     // El usuario es incorrecto.
-        header("Location: login.html?error.credentials");
+    header("Location: ../html/login.html?error=credentials");
+    exit;
 }
 ?>

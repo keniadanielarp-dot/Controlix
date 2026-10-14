@@ -16,6 +16,9 @@
 
     <!-- Referencia a css -->
     <link rel="stylesheet" href="../css/login.css">
+
+    <!--Referencia a js-->
+    <link rel="stylesheet" href="../js/login.js">
 </head>
 
 <body>
@@ -44,6 +47,10 @@
 
             <div id="alert_login" class="alert alert-danger text-center d-none" role="alert">
                 Usuario y/o contraseña incorrectos. Inténtelo de nuevo.
+            </div>
+
+            <div id="alert_status" class="alert alert-danger text-center d-none" role="alert">
+                Usuario inactivo. 
             </div>
 
             <!-- Formulario que permite a los usuarios introducir y enviar datos a un servidor web para su procesamiento.--> 
@@ -113,60 +120,6 @@
 
         </section> <!-- Fin de la tarjeta grafica -->
     </main> <!-- Fin del contenido de la pagina Login -->
-
-
-    <!--Javascript para el ícono del ojo -->
-    <script>
-     // Buscamos el input de contraseña por su ID 
-     const pass_js = document.getElementById("pass");
-
-     //Buscamos nuestro ícono del ojo por su clase
-     const eye = document.querySelector(".eye_pass");
-
-     // Cada vez que se haga click en el ojo 
-     eye.addEventListener("click", function () {
-        
-        //Mostramos en la consola el tipo actual del input 
-        console.log("Antes del cambio:", pass_js.type);
-
-        // Si está oculta...
-        if (pass_js.type === "password") {
-
-            // La mostramos 
-            pass_js.type = "text";
-            console.log("Ahora se muestra");
-
-            //Cambiar a ojo abierto
-            eye.classList.remove("bi-eye-slash");
-            eye.classList.add("bi-eye");
-
-        } else {  //Si no...
-
-            // Se vuelve a ocultar 
-            pass_js.type = "password";
-            console.log("Ahora se oculta");
-
-            //Se oculta nuevamente el ojo 
-            eye.classList.remove("bi-eye");
-            eye.classList.add("bi-eye-slash");
-        }
-
-        // Mostramos qué quedó después del cambio
-        console.log("Después del cambio:", pass_js.type);
-    });
-    </script>
-
-    <!--Mensaje de alerta para usuario o contraseña incorrectos-->
-    <script>
-    // DETECTAR ERROR ENVIADO POR PHP
-    const errorLogin = new URLSearchParams(window.location.search);
-
-    // MOSTRAR ALERTA EN EL FORMULARIO
-    if (errorLogin.get("error") === "credentials") {
-        document.getElementById("alert_login")
-                .classList.remove("d-none");
-    }
-</script>
-
+    <script src="../js/login.js"></script>
 </body>
 </html>
