@@ -27,13 +27,14 @@ fetch("../php/dashboard_admin.php")
         return res.json();
     })
     .then(data => {
-        // Saludo
-        document.getElementById("user_welc").textContent =
-            "Hola, " + data.name;
+        // Saludo en barra superior derecha
+        document.getElementById("user_welc").textContent = "Hola, " + data.name_user;
+        //Rol
+        document.getElementById("rol_dash").textContent = data.rol; 
 
-        // Nombre del usuario
-        document.getElementById("name_profile").textContent =
-            data.name;
+        // Nombre del usuario en menu desplegable
+        document.getElementById("name_profile").textContent = data.name_user;
+        
     })
     .catch(error => {
         console.error("Error al cargar el perfil:", error);

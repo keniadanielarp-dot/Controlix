@@ -39,16 +39,59 @@ eye.addEventListener("click", function () {
 });
 
 
-//Mensaje de alerta para usuario o contraseña incorrectos
+// Borrar datos de los inputs en el login al presionar atrás 
 
-// Obtener el error enviado por php
+//Detectar cuando se muestra la pagina 
+window.addEventListener("pageshow", function () {
+
+    // Campos del login
+    const usu = document.getElementById("user");
+    const pass = document.getElementById("pass");
+
+    //Limpiar campos 
+    if (usu) {
+        usu.value = "";
+    }
+    if (pass) {
+        pass.value = "";
+    }
+});
+
+//Mensaje de error 
+
+//Obtener los mensajes desde HTML
+const login_error = document.getElementById("alert_login");
+const status_error = document.getElementById("alert_status");
+
+// Obtener el error de php por medio de la URL
 const param = new URLSearchParams(window.location.search);
-const error = param.get("error");
+const url_error = param.get("error");
 
-// MOSTRAR SOLO LA ALERTA CORRESPONDIENTE
-if (error === "credentials") {
-    document.getElementById("alert_login").classList.remove("d-none");
+// Mostrar el mensaje correspondiente
+if (url_error === "credentials") {
+    login_error.classList.remove("d-none");
 
-} else if (error === "inac_user") {
-    document.getElementById("alert_status").classList.remove("d-none");
+} else if (url_error === "inac_user") {
+    status_error.classList.remove("d-none");
 }
+
+// Limpiar el mensaje cuando se regresa desde el Dashboard
+window.addEventListener("pageshow", function (ev) {
+
+    // Solo cuando el navegador restaura la pagina
+    if (ev.persisted) {
+        login_error.classList.add("d-none");
+        status_error.classList.add("d-none");
+
+    }
+
+});
+
+// Eliminar el parametro de error del historial
+if (url_error !== null) {
+    const url_clean = window.location.pathname + window.location.hash;
+
+    window.history.replaceState(null, "", url_clean);
+
+}
+

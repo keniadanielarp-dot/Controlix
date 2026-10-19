@@ -5,7 +5,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$db = "myr_quality_adidas"; // CAMBIAR POR EL NOMBRE REAL DE TU BDD
+$db = "myr_quality_adidas";
 
 // Establecer conexión
 $connection = new mysqli(
@@ -22,6 +22,6 @@ if ($connection->connect_error) {
     exit("Error de conexion a la base de datos");
 }
 
-// Configurar caracteres 
+// Configurar caracteres para que php y la BDD interpreten correctamente los caracteres de los textos que se guardaron 
 $connection->set_charset("utf8mb4");
 ?>
