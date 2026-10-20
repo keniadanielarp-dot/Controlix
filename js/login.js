@@ -39,59 +39,95 @@ eye.addEventListener("click", function () {
 });
 
 
-// Borrar datos de los inputs en el login al presionar atrás 
 
-//Detectar cuando se muestra la pagina 
-window.addEventListener("pageshow", function () {
+// BLOQUE: Mostrar mensaje de error 
 
-    // Campos del login
-    const usu = document.getElementById("user");
-    const pass = document.getElementById("pass");
+// Cuando se ingresa mal el usuario y la contraseña, los input se vacían.
+// Cuando se ingresa mal el usuario y la contraseña bien, solo se elimina el input de la contraseña. 
 
-    //Limpiar campos 
-    if (usu) {
-        usu.value = "";
-    }
-    if (pass) {
-        pass.value = "";
-    }
-});
-
-//Mensaje de error 
+// Obtener los datos del formulario de login.html
+const form = document.getElementById("form_alert");
+const txt_usu = document.getElementById("user");
+const txt_pass = document.getElementById("pass");
 
 //Obtener los mensajes desde HTML
 const login_error = document.getElementById("alert_login");
+const login_error2 = document.getElementById("alert_login2");
 const status_error = document.getElementById("alert_status");
 
-// Obtener el error de php por medio de la URL
+// Guardar temporalmente el usuario al enviar el formulario
+if (form && txt_usu) {
+
+    form.addEventListener("submit", function () {
+        sessionStorage.setItem("usu_temp", txt_usu.value);
+    });
+
+}
+
+// Identificar el error enviado por php
 const param = new URLSearchParams(window.location.search);
 const url_error = param.get("error");
 
-// Mostrar el mensaje correspondiente
-if (url_error === "credentials") {
-    login_error.classList.remove("d-none");
+// Mostrar el error y recuperar el usuario
+if (url_error !== null) {
 
-} else if (url_error === "inac_user") {
-    status_error.classList.remove("d-none");
+    // Mostrar el mensaje correspondiente
+    if (url_error === "credentials") {
+        login_error.classList.remove("d-none");
+    }
+    if (url_error === "credentials2") {
+        login_error2.classList.remove("d-none");
+        if (txt_usu) {
+            txt_usu.value =
+                sessionStorage.getItem("usu_temp") || "";
+        }
+
+        if (txt_pass) {
+            txt_pass.value = "";
+        }
+
+    }
+
+    if (url_error === "inac_user") {
+        status_error.classList.remove("d-none");
+    }
+
+    // Eliminar el parametro error sin recargar la pagina
+    const url_clean = window.location.pathname + window.location.hash;
+    window.history.replaceState(null, "", url_clean);
 }
 
-// Limpiar el mensaje cuando se regresa desde el Dashboard
+// Limpiar el login al regresar desde el dashboard 
 window.addEventListener("pageshow", function (ev) {
 
-    // Solo cuando el navegador restaura la pagina
     if (ev.persisted) {
+
+        if (txt_usu) {
+            txt_usu.value = "";
+        }
+
+        if (txt_pass) {
+            txt_pass.value = "";
+        }
+
         login_error.classList.add("d-none");
         status_error.classList.add("d-none");
 
+        sessionStorage.removeItem("usu_temp");
     }
 
 });
 
-// Eliminar el parametro de error del historial
-if (url_error !== null) {
-    const url_clean = window.location.pathname + window.location.hash;
 
-    window.history.replaceState(null, "", url_clean);
 
-}
+
+
+
+
+
+
+
+
+
+
 

@@ -36,7 +36,6 @@ $res = $query -> get_result();
 
 // Comprueba que se encontro exactamente un usuario.
 if ($res->num_rows === 1) {
-
     //Si lo encontró...
 
     // Recupera los datos del usuario.
@@ -60,13 +59,13 @@ if ($res->num_rows === 1) {
 
     } else {
         
-        // La contraseña es incorrecta.
-        header("Location: ../html/login.html?error=credentials");
+        // El usuario es incorrecto. 
+        header("Location: ../html/login.html?error=credentials2");
         exit;
     }
 
 } else {
-    // El usuario es incorrecto.
+    // La contraseña es incorrecta
     header("Location: ../html/login.html?error=credentials");
     exit;
 }
