@@ -13,11 +13,15 @@
     <!-- Cargar íconos de bootstrap locales  -->
     <link rel="stylesheet" href="../css/bootstrap-icons.css">
 
-    <!-- BOOTSTRAP JAVASCRIPT -->
+    <!-- Bootstrap Javascript -->
     <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Referencia a css -->
     <link rel="stylesheet" href="../css/dashboard_admin.css">
+
+    <!-------------------------------------------------------    USUARIOS   ------------------------------------------------------>
+    <!-- Estilos exclusivos del módulo Usuarios -->
+    <link rel="stylesheet" href="../css/users.css">
 
 </head>
 
@@ -43,7 +47,7 @@
             </a>
 
             <!-- Opcion Usuario -->
-            <a href="#" class="option_menu">
+            <a href="#" class="option_menu" id="option_users">
                 <i class="bi bi-people" aria-hidden="true"></i>
                 <span>Usuarios</span>
             </a>
@@ -52,6 +56,7 @@
 
     <!-- Contenido -->
     <main class="content">
+
         <!-- barra superior -->
         <header class="top_bar">
 
@@ -119,6 +124,9 @@
                 </div>
             </div>
         </header>
+
+
+
         <nav class="route_nav" aria-label="Ruta de navegación">
 
             <!--icono casa-->
@@ -130,11 +138,19 @@
             <span class="divider">/</span>
 
             <!--Nombre pagina actual-->
-            <span class="current_route" aria-current="page">Dashboard</span>
+            <span id="module_name" class="current_route" aria-current="page">Dashboard</span>
 
+
+        </nav>
+
+        <div id="module_content">
+        </div>
     </main>
-    </nav>
+
+
+
     <!-- Referencia a js -->
     <script src="../js/dashboard_admin.js"></script>
 </body>
+
 </html>

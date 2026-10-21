@@ -1,0 +1,83 @@
+<!-- MÓDULO DE USUARIOS -->
+<section class="users_module">
+
+    <!-- ENCABEZADO -->
+    <div class="users_header">
+
+        <!-- Título e información -->
+        <div class="users_title">
+
+            <i class="bi bi-people-fill"></i>
+
+            <div>
+                <h1>Usuarios</h1>
+                <p>Administra los usuarios del sistema.</p>
+            </div>
+
+        </div>
+
+        <!-- Botones de administración -->
+        <div class="users_actions">
+
+            <button type="button" id="btn_edit_user">
+                <i class="bi bi-pencil-fill"></i>
+                Editar
+            </button>
+
+            <button type="button" id="btn_delete_user">
+                <i class="bi bi-trash-fill"></i>
+                Eliminar
+            </button>
+
+            <button type="button" id="btn_new_user">
+                <i class="bi bi-plus-circle-fill"></i>
+                Nuevo Usuario
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+     BUSCADOR Y FILTROS DE USUARIOS
+===================================== -->
+<div class="users_filters">
+
+    <!-- Buscador -->
+    <div class="users_search">
+
+        <i class="bi bi-search"></i>
+
+        <input
+            type="search"
+            id="search_user"
+            placeholder="Buscar por ID, nombre o usuario..."
+        >
+
+    </div>
+
+    <!-- Filtro por estado -->
+    <div class="users_filter_state">
+
+        <label for="filter_state">Estado</label>
+
+        <select id="filter_state">
+            <option value="todos">Todos</option>
+            <option value="activo">Activo</option>
+            <option value="inactivo">Inactivo</option>
+        </select>
+
+    </div>
+
+    <!-- Botón para limpiar filtros -->
+    <button type="button" id="btn_clear_filters">
+
+        <i class="bi bi-funnel"></i>
+        Limpiar filtros
+
+    </button>
+
+</div>
+
+</section>

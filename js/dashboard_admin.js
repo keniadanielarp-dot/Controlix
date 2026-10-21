@@ -17,7 +17,7 @@ button_line.addEventListener("click", function () {
 });
 
 
-// Obtener datos del usuario desde php
+// Mostrar saludo en la barra superior derecha 
 fetch("../php/dashboard_admin.php")
     .then(res => {
         if (!res.ok) {
@@ -39,3 +39,46 @@ fetch("../php/dashboard_admin.php")
     .catch(error => {
         console.error("Error al cargar el perfil:", error);
     });
+
+
+    
+// Opción Usuarios del menu principal
+
+// Localiza el enlace de usuarios.
+const option_users = document.getElementById("option_users");
+
+// Cuando el usuario hace click...
+option_users.addEventListener("click", async function (ev) {
+
+    // Evita que el enlace navegue a otra página.
+    ev.preventDefault();
+
+    try {
+
+        // Solicita el contenido de usuarios.html.
+        const res = await fetch("users.html");
+
+        // Obtiene el contenido HTML.
+        const content = await res.text();
+
+        // Busca el contenedor principal del Dashboard.
+        const container = document.getElementById("module_content");
+
+        // Muestra el módulo Usuarios.
+        container.innerHTML = content;
+
+// Actualiza el nombre del módulo en la ruta de navegación.
+const module_name = document.getElementById("module_name");
+
+if (module_name) {
+    module_name.textContent = "Usuarios";
+}
+
+    } catch (error) {
+
+        // Muestra el error en la consola.
+        console.error("Error al cargar Usuarios:", error);
+
+    }
+
+});
