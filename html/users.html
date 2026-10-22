@@ -1,7 +1,11 @@
-<!-- MÓDULO DE USUARIOS -->
+<!-- =====================================
+     MÓDULO DE USUARIOS
+===================================== -->
 <section class="users_module">
 
-    <!-- ENCABEZADO -->
+    <!-- =====================================
+         ENCABEZADO DE USUARIOS
+    ===================================== -->
     <div class="users_header">
 
         <!-- Título e información -->
@@ -16,8 +20,47 @@
 
         </div>
 
+    </div>
+
+
+    <!-- =====================================
+         BUSCADOR DE USUARIOS
+    ===================================== -->
+    <div class="users_filters">
+
+        <div class="users_search">
+
+            <i class="bi bi-search"></i>
+
+            <input type="search" id="search_user" placeholder="Buscar por ID, nombre o usuario...">
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         SELECCIÓN Y BOTONES DE ADMINISTRACIÓN
+    ===================================== -->
+    <div class="users_selection">
+
+        <!-- Seleccionar todos los usuarios -->
+        <label class="select_all_label">
+
+            <input type="checkbox" id="select_all_users">
+
+            <span>Seleccionar todo</span>
+
+        </label>
+
+
         <!-- Botones de administración -->
         <div class="users_actions">
+
+            <button type="button" id="btn_new_user">
+                <i class="bi bi-plus-circle-fill"></i>
+                Nuevo
+            </button>
 
             <button type="button" id="btn_edit_user">
                 <i class="bi bi-pencil-fill"></i>
@@ -29,10 +72,7 @@
                 Eliminar
             </button>
 
-            <button type="button" id="btn_new_user">
-                <i class="bi bi-plus-circle-fill"></i>
-                Nuevo Usuario
-            </button>
+
 
         </div>
 
@@ -40,44 +80,627 @@
 
 
     <!-- =====================================
-     BUSCADOR Y FILTROS DE USUARIOS
-===================================== -->
-<div class="users_filters">
+         TABLA DE USUARIOS
+    ===================================== -->
+    <div class="users_table_container">
 
-    <!-- Buscador -->
-    <div class="users_search">
+        <table class="users_table">
 
-        <i class="bi bi-search"></i>
+            <!-- Encabezados -->
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>ID</th>
+                    <th>Nombre de usuario</th>
+                    <th>Usuario</th>
+                    <th>Contraseña</th>
+                    <th>Rol</th>
+                </tr>
+            </thead>
 
-        <input
-            type="search"
-            id="search_user"
-            placeholder="Buscar por ID, nombre o usuario..."
-        >
 
-    </div>
+            <!-- Registros de usuarios -->
+            <tbody id="users_table_body"></tbody>
 
-    <!-- Filtro por estado -->
-    <div class="users_filter_state">
-
-        <label for="filter_state">Estado</label>
-
-        <select id="filter_state">
-            <option value="todos">Todos</option>
-            <option value="activo">Activo</option>
-            <option value="inactivo">Inactivo</option>
-        </select>
+        </table>
 
     </div>
 
-    <!-- Botón para limpiar filtros -->
-    <button type="button" id="btn_clear_filters">
 
-        <i class="bi bi-funnel"></i>
-        Limpiar filtros
+    <!-- ==========================================
+     MODAL RECUPERAR CONTRASEÑA
+========================================== -->
 
-    </button>
+    <div id="reset_password_modal" class="password_modal_overlay" hidden>
 
-</div>
+        <!-- Cuadro central -->
+        <div class="password_modal" role="dialog" aria-modal="true" aria-labelledby="reset_password_title">
+
+            <!-- =====================================
+             ENCABEZADO
+        ===================================== -->
+            <div class="password_modal_header">
+
+                <h2 id="reset_password_title">
+                    Recuperar contraseña
+                </h2>
+
+                <button type="button" id="btn_close_password" aria-label="Cerrar ventana">
+
+                    <i class="bi bi-x-lg"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- =====================================
+             FORMULARIO
+        ===================================== -->
+            <form id="reset_password_form">
+
+                <!-- Información del usuario -->
+                <div class="password_user_info">
+
+                    <div class="password_info_title">
+                        <i class="bi bi-key-fill"></i>
+
+                        <span>
+                            Se cambiará la contraseña del siguiente usuario:
+                        </span>
+                    </div>
+
+                    <!-- ID -->
+                    <div class="password_info_row">
+                        <strong>ID:</strong>
+                        <span id="reset_user_id"></span>
+                    </div>
+
+                    <!-- Nombre -->
+                    <div class="password_info_row">
+                        <strong>Nombre:</strong>
+                        <span id="reset_user_name"></span>
+                    </div>
+
+                    <!-- Usuario -->
+                    <div class="password_info_row">
+                        <strong>Usuario:</strong>
+                        <span id="reset_username"></span>
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                 NUEVA CONTRASEÑA
+            ===================================== -->
+                <div class="password_form_group">
+
+                    <label for="new_password">
+                        Nueva contraseña
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <div class="password_input_container">
+
+                        <input type="password" id="new_password" name="new_password"
+                            placeholder="Ingresa la nueva contraseña" autocomplete="new-password" minlength="8"
+                            required>
+
+                        <button type="button" class="password_eye" aria-label="Mostrar nueva contraseña">
+
+                            <i class="bi bi-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                 CONFIRMAR CONTRASEÑA
+            ===================================== -->
+                <div class="password_form_group">
+
+                    <label for="confirm_password">
+                        Confirmar contraseña
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <div class="password_input_container">
+
+                        <input type="password" id="confirm_password" name="confirm_password"
+                            placeholder="Confirma la contraseña" autocomplete="new-password" minlength="8" required>
+
+                        <button type="button" class="password_eye" aria-label="Mostrar confirmación de contraseña">
+
+                            <i class="bi bi-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                 MENSAJE DE ERROR
+            ===================================== -->
+                <div id="password_error" class="password_error" role="alert" hidden>
+
+                    <i class="bi bi-exclamation-circle-fill"></i>
+
+                    <span id="password_error_text">
+                        Las contraseñas no coinciden. Inténtelo de nuevo.
+                    </span>
+
+                </div>
+
+
+                <!-- =====================================
+                 BOTONES
+            ===================================== -->
+                <div class="password_modal_actions">
+
+                    <button type="button" id="btn_cancel_password">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" id="btn_save_password">
+
+                        <i class="bi bi-floppy-fill"></i>
+                        Guardar
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+     MODAL NUEVO USUARIO
+========================================== -->
+
+    <div id="new_user_modal" class="new_user_modal_overlay" hidden>
+
+        <!-- Cuadro central -->
+        <div class="new_user_modal" role="dialog" aria-modal="true" aria-labelledby="new_user_title">
+
+            <!-- =====================================
+             ENCABEZADO
+        ===================================== -->
+            <div class="new_user_modal_header">
+
+                <h2 id="new_user_title">
+                    Nuevo usuario
+                </h2>
+
+                <button type="button" id="btn_close_new_user" aria-label="Cerrar ventana">
+
+                    <i class="bi bi-x-lg"></i>
+
+                </button>
+
+            </div>
+
+
+            <!-- =====================================
+             FORMULARIO
+        ===================================== -->
+            <form id="new_user_form" novalidate>
+
+                <!-- Nombre completo -->
+                <div class="new_user_form_group">
+
+                    <label for="new_user_name">
+                        Nombre completo
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <input type="text" id="new_user_name" name="name_user" placeholder="Ingresa el nombre completo"
+                        autocomplete="name" required>
+
+                    <small class="new_user_field_error" id="error_new_user_name" hidden></small>
+
+                </div>
+
+
+                <!-- Nombre de usuario -->
+                <div class="new_user_form_group">
+
+                    <label for="new_username">
+                        Usuario
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <input type="text" id="new_username" name="usuario" placeholder="Ingresa el nombre de usuario"
+                        autocomplete="off" required>
+
+                    <small class="new_user_field_error" id="error_new_username" hidden></small>
+
+                </div>
+
+
+                <!-- Contraseña -->
+                <div class="new_user_form_group">
+
+                    <label for="new_user_password">
+                        Contraseña
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <div class="new_user_password_container">
+
+                        <input type="password" id="new_user_password" name="password"
+                            placeholder="Ingresa la contraseña" autocomplete="new-password" minlength="8" required>
+
+                        <button type="button" class="new_user_eye" aria-label="Mostrar contraseña">
+
+                            <i class="bi bi-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                    <small class="new_user_field_error" id="error_new_user_password" hidden></small>
+
+                </div>
+
+
+                <!-- Confirmar contraseña -->
+                <div class="new_user_form_group">
+
+                    <label for="new_user_confirm_password">
+                        Confirmar contraseña
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <div class="new_user_password_container">
+
+                        <input type="password" id="new_user_confirm_password" name="confirm_password"
+                            placeholder="Confirma la contraseña" autocomplete="new-password" minlength="8" required>
+
+                        <button type="button" class="new_user_eye" aria-label="Mostrar confirmación de contraseña">
+
+                            <i class="bi bi-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                    <small class="new_user_field_error" id="error_new_user_confirm_password" hidden></small>
+
+                </div>
+
+
+                <!-- Rol -->
+                <div class="new_user_form_group">
+
+                    <label for="new_user_role">
+                        Rol
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <select id="new_user_role" name="id_rol" required>
+
+                        <option value="">
+                            Selecciona un rol
+                        </option>
+
+                    </select>
+
+                    <small class="new_user_field_error" id="error_new_user_role" hidden></small>
+
+                </div>
+
+
+                <!-- Estado -->
+                <div class="new_user_form_group">
+
+                    <label for="new_user_status">
+                        Estado
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <select id="new_user_status" name="tercera_columna" required>
+
+                        <option value="">
+                            Selecciona el estado
+                        </option>
+
+                        <option value="1">
+                            Activo
+                        </option>
+
+                        <option value="0">
+                            Inactivo
+                        </option>
+
+                    </select>
+
+                    <small class="new_user_field_error" id="error_new_user_status" hidden></small>
+
+                </div>
+
+
+                <!-- =====================================
+                 BOTONES
+            ===================================== -->
+                <div class="new_user_modal_actions">
+
+                    <button type="button" id="btn_cancel_new_user">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" id="btn_save_new_user">
+
+                        <i class="bi bi-floppy-fill"></i>
+                        Guardar
+
+                    </button>
+
+                </div>
+
+
+
+            </form>
+
+        </div>
+
+        <!-- ==========================================
+     BOTÓN DE NOTIFICACIÓN
+========================================== -->
+
+        <div class="user_notification_actions">
+
+            <button type="button" id="btn_notification_accept">
+                Aceptar
+            </button>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- ==========================================
+     MODAL EDITAR USUARIO
+========================================== -->
+
+    <div id="edit_user_modal" class="edit_user_modal_overlay" hidden>
+
+        <div class="edit_user_modal" role="dialog" aria-modal="true" aria-labelledby="edit_user_title">
+
+            <!-- ENCABEZADO -->
+            <div class="edit_user_modal_header">
+
+                <h2 id="edit_user_title">
+                    Editar usuario
+                </h2>
+
+                <button type="button" id="btn_close_edit_user" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+            <!-- FORMULARIO -->
+            <form id="edit_user_form" novalidate>
+
+                <!-- ID DEL USUARIO -->
+                <div class="edit_user_form_group">
+
+                    <label for="edit_user_id">
+                        ID del usuario
+                    </label>
+
+                    <input type="text" id="edit_user_id" readonly>
+
+                </div>
+
+                <!-- NOMBRE COMPLETO -->
+                <div class="edit_user_form_group">
+
+                    <label for="edit_user_name">
+                        Nombre completo
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <input type="text" id="edit_user_name" name="name_user" required>
+
+                    <small class="edit_user_field_error" id="error_edit_user_name" hidden></small>
+
+                </div>
+
+                <!-- NOMBRE DE USUARIO -->
+                <div class="edit_user_form_group">
+
+                    <label for="edit_username">
+                        Usuario
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <input type="text" id="edit_username" name="usuario" required>
+
+                    <small class="edit_user_field_error" id="error_edit_username" hidden></small>
+
+                </div>
+
+                <!-- CONTRASEÑA -->
+                <div class="edit_user_form_group">
+
+                    <label for="edit_user_password">
+                        Nueva contraseña
+                    </label>
+
+                    <div class="edit_user_password_container">
+
+                        <input type="password" id="edit_user_password" name="password"
+                            placeholder="Dejar en blanco para conservar" autocomplete="new-password">
+
+                        <button type="button" class="edit_user_eye" aria-label="Mostrar contraseña">
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                    </div>
+
+                    <small class="edit_user_hint">
+                        Déjala vacía si no deseas cambiarla.
+                    </small>
+
+                    <small class="edit_user_field_error" id="error_edit_user_password" hidden></small>
+
+                </div>
+
+                <!-- CONFIRMAR CONTRASEÑA -->
+                <div class="edit_user_form_group">
+
+                    <label for="edit_user_confirm_password">
+                        Confirmar contraseña
+                    </label>
+
+                    <div class="edit_user_password_container">
+
+                        <input type="password" id="edit_user_confirm_password" name="confirm_password"
+                            placeholder="Confirma la nueva contraseña" autocomplete="new-password">
+
+                        <button type="button" class="edit_user_eye" aria-label="Mostrar confirmación">
+                            <i class="bi bi-eye"></i>
+                        </button>
+
+                    </div>
+
+                    <small class="edit_user_field_error" id="error_edit_user_confirm_password" hidden></small>
+
+                </div>
+
+                <!-- ROL -->
+                <div class="edit_user_form_group">
+
+                    <label for="edit_user_role">
+                        Rol
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <select id="edit_user_role" name="id_rol" required>
+
+                        <option value="">
+                            Selecciona un rol
+                        </option>
+
+                    </select>
+
+                    <small class="edit_user_field_error" id="error_edit_user_role" hidden></small>
+
+                </div>
+
+                <!-- ESTADO -->
+                <div class="edit_user_form_group">
+
+                    <label for="edit_user_status">
+                        Estado
+                        <span class="required_field">*</span>
+                    </label>
+
+                    <select id="edit_user_status" name="tercera_columna" required>
+
+                        <option value="">
+                            Selecciona el estado
+                        </option>
+
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+
+                    </select>
+
+                    <small class="edit_user_field_error" id="error_edit_user_status" hidden></small>
+
+                </div>
+
+                <!-- BOTONES -->
+                <div class="edit_user_modal_actions">
+
+                    <button type="button" id="btn_cancel_edit_user">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" id="btn_save_edit_user">
+
+                        <i class="bi bi-floppy-fill"></i>
+                        Guardar cambios
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ==========================================
+     MODAL CONFIRMAR ELIMINACIÓN DE USUARIO
+========================================== -->
+
+    <div id="delete_user_modal" class="delete_user_modal_overlay" hidden>
+
+        <div class="delete_user_modal" role="alertdialog" aria-modal="true" aria-labelledby="delete_user_title"
+            aria-describedby="delete_user_message">
+
+            <!-- ENCABEZADO Y BOTÓN CERRAR -->
+            <div class="delete_user_modal_header">
+
+                <button type="button" id="btn_close_delete_user" aria-label="Cerrar ventana">
+
+                    <i class="bi bi-x-lg"></i>
+
+                </button>
+
+            </div>
+
+            <!-- ÍCONO DE ADVERTENCIA -->
+            <div class="delete_user_icon">
+
+                <i class="bi bi-exclamation-circle-fill"></i>
+
+            </div>
+
+            <!-- MENSAJE DE CONFIRMACIÓN -->
+            <h2 id="delete_user_title">
+                ¿Eliminar usuario?
+            </h2>
+
+            <p id="delete_user_message">
+                ¿Estás seguro de que deseas eliminar
+                el usuario seleccionado?
+            </p>
+
+            <!-- BOTONES -->
+            <div class="delete_user_modal_actions">
+
+                <button type="button" id="btn_cancel_delete_user">
+                    Cancelar
+                </button>
+
+                <button type="button" id="btn_confirm_delete_user">
+
+                    <i class="bi bi-trash-fill"></i>
+                    Eliminar
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
 </section>

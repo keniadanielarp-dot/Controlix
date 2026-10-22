@@ -1,6 +1,7 @@
-/* =====================================
-   MÓDULO DE USUARIOS
-===================================== */
+
+/* ==========================================
+   1. CONTENEDOR PRINCIPAL DE USUARIOS
+========================================== */
 
 .users_module {
     width: 100%;
@@ -8,9 +9,10 @@
     box-sizing: border-box;
 }
 
-/* =====================================
-   ENCABEZADO DE USUARIOS
-===================================== */
+
+/* ==========================================
+   2. ENCABEZADO DE USUARIOS
+========================================== */
 
 .users_header {
     display: flex;
@@ -20,13 +22,9 @@
     padding: 25px 30px;
     background-color: #eaf3ff;
     border-radius: 12px;
-    flex-wrap: wrap;
 }
 
-/* =====================================
-   TÍTULO E ÍCONO
-===================================== */
-
+/* Título e ícono */
 .users_title {
     display: flex;
     align-items: center;
@@ -51,61 +49,27 @@
     color: #526789;
 }
 
-/* =====================================
-   BOTONES DE ADMINISTRACIÓN
-===================================== */
 
-.users_actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.users_actions button {
-    padding: 12px 20px;
-    border: 1px solid #0064d8;
-    border-radius: 7px;
-    background-color: white;
-    color: #0064d8;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-#btn_delete_user {
-    border-color: #dc3545;
-    color: #dc3545;
-}
-
-#btn_new_user {
-    background-color: #0064d8;
-    color: white;
-}
-
-/* =====================================
-   CONTENEDOR DE FILTROS
-===================================== */
+/* ==========================================
+   3. CONTENEDOR DEL BUSCADOR
+========================================== */
 
 .users_filters {
     display: flex;
-    align-items: end;
-    gap: 20px;
-    padding: 20px;
+    align-items: center;
+    width: 100%;
     margin-top: 15px;
+    padding: 20px;
     background-color: #ffffff;
     border-radius: 12px;
-    flex-wrap: wrap;
+    box-sizing: border-box;
 }
 
-/* =====================================
-   BUSCADOR
-===================================== */
-
+/* Campo de búsqueda */
 .users_search {
     display: flex;
     align-items: center;
-    flex: 1 1 300px;
+    width: 100%;
     gap: 12px;
     padding: 12px 18px;
     border: 1px solid #d4e1f0;
@@ -119,6 +83,7 @@
 
 .users_search input {
     width: 100%;
+    min-width: 0;
     border: none;
     outline: none;
     background: transparent;
@@ -126,46 +91,1410 @@
     color: #092b60;
 }
 
-/* =====================================
-   FILTRO POR ESTADO
-===================================== */
+.users_search:focus-within {
+    outline: 2px solid #0064d8;
+    outline-offset: 2px;
+}
 
-.users_filter_state {
+
+/* ==========================================
+   4. SELECCIONAR TODO Y BOTONES
+========================================== */
+
+.users_selection {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 20px;
+    margin-top: 20px;
+    padding: 10px 15px;
+    box-sizing: border-box;
 }
 
-.users_filter_state label {
-    color: #092b60;
+/* Casilla Seleccionar todo */
+.users_selection .select_all_label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0;
+    white-space: nowrap;
+    font-size: 15px;
     font-weight: 600;
-    font-size: 14px;
-}
-
-.users_filter_state select {
-    min-width: 160px;
-    padding: 12px;
-    border: 1px solid #d4e1f0;
-    border-radius: 7px;
-    background-color: white;
     color: #092b60;
+    cursor: pointer;
 }
 
-/* =====================================
-   BOTÓN LIMPIAR FILTROS
-===================================== */
+/* Casilla principal */
+.users_selection input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+    accent-color: #0064d8;
+    cursor: pointer;
+}
 
-#btn_clear_filters {
-    padding: 12px 18px;
+
+/* ==========================================
+   5. BOTONES DE ADMINISTRACIÓN
+========================================== */
+
+.users_actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Diseño general de botones */
+.users_actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 20px;
     border: 1px solid #0064d8;
     border-radius: 7px;
     background-color: white;
     color: #0064d8;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* Botón Editar */
+#btn_edit_user {
+    background-color: white;
+    border-color: #0064d8;
+    color: #0064d8;
+}
+
+/* Botón Eliminar */
+#btn_delete_user {
+    background-color: white;
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+
+/* Botón Nuevo Usuario */
+#btn_new_user {
+    border-color: #0064d8;
+    color: #0064d8;
+}
+
+/* Efectos de los botones */
+#btn_edit_user:hover {
+    background-color: #eaf3ff;
+}
+
+#btn_delete_user:hover {
+    background-color: #fff0f0;
+}
+
+#btn_new_user:hover {
+    background-color: #eaf3ff;
+}
+
+
+/* ==========================================
+   6. CONTENEDOR DE LA TABLA
+========================================== */
+
+.users_table_container {
+    width: 100%;
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-sizing: border-box;
+    overflow-x: auto;
+}
+
+
+/* ==========================================
+   7. DISEÑO GENERAL DE LA TABLA
+========================================== */
+
+.users_table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    color: #092b60;
+}
+
+/* Encabezados */
+.users_table thead {
+    background-color: #eaf3ff;
+}
+
+.users_table th {
+    padding: 16px;
+    text-align: left;
+    font-weight: 600;
+    border: 1px solid #dce6f2;
+}
+
+/* Filas y celdas */
+.users_table td {
+    padding: 14px 16px;
+    border: 1px solid #dce6f2;
+    vertical-align: middle;
+}
+
+/* Efecto al pasar el cursor */
+.users_table tbody tr:hover {
+    background-color: #f3f8ff;
+}
+
+
+/* ==========================================
+   8. CASILLAS INDIVIDUALES
+========================================== */
+
+.users_table input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #0064d8;
+    cursor: pointer;
+}
+
+/* Primera columna */
+.users_table th:first-child,
+.users_table td:first-child {
+    width: 55px;
+    text-align: center;
+}
+
+/* Resaltar filas seleccionadas */
+.users_table tbody tr:has(.select_user:checked) {
+    background-color: #eaf3ff;
+}
+
+
+
+/* ==========================================
+   10. FONDO DEL MODAL
+========================================== */
+
+.password_modal_overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Mantener oculto el modal inicialmente */
+.password_modal_overlay[hidden] {
+    display: none;
+}
+
+
+/* ==========================================
+   11. CUADRO CENTRAL
+========================================== */
+
+.password_modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    color: #092b60;
+}
+
+
+/* ==========================================
+   12. ENCABEZADO DEL MODAL
+========================================== */
+
+.password_modal_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    border-bottom: 1px solid #dce6f2;
+}
+
+.password_modal_header h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    color: #092b60;
+}
+
+/* Botón cerrar (X) */
+#btn_close_password {
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#btn_close_password:hover {
+    color: #dc3545;
+}
+
+
+/* ==========================================
+   13. FORMULARIO
+========================================== */
+
+#reset_password_form {
+    padding: 25px;
+}
+
+
+/* ==========================================
+   14. INFORMACIÓN DEL USUARIO
+========================================== */
+
+.password_user_info {
+    padding: 18px;
+    margin-bottom: 25px;
+    background-color: #eaf3ff;
+    border-radius: 8px;
+}
+
+.password_info_title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.password_info_title i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background-color: #0064d8;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.password_info_row {
+    display: grid;
+    grid-template-columns: 85px 1fr;
+    gap: 10px;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.password_info_row strong {
+    font-weight: 600;
+}
+
+.password_info_row span {
+    overflow-wrap: anywhere;
+}
+
+
+/* ==========================================
+   15. CAMPOS DE CONTRASEÑA
+========================================== */
+
+.password_form_group {
+    margin-bottom: 20px;
+}
+
+.password_form_group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #092b60;
+}
+
+/* Asterisco de campo obligatorio */
+.required_field {
+    color: #dc3545;
+}
+
+/* Contenedor del input y el ojo */
+.password_input_container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Campo de contraseña */
+.password_input_container input {
+    width: 100%;
+    height: 44px;
+    padding: 10px 45px 10px 14px;
+    border: 1px solid #d4e1f0;
+    border-radius: 7px;
+    outline: none;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #092b60;
+    background-color: #ffffff;
+}
+
+/* Campo seleccionado */
+.password_input_container input:focus {
+    border-color: #0064d8;
+    box-shadow: 0 0 0 3px rgba(0, 100, 216, 0.12);
+}
+
+/* Botón del ojo */
+.password_eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.password_eye:hover {
+    color: #0064d8;
+}
+
+
+/* ==========================================
+   16. MENSAJE DE ERROR
+========================================== */
+
+.password_error {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #f1b7bd;
+    border-radius: 7px;
+    background-color: #fde8ea;
+    color: #b42332;
+    font-size: 13px;
+}
+
+.password_error[hidden] {
+    display: none;
+}
+
+.password_error i {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+
+/* ==========================================
+   17. BOTONES CANCELAR Y GUARDAR
+========================================== */
+
+.password_modal_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+/* Estilo general */
+.password_modal_actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 7px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
 }
 
-#btn_clear_filters:hover {
-    background-color: #eaf3ff;
+/* Cancelar */
+#btn_cancel_password {
+    border: 1px solid #d4dce8;
+    background-color: #e9edf3;
+    color: #092b60;
 }
+
+#btn_cancel_password:hover {
+    background-color: #dce4ee;
+}
+
+/* Guardar */
+#btn_save_password {
+    border: 1px solid #0064d8;
+    background-color: #0064d8;
+    color: #ffffff;
+}
+
+#btn_save_password:hover {
+    background-color: #004ba8;
+}
+
+#btn_save_password:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+
+/* ==========================================
+   NUEVO USUARIO - FONDO DEL MODAL
+========================================== */
+
+.new_user_modal_overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+    box-sizing: border-box;
+}
+
+/* Mantener oculto el modal inicialmente */
+.new_user_modal_overlay[hidden] {
+    display: none;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - CUADRO CENTRAL
+========================================== */
+
+.new_user_modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    color: #092b60;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - ENCABEZADO
+========================================== */
+
+.new_user_modal_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    border-bottom: 1px solid #dce6f2;
+}
+
+.new_user_modal_header h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    color: #092b60;
+}
+
+/* Botón cerrar */
+#btn_close_new_user {
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#btn_close_new_user:hover {
+    color: #dc3545;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - FORMULARIO
+========================================== */
+
+#new_user_form {
+    padding: 25px;
+}
+
+.new_user_form_group {
+    margin-bottom: 18px;
+}
+
+.new_user_form_group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #092b60;
+}
+
+/* Campos obligatorios */
+.new_user_form_group .required_field {
+    color: #dc3545;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - INPUTS Y SELECTORES
+========================================== */
+
+.new_user_form_group input,
+.new_user_form_group select {
+    width: 100%;
+    height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #d4e1f0;
+    border-radius: 7px;
+    outline: none;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #092b60;
+    background-color: #ffffff;
+}
+
+.new_user_form_group input:focus,
+.new_user_form_group select:focus {
+    border-color: #0064d8;
+    box-shadow: 0 0 0 3px rgba(0, 100, 216, 0.12);
+}
+
+.new_user_form_group input::placeholder {
+    color: #8999ad;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - CONTRASEÑAS Y OJOS
+========================================== */
+
+.new_user_password_container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Espacio para el ícono del ojo */
+.new_user_password_container input {
+    padding-right: 45px;
+}
+
+/* Botón mostrar/ocultar contraseña */
+.new_user_eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.new_user_eye:hover {
+    color: #0064d8;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - MENSAJES DE ERROR
+========================================== */
+
+.new_user_field_error {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid #f1b7bd;
+    border-radius: 5px;
+    background-color: #fde8ea;
+    color: #b42332;
+    font-size: 12px;
+}
+
+/* Ocultar mensajes cuando no hay error */
+.new_user_field_error[hidden] {
+    display: none;
+}
+
+/* Resaltar campos con errores */
+.new_user_form_group input.input_error,
+.new_user_form_group select.input_error {
+    border-color: #dc3545;
+    background-color: #fffafa;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - BOTONES
+========================================== */
+
+.new_user_modal_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.new_user_modal_actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Botón Cancelar */
+#btn_cancel_new_user {
+    border: 1px solid #d4dce8;
+    background-color: #e9edf3;
+    color: #092b60;
+}
+
+#btn_cancel_new_user:hover {
+    background-color: #dce4ee;
+}
+
+/* Botón Guardar */
+#btn_save_new_user {
+    border: 1px solid #0064d8;
+    background-color: #0064d8;
+    color: #ffffff;
+}
+
+#btn_save_new_user:hover {
+    background-color: #004ba8;
+}
+
+#btn_save_new_user:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   NOTIFICACIONES - FONDO OSCURO
+========================================== */
+
+.user_notification_overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.65);
+    z-index: 3000;
+}
+
+.user_notification_overlay[hidden] {
+    display: none;
+}
+
+
+/* ==========================================
+   NOTIFICACIONES - CUADRO CENTRAL
+========================================== */
+
+.user_notification {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    box-sizing: border-box;
+}
+
+
+/* ==========================================
+   NOTIFICACIONES - ÍCONOS
+========================================== */
+
+.user_notification_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    font-size: 55px;
+}
+
+.user_notification_icon.success {
+    color: #198754;
+}
+
+.user_notification_icon.error {
+    color: #dc3545;
+}
+
+.user_notification_icon.warning {
+    color: #0064d8;
+}
+
+
+/* ==========================================
+   NOTIFICACIONES - TEXTOS
+========================================== */
+
+.user_notification h2 {
+    margin: 0 0 12px;
+    color: #092b60;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.user_notification p {
+    margin: 0 0 25px;
+    color: #526789;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+
+/* ==========================================
+   NOTIFICACIONES - BOTONES
+========================================== */
+
+.user_notification_actions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.user_notification_actions button {
+    padding: 11px 22px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_notification_accept {
+    border: 1px solid #0064d8;
+    background-color: #0064d8;
+    color: #ffffff;
+}
+
+
+/* ==========================================
+   NUEVO USUARIO - DISEÑO RESPONSIVO
+========================================== */
+
+@media (max-width: 600px) {
+
+    .new_user_modal_overlay {
+        padding: 12px;
+    }
+
+    .new_user_modal {
+        max-width: 100%;
+    }
+
+    .new_user_modal_header {
+        padding: 16px;
+    }
+
+    .new_user_modal_header h2 {
+        font-size: 18px;
+    }
+
+    #new_user_form {
+        padding: 16px;
+    }
+
+    .new_user_modal_actions button {
+        padding: 10px 14px;
+    }
+
+}
+
+
+
+
+/* ==========================================
+   18. ADAPTACIÓN A PANTALLAS PEQUEÑAS
+========================================== */
+
+@media (max-width: 600px) {
+
+    .password_modal_overlay {
+        padding: 12px;
+    }
+
+    .password_modal {
+        max-width: 100%;
+    }
+
+    .password_modal_header {
+        padding: 16px;
+    }
+
+    .password_modal_header h2 {
+        font-size: 18px;
+    }
+
+    #reset_password_form {
+        padding: 16px;
+    }
+
+    .password_info_row {
+        grid-template-columns: 70px 1fr;
+    }
+
+    .password_modal_actions button {
+        padding: 10px 14px;
+    }
+
+}
+
+
+/* ==========================================
+   9. ADAPTACIÓN A PANTALLAS PEQUEÑAS
+========================================== */
+
+@media (max-width: 900px) {
+
+    .users_selection {
+        flex-wrap: wrap;
+    }
+
+    .users_actions {
+        justify-content: flex-start;
+    }
+
+    .users_header {
+        padding: 20px;
+    }
+
+    .users_title > i {
+        font-size: 45px;
+    }
+
+    .users_title h1 {
+        font-size: 26px;
+    }
+
+}
+
+@media (max-width: 600px) {
+
+    .users_module {
+        padding: 10px;
+    }
+
+    .users_selection {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .users_actions {
+        width: 100%;
+    }
+
+    .users_actions button {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+}
+
+
+
+/* ==========================================
+   EDITAR USUARIO - FONDO DEL MODAL
+========================================== */
+
+.edit_user_modal_overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+    box-sizing: border-box;
+}
+
+/* Mantener el formulario oculto inicialmente */
+.edit_user_modal_overlay[hidden] {
+    display: none;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - CUADRO CENTRAL
+========================================== */
+
+.edit_user_modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    color: #092b60;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - ENCABEZADO
+========================================== */
+
+.edit_user_modal_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 25px;
+    border-bottom: 1px solid #dce6f2;
+}
+
+.edit_user_modal_header h2 {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    color: #092b60;
+}
+
+/* Botón cerrar (X) */
+#btn_close_edit_user {
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+#btn_close_edit_user:hover {
+    color: #dc3545;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - FORMULARIO
+========================================== */
+
+#edit_user_form {
+    padding: 25px;
+}
+
+.edit_user_form_group {
+    margin-bottom: 18px;
+}
+
+.edit_user_form_group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #092b60;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - INPUTS Y SELECTORES
+========================================== */
+
+.edit_user_form_group input,
+.edit_user_form_group select {
+    width: 100%;
+    height: 44px;
+    padding: 10px 14px;
+    border: 1px solid #d4e1f0;
+    border-radius: 7px;
+    outline: none;
+    box-sizing: border-box;
+    font-size: 14px;
+    color: #092b60;
+    background-color: #ffffff;
+}
+
+/* Campo seleccionado */
+.edit_user_form_group input:focus,
+.edit_user_form_group select:focus {
+    border-color: #0064d8;
+    box-shadow: 0 0 0 3px rgba(0, 100, 216, 0.12);
+}
+
+/* Texto de ejemplo */
+.edit_user_form_group input::placeholder {
+    color: #8999ad;
+}
+
+/* Campo ID de solo lectura */
+#edit_user_id {
+    background-color: #f0f3f8;
+    color: #526789;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - CONTRASEÑAS
+========================================== */
+
+.edit_user_password_container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Espacio para el ojo */
+.edit_user_password_container input {
+    padding-right: 45px;
+}
+
+/* Botón mostrar/ocultar contraseña */
+.edit_user_eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.edit_user_eye:hover {
+    color: #0064d8;
+}
+
+/* Texto informativo debajo de contraseña */
+.edit_user_hint {
+    display: block;
+    margin-top: 6px;
+    color: #526789;
+    font-size: 12px;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - MENSAJES DE ERROR
+========================================== */
+
+.edit_user_field_error {
+    display: block;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid #f1b7bd;
+    border-radius: 5px;
+    background-color: #fde8ea;
+    color: #b42332;
+    font-size: 12px;
+}
+
+/* Ocultar mensajes cuando no hay error */
+.edit_user_field_error[hidden] {
+    display: none;
+}
+
+/* Resaltar campos incorrectos */
+.edit_user_form_group input.input_error,
+.edit_user_form_group select.input_error {
+    border-color: #dc3545;
+    background-color: #fffafa;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - BOTONES
+========================================== */
+
+.edit_user_modal_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+/* Estilo general */
+.edit_user_modal_actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 20px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Botón Cancelar */
+#btn_cancel_edit_user {
+    border: 1px solid #d4dce8;
+    background-color: #e9edf3;
+    color: #092b60;
+}
+
+#btn_cancel_edit_user:hover {
+    background-color: #dce4ee;
+}
+
+/* Botón Guardar cambios */
+#btn_save_edit_user {
+    border: 1px solid #0064d8;
+    background-color: #0064d8;
+    color: #ffffff;
+}
+
+#btn_save_edit_user:hover {
+    background-color: #004ba8;
+}
+
+#btn_save_edit_user:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   EDITAR USUARIO - DISEÑO RESPONSIVO
+========================================== */
+
+@media (max-width: 600px) {
+
+    .edit_user_modal_overlay {
+        padding: 12px;
+    }
+
+    .edit_user_modal {
+        max-width: 100%;
+    }
+
+    .edit_user_modal_header {
+        padding: 16px;
+    }
+
+    .edit_user_modal_header h2 {
+        font-size: 18px;
+    }
+
+    #edit_user_form {
+        padding: 16px;
+    }
+
+    .edit_user_modal_actions button {
+        padding: 10px 14px;
+    }
+
+}
+
+
+/* ==========================================
+   ELIMINAR USUARIO - FONDO DEL MODAL
+========================================== */
+
+.delete_user_modal_overlay {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+    box-sizing: border-box;
+}
+
+/* Mantener el modal oculto inicialmente */
+.delete_user_modal_overlay[hidden] {
+    display: none;
+}
+
+
+/* ==========================================
+   ELIMINAR USUARIO - CUADRO CENTRAL
+========================================== */
+
+.delete_user_modal {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px 25px 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    color: #092b60;
+    box-sizing: border-box;
+}
+
+
+/* ==========================================
+   ELIMINAR USUARIO - BOTÓN CERRAR
+========================================== */
+
+.delete_user_modal_header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+#btn_close_delete_user {
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+#btn_close_delete_user:hover {
+    color: #dc3545;
+}
+
+
+/* ==========================================
+   ELIMINAR USUARIO - ÍCONO DE ADVERTENCIA
+========================================== */
+
+.delete_user_icon {
+    margin-bottom: 15px;
+    color: #f28c00;
+    font-size: 55px;
+    line-height: 1;
+}
+
+
+/* ==========================================
+   ELIMINAR USUARIO - TÍTULO Y MENSAJE
+========================================== */
+
+.delete_user_modal h2 {
+    margin: 0 0 12px;
+    color: #092b60;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.delete_user_modal p {
+    margin: 0 0 25px;
+    color: #526789;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+
+/* ==========================================
+   ELIMINAR USUARIO - BOTONES
+========================================== */
+
+.delete_user_modal_actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.delete_user_modal_actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Botón Cancelar */
+#btn_cancel_delete_user {
+    border: 1px solid #d4dce8;
+    background-color: #e9edf3;
+    color: #092b60;
+}
+
+#btn_cancel_delete_user:hover {
+    background-color: #dce4ee;
+}
+
+/* Botón Eliminar */
+#btn_confirm_delete_user {
+    border: 1px solid #dc3545;
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+#btn_confirm_delete_user:hover {
+    background-color: #b42332;
+}
+
+#btn_confirm_delete_user:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ==========================================
+   ELIMINAR USUARIO - DISEÑO RESPONSIVO
+========================================== */
+
+@media (max-width: 600px) {
+
+    .delete_user_modal_overlay {
+        padding: 12px;
+    }
+
+    .delete_user_modal {
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .delete_user_modal h2 {
+        font-size: 19px;
+    }
+
+    .delete_user_modal_actions button {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+}
+
