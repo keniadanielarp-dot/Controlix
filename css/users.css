@@ -1,18 +1,14 @@
 
-/* ==========================================
-   1. CONTENEDOR PRINCIPAL DE USUARIOS
-========================================== */
+/* Contenido principal */
 
-.users_module {
+.users_content {
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
 }
 
 
-/* ==========================================
-   2. ENCABEZADO DE USUARIOS
-========================================== */
+/* Encabezado */
 
 .users_header {
     display: flex;
@@ -24,18 +20,14 @@
     border-radius: 12px;
 }
 
-/* Título e ícono */
+/* Acomodo del titulo  */
 .users_title {
     display: flex;
     align-items: center;
     gap: 20px;
 }
 
-.users_title > i {
-    font-size: 65px;
-    color: #0056b3;
-}
-
+/* Título */
 .users_title h1 {
     margin: 0;
     font-size: 32px;
@@ -43,18 +35,21 @@
     color: #092b60;
 }
 
+/* Descripción */
 .users_title p {
     margin: 5px 0 0;
     font-size: 16px;
     color: #526789;
 }
 
+/* ícono */
+.users_title > i {
+    font-size: 65px;
+    color: #0056b3;
+}
 
-/* ==========================================
-   3. CONTENEDOR DEL BUSCADOR
-========================================== */
-
-.users_filters {
+/* Propiedades del buscador */
+.search_prop {
     display: flex;
     align-items: center;
     width: 100%;
@@ -76,11 +71,7 @@
     border-radius: 30px;
 }
 
-.users_search i {
-    color: #0056b3;
-    font-size: 20px;
-}
-
+/* TextBox */
 .users_search input {
     width: 100%;
     min-width: 0;
@@ -91,16 +82,20 @@
     color: #092b60;
 }
 
+/* ícono */
+.users_search i {
+    color: #0056b3;
+    font-size: 20px;
+}
+
+/*Al hacer click */
 .users_search:focus-within {
     outline: 2px solid #0064d8;
     outline-offset: 2px;
 }
 
-
-/* ==========================================
-   4. SELECCIONAR TODO Y BOTONES
-========================================== */
-
+/* Seleccionar todo */
+/* Acomodo en el Dashboard */
 .users_selection {
     display: flex;
     flex-direction: row;
@@ -113,7 +108,7 @@
     box-sizing: border-box;
 }
 
-/* Casilla Seleccionar todo */
+/* CheckBox Seleccionar todo */
 .users_selection .select_all_label {
     display: flex;
     align-items: center;
@@ -126,7 +121,7 @@
     cursor: pointer;
 }
 
-/* Casilla principal */
+/* Al hacer click */
 .users_selection input[type="checkbox"] {
     width: 20px;
     height: 20px;
@@ -136,10 +131,8 @@
 }
 
 
-/* ==========================================
-   5. BOTONES DE ADMINISTRACIÓN
-========================================== */
-
+/* Botones CRUD */
+/* Acomodo en el Dashboard */
 .users_actions {
     display: flex;
     flex-direction: row;
@@ -149,17 +142,15 @@
     flex-wrap: wrap;
 }
 
-/* Diseño general de botones */
+/* Propiedades de los botones */
 .users_actions button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     padding: 12px 20px;
-    border: 1px solid #0064d8;
+    border: 1px solid;
     border-radius: 7px;
-    background-color: white;
-    color: #0064d8;
     font-size: 15px;
     font-weight: 600;
     white-space: nowrap;
@@ -180,9 +171,9 @@
     color: #dc3545;
 }
 
-
 /* Botón Nuevo Usuario */
 #btn_new_user {
+    background-color: white;
     border-color: #0064d8;
     color: #0064d8;
 }
@@ -905,6 +896,7 @@
 }
 
 #btn_notification_accept {
+    display: none;
     border: 1px solid #0064d8;
     background-color: #0064d8;
     color: #ffffff;
@@ -1013,7 +1005,7 @@
 
 @media (max-width: 600px) {
 
-    .users_module {
+    .users_content {
         padding: 10px;
     }
 

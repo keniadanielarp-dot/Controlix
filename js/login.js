@@ -95,6 +95,17 @@ if (url_error !== null) {
     // Eliminar el parametro error sin recargar la pagina
     const url_clean = window.location.pathname + window.location.hash;
     window.history.replaceState(null, "", url_clean);
+
+    /* Ocultar el mensaje de error una vez que el usuario corrige un input */
+    function hide_error() {
+        login_error.classList.add("d-none");
+        login_error2.classList.add("d-none");
+        status_error.classList.add("d-none");
+    }
+
+    txt_usu.addEventListener("input", hide_error);
+    txt_pass.addEventListener("input", hide_error);
+
 }
 
 // Limpiar el login al regresar desde el dashboard 
@@ -111,6 +122,7 @@ window.addEventListener("pageshow", function (ev) {
         }
 
         login_error.classList.add("d-none");
+        login_error2.classList.add("d-none");
         status_error.classList.add("d-none");
 
         sessionStorage.removeItem("usu_temp");

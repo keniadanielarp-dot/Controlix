@@ -1,47 +1,29 @@
-<!-- =====================================
-     MÓDULO DE USUARIOS
-===================================== -->
-<section class="users_module">
+<!-- Contenido principal de Usuarios -->
+<section class="users_content">
 
-    <!-- =====================================
-         ENCABEZADO DE USUARIOS
-    ===================================== -->
+    <!-- Encabezado-->
     <div class="users_header">
 
         <!-- Título e información -->
         <div class="users_title">
-
             <i class="bi bi-people-fill"></i>
-
             <div>
                 <h1>Usuarios</h1>
                 <p>Administra los usuarios del sistema.</p>
             </div>
-
         </div>
-
     </div>
 
-
-    <!-- =====================================
-         BUSCADOR DE USUARIOS
-    ===================================== -->
-    <div class="users_filters">
-
+    <!-- Buscador -->
+    <div class="search_prop">
         <div class="users_search">
-
             <i class="bi bi-search"></i>
-
             <input type="search" id="search_user" placeholder="Buscar por ID, nombre o usuario...">
-
         </div>
-
     </div>
 
 
-    <!-- =====================================
-         SELECCIÓN Y BOTONES DE ADMINISTRACIÓN
-    ===================================== -->
+    <!-- CheckBox Seleccionar todo -->
     <div class="users_selection">
 
         <!-- Seleccionar todos los usuarios -->
@@ -106,163 +88,6 @@
 
     </div>
 
-
-    <!-- ==========================================
-     MODAL RECUPERAR CONTRASEÑA
-========================================== -->
-
-    <div id="reset_password_modal" class="password_modal_overlay" hidden>
-
-        <!-- Cuadro central -->
-        <div class="password_modal" role="dialog" aria-modal="true" aria-labelledby="reset_password_title">
-
-            <!-- =====================================
-             ENCABEZADO
-        ===================================== -->
-            <div class="password_modal_header">
-
-                <h2 id="reset_password_title">
-                    Recuperar contraseña
-                </h2>
-
-                <button type="button" id="btn_close_password" aria-label="Cerrar ventana">
-
-                    <i class="bi bi-x-lg"></i>
-
-                </button>
-
-            </div>
-
-
-            <!-- =====================================
-             FORMULARIO
-        ===================================== -->
-            <form id="reset_password_form">
-
-                <!-- Información del usuario -->
-                <div class="password_user_info">
-
-                    <div class="password_info_title">
-                        <i class="bi bi-key-fill"></i>
-
-                        <span>
-                            Se cambiará la contraseña del siguiente usuario:
-                        </span>
-                    </div>
-
-                    <!-- ID -->
-                    <div class="password_info_row">
-                        <strong>ID:</strong>
-                        <span id="reset_user_id"></span>
-                    </div>
-
-                    <!-- Nombre -->
-                    <div class="password_info_row">
-                        <strong>Nombre:</strong>
-                        <span id="reset_user_name"></span>
-                    </div>
-
-                    <!-- Usuario -->
-                    <div class="password_info_row">
-                        <strong>Usuario:</strong>
-                        <span id="reset_username"></span>
-                    </div>
-
-                </div>
-
-
-                <!-- =====================================
-                 NUEVA CONTRASEÑA
-            ===================================== -->
-                <div class="password_form_group">
-
-                    <label for="new_password">
-                        Nueva contraseña
-                        <span class="required_field">*</span>
-                    </label>
-
-                    <div class="password_input_container">
-
-                        <input type="password" id="new_password" name="new_password"
-                            placeholder="Ingresa la nueva contraseña" autocomplete="new-password" minlength="8"
-                            required>
-
-                        <button type="button" class="password_eye" aria-label="Mostrar nueva contraseña">
-
-                            <i class="bi bi-eye"></i>
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =====================================
-                 CONFIRMAR CONTRASEÑA
-            ===================================== -->
-                <div class="password_form_group">
-
-                    <label for="confirm_password">
-                        Confirmar contraseña
-                        <span class="required_field">*</span>
-                    </label>
-
-                    <div class="password_input_container">
-
-                        <input type="password" id="confirm_password" name="confirm_password"
-                            placeholder="Confirma la contraseña" autocomplete="new-password" minlength="8" required>
-
-                        <button type="button" class="password_eye" aria-label="Mostrar confirmación de contraseña">
-
-                            <i class="bi bi-eye"></i>
-
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =====================================
-                 MENSAJE DE ERROR
-            ===================================== -->
-                <div id="password_error" class="password_error" role="alert" hidden>
-
-                    <i class="bi bi-exclamation-circle-fill"></i>
-
-                    <span id="password_error_text">
-                        Las contraseñas no coinciden. Inténtelo de nuevo.
-                    </span>
-
-                </div>
-
-
-                <!-- =====================================
-                 BOTONES
-            ===================================== -->
-                <div class="password_modal_actions">
-
-                    <button type="button" id="btn_cancel_password">
-                        Cancelar
-                    </button>
-
-                    <button type="submit" id="btn_save_password">
-
-                        <i class="bi bi-floppy-fill"></i>
-                        Guardar
-
-                    </button>
-
-                </div>
-
-            </form>
-
-        </div>
-
-    </div>
-
-
     <!-- ==========================================
      MODAL NUEVO USUARIO
 ========================================== -->
@@ -303,7 +128,7 @@
                         <span class="required_field">*</span>
                     </label>
 
-                    <input type="text" id="new_user_name" name="name_user" placeholder="Ingresa el nombre completo"
+                    <input type="text" id="new_user_name" name="txt_name_user" placeholder="Ingresa el nombre completo"
                         autocomplete="name" required>
 
                     <small class="new_user_field_error" id="error_new_user_name" hidden></small>
@@ -319,7 +144,7 @@
                         <span class="required_field">*</span>
                     </label>
 
-                    <input type="text" id="new_username" name="usuario" placeholder="Ingresa el nombre de usuario"
+                    <input type="text" id="new_username" name="txt_new_user" placeholder="Ingresa el nombre de usuario"
                         autocomplete="off" required>
 
                     <small class="new_user_field_error" id="error_new_username" hidden></small>
@@ -337,7 +162,7 @@
 
                     <div class="new_user_password_container">
 
-                        <input type="password" id="new_user_password" name="password"
+                        <input type="password" id="new_user_password" name="txt_new_pass"
                             placeholder="Ingresa la contraseña" autocomplete="new-password" minlength="8" required>
 
                         <button type="button" class="new_user_eye" aria-label="Mostrar contraseña">
@@ -363,7 +188,7 @@
 
                     <div class="new_user_password_container">
 
-                        <input type="password" id="new_user_confirm_password" name="confirm_password"
+                        <input type="password" id="new_user_confirm_password" name="txt_conf_new_pass"
                             placeholder="Confirma la contraseña" autocomplete="new-password" minlength="8" required>
 
                         <button type="button" class="new_user_eye" aria-label="Mostrar confirmación de contraseña">
@@ -387,7 +212,7 @@
                         <span class="required_field">*</span>
                     </label>
 
-                    <select id="new_user_role" name="id_rol" required>
+                    <select id="new_user_role" name="ddl_rol" required>
 
                         <option value="">
                             Selecciona un rol
@@ -408,7 +233,7 @@
                         <span class="required_field">*</span>
                     </label>
 
-                    <select id="new_user_status" name="tercera_columna" required>
+                    <select id="new_user_status" name="ddl_status" required>
 
                         <option value="">
                             Selecciona el estado
