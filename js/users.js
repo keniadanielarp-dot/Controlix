@@ -1,19 +1,17 @@
 
-/* ==========================================
-   SELECCIONAR TODOS LOS USUARIOS
-========================================== */
+/* Metodo para seleccionar todos los usuarios */
 
 // Detectar cambios en las casillas de selección.
 document.addEventListener("change", function (event) {
 
     // Obtener la casilla principal.
-    const seleccionarTodos = document.getElementById("select_all_users");
+    const ch_select_all = document.getElementById("select_all_users");
 
     // Obtener todas las casillas individuales.
     const usuarios = document.querySelectorAll(".select_user");
 
     // Verificar que el módulo Usuarios esté cargado.
-    if (!seleccionarTodos) {
+    if (!ch_select_all) {
         return;
     }
 
@@ -25,8 +23,7 @@ document.addEventListener("change", function (event) {
 
         usuarios.forEach(function (usuario) {
 
-            usuario.checked = seleccionarTodos.checked;
-
+            usuario.checked = ch_select_all.checked;
         });
 
     }
@@ -43,7 +40,7 @@ document.addEventListener("change", function (event) {
         );
 
         // Marcar Seleccionar todo si todas están seleccionadas.
-        seleccionarTodos.checked =
+        ch_select_all.checked =
             usuarios.length > 0 &&
             seleccionados.length === usuarios.length;
 
@@ -59,7 +56,7 @@ document.addEventListener("change", function (event) {
     ).length;
 
     // Mostrar estado intermedio si solo algunas están marcadas.
-    seleccionarTodos.indeterminate =
+    ch_select_all.indeterminate =
         cantidadSeleccionados > 0 &&
         cantidadSeleccionados < usuarios.length;
 
@@ -70,10 +67,10 @@ document.addEventListener("change", function (event) {
    CARGAR ROLES DESDE MARIADB
 ========================================== */
 
-function cargarRoles() {
+function cargarRoles(idSelect) {
 
     // Obtener el menú desplegable
-    const selectRol = document.getElementById("new_user_role");
+    const selectRol = document.getElementById(idSelect);
 
     // Limpiar las opciones anteriores
     selectRol.innerHTML = '<option value="">Selecciona un rol</option>';
@@ -235,7 +232,7 @@ document.addEventListener("click", function (event) {
 
         // Colocar el cursor en Nombre completo.
         document.getElementById("new_user_name").focus();
-        cargarRoles();
+        cargarRoles("new_user_role");
 
         return;
     }
@@ -315,7 +312,7 @@ document.addEventListener("click", function (event) {
 ========================================== */
 
 // Detectar cuando se presiona Guardar.
-document.addEventListener("submit", function (event) {
+document.addEventListener("submit", async function (event) {
 
     // Verificar que sea el formulario Nuevo usuario.
     if (event.target.id !== "new_user_form") {
@@ -514,11 +511,91 @@ document.addEventListener("submit", function (event) {
     const datos = new URLSearchParams();
 
     datos.append("name_user_js", nombre.value.trim());
-    datos.append("new_user_js", usuario.value.trim());
+    datos.append("user_js", usuario.value.trim());
     datos.append("new_pass_js", password.value);
     datos.append("conf_pass_js", confirmar.value);
     datos.append("rol_js", rol.value);
     datos.append("status_js", estado.value);
+
+
+    // =====================================
+    // 12. ENVIAR LOS DATOS A PHP
+    // =====================================
+
+    try {
+
+        const respuesta = await fetch(
+            "/sistema_calidad/php/users.php",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: datos.toString()
+            }
+        );
+
+        // Convertir la respuesta de PHP a un objeto JavaScript.
+        // Leer la respuesta de PHP como texto.
+
+        // =====================================
+        // LEER Y VALIDAR LA RESPUESTA DE PHP
+        // =====================================
+
+        // Convertir el JSON recibido en un objeto JavaScript.
+        const resultado = await respuesta.json();
+
+        // Comprobar si el servidor reportó un error.
+        if (!respuesta.ok || !resultado.success) {
+
+            throw new Error(
+                resultado.message || "No se pudo registrar el usuario."
+            );
+
+        }
+
+        // Mostrar el mensaje de confirmación.
+        console.log("Usuario registrado:", resultado.message);
+
+
+        // Comprobar si PHP registró correctamente al usuario.
+        if (!respuesta.ok || !resultado.success) {
+
+            throw new Error(
+                resultado.message || "No se pudo registrar el usuario."
+            );
+        }
+
+        console.log("Usuario registrado:", resultado.message);
+        // =====================================
+        // REGISTRO EXITOSO
+        // =====================================
+
+        // Cerrar el formulario Nuevo usuario.
+        document.getElementById("new_user_modal").hidden = true;
+
+        // Mostrar la notificación de éxito.
+        mostrarNotificacionUsuario("success", resultado.message);
+
+        // Limpiar los campos del formulario.
+        formulario.reset();
+
+    }
+
+    // =====================================
+    // ERROR AL REGISTRAR USUARIO
+    // =====================================
+
+    catch (error) {
+
+        console.error("Error al registrar usuario:", error);
+
+        // Mostrar la notificación de error.
+        mostrarNotificacionUsuario("error", error.message);
+
+    }
+
+
 
 });
 
@@ -614,6 +691,8 @@ document.addEventListener("click", function (event) {
             "#users_table_body .select_user:checked"
         );
 
+
+
         // Verificar que exista un usuario seleccionado.
         if (seleccionados.length === 0) {
 
@@ -629,6 +708,7 @@ document.addEventListener("click", function (event) {
 
             return;
         }
+
 
         // =====================================
         // 2. RECUPERAR LOS DATOS DE LA TABLA
@@ -684,6 +764,9 @@ document.addEventListener("click", function (event) {
         document.getElementById("edit_user_password").value = "";
 
         document.getElementById("edit_user_confirm_password").value = "";
+
+        cargarRoles("edit_user_role");
+
 
         // =====================================
         // 5. RESTAURAR LOS ÍCONOS DE OJO
@@ -954,14 +1037,86 @@ document.addEventListener("submit", function (event) {
     }
 
     // =====================================
-    // 11. FORMULARIO VÁLIDO
+    // 11. PREPARAR LOS DATOS DEL USUARIO
     // =====================================
 
-    // Por ahora solo confirmamos la validación.
-    // Todavía NO se actualiza MariaDB.
+    // Recuperar el ID del usuario seleccionado.
+    const id_user = document.getElementById("edit_user_id").value;
 
-    console.log("Formulario Editar usuario validado correctamente.");
+    // Agrupar los datos que enviaremos a PHP.
+    const datosUsuario = {
 
+        id_user: id_user,
+        name_user: nombre.value.trim(),
+        user: usuario.value.trim(),
+        pass: password.value,
+        confirm_pass: confirmar.value,
+        id_rol: rol.value,
+        status: estado.value
+
+    };
+
+    // ==========================================
+    // COMPROBAR LOS DATOS QUE ENVIAREMOS A PHP
+    // ==========================================
+
+    // Mostrar los datos sin exponer las contraseñas.
+    console.table({
+        id_user: datosUsuario.id_user,
+        name_user: datosUsuario.name_user,
+        user: datosUsuario.user,
+        id_rol: datosUsuario.id_rol,
+        status: datosUsuario.status
+    });
+
+    // =====================================
+    // 12. ENVIAR LOS DATOS A PHP
+    // =====================================
+
+    fetch("/sistema_calidad/php/users.php", {
+
+        method: "PUT",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(datosUsuario)
+
+    })
+        .then(function (respuesta) {
+
+            return respuesta.json();
+
+        })
+        // ==========================================
+        // 13. PROCESAR LA RESPUESTA DE PHP
+        // ==========================================
+
+        .then(function (resultado) {
+
+            // Verificar si PHP confirmó la actualización.
+            if (resultado.success === true) {
+
+                // Mostrar confirmación en la consola.
+                console.log(resultado.message);
+
+                // Cerrar el formulario Editar usuario.
+                document.getElementById("edit_user_modal").hidden = true;
+
+            } else {
+
+                // Mostrar el mensaje de error enviado por PHP.
+                console.error(resultado.message);
+
+            }
+
+        })
+        .catch(function (error) {
+
+            console.error("Error al enviar los datos:", error);
+
+        });
 });
 
 
@@ -1063,6 +1218,50 @@ document.addEventListener("click", function (event) {
     }
 
 });
+
+
+/* ==========================================
+   LIMPIAR ERRORES AL MODIFICAR LOS CAMPOS
+========================================== */
+
+document.addEventListener("input", function (event) {
+
+    // Verificar que el campo pertenezca al formulario Nuevo usuario.
+    const campo = event.target;
+
+    if (!campo.closest("#new_user_form")) {
+        return;
+    }
+
+    // Relacionar cada campo con su mensaje de error.
+    const errores = {
+        new_user_name: "error_new_user_name",
+        new_username: "error_new_username",
+        new_user_password: "error_new_user_password",
+        new_user_confirm_password: "error_new_user_confirm_password",
+        new_user_role: "error_new_user_role",
+        new_user_status: "error_new_user_status"
+    };
+
+    // Buscar el mensaje correspondiente al campo modificado.
+    const idError = errores[campo.id];
+
+    if (!idError) {
+        return;
+    }
+
+    const mensaje = document.getElementById(idError);
+
+    // Ocultar el mensaje y quitar el borde rojo.
+    if (mensaje) {
+        mensaje.hidden = true;
+        mensaje.textContent = "";
+    }
+
+    campo.classList.remove("input_error");
+
+});
+
 
 
 

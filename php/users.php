@@ -54,14 +54,14 @@ if (
     exit;
 }
 
-// -------------------------------------------------------------------------------------------------------
+// ------------------------------ REGISTRAR NUEVO USUARIO ----------------------------------------
 // Botón Nuevo Usuario
 //Método POST para agregar nuevos datos
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Recuperar los datos del nuevo usuario */
     $name_user = trim($_POST['name_user_js'] ?? '');
-    $user_new = trim($_POST['new_user_js'] ?? '');
+    $user_new = trim($_POST['user_js'] ?? '');
     $pass_new = $_POST['new_pass_js'] ?? '';
     $conf_pass = $_POST['conf_pass_js'] ?? '';
     $rol = $_POST['rol_js'] ?? '';
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // --------------------------------------------------
-    /* Validar contraseñas */
+    /* Verificar contraseñas */
     // Longitud mínima
     if (strlen($pass_new) < 8) {
         http_response_code(400);
@@ -234,6 +234,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Obtener el ID del usuario que realiza el registro
     $id_current_user = (int) $_SESSION['id_user'];
+
+
+    // -----------------------------------------------------------------------------
+
+
+    // 5. Registrar el usuario.
+    $sql = "INSERT INTO myr_users
+        (name_user, user, passwd_user, id_rol, status_user, created_by, updated_by, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())";
+
+    $query = $connection->prepare($sql);
+
+    $query->bind_param(
+        "sssiiii",
+        $name_user,
+        $user_new,
+        $pass_new,
+        $id_rol,
+        $status,
+        $id_current_user,
+        $id_current_user
+    );
+
+    // 6. Ejecutar y devolver el resultado.
+    if ($query->execute()) {
+
+        echo json_encode([
+            "success" => true,
+            "message" => "Usuario registrado correctamente."
+        ]);
+
+    } else {
+
+        http_response_code(500);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "No se pudo registrar el usuario."
+        ]);
+    }
+
+    $query->close();
+    exit;
 }
 // --------------------------------------------------
 // Metodo GET para los datos de la tabla 
@@ -241,7 +284,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Verificar que sea una consulta GET de usuarios
 if (
     $_SERVER['REQUEST_METHOD'] === 'GET' &&
-    !isset($_GET['accion'])
+    !isset($_GET['action'])
 ) {
 
     try {
@@ -286,4 +329,259 @@ if (
     }
     exit;
 }
+
+// ------------------------------------------------------ ACTUALIZAR USUARIOS -------------------------------------------
+/* Método PUT para actualizar los datos */
+
+// Verificar si la solicitud utiliza el método PUT.
+if ($_SERVER["REQUEST_METHOD"] === "PUT") {
+
+    // Recibir los datos enviados desde JavaScript.
+    $data_js = json_decode(file_get_contents("php://input"), true);
+
+    // ==========================================
+// COMPROBAR LOS DATOS RECIBIDOS EN PHP
+// ==========================================
+
+    error_log(print_r([
+        "id_user" => $data_js["id_user"] ?? null,
+        "name_user" => $data_js["name_user_js"] ?? null,
+        "user" => $data_js["user_js"] ?? null,
+        "id_rol" => $data_js["rol_js"] ?? null,
+        "status" => $data_js["status_js"] ?? null
+    ], true));
+
+
+    // Validar los datos recibidos 
+    if (!is_array($data_js)) {
+
+        http_response_code(400);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "Los datos recibidos no son válidos."
+        ]);
+
+        exit;
+    }
+
+    // Recuperar los datos del usuario.
+    $id_user = filter_var($data_js["id_user"] ?? null, FILTER_VALIDATE_INT);
+
+    $name_user = trim($data_js["name_user_js"] ?? "");
+
+    $user = trim($data_js["user_js"] ?? "");
+
+    $id_rol = filter_var($data_js["rol_js"] ?? null, FILTER_VALIDATE_INT);
+
+    $status = $data_js["status_js"] ?? null;
+
+    // ==========================================
+// IDENTIFICAR CAMPOS INVÁLIDOS
+// ==========================================
+
+    $errores = [];
+
+    if (!$id_user || $id_user <= 0) {
+        $errores[] = "id_user";
+    }
+
+    if ($name_user === "") {
+        $errores[] = "name_user_js";
+    }
+
+    if ($user === "") {
+        $errores[] = "user_js";
+    }
+
+    if (!$id_rol || $id_rol <= 0) {
+        $errores[] = "rol_js";
+    }
+
+    if (!in_array((string) $status, ["0", "1"], true)) {
+        $errores[] = "status_js";
+    }
+
+    if (!empty($errores)) {
+
+        http_response_code(400);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "Campos inválidos: " . implode(", ", $errores)
+        ]);
+
+        exit;
+    }
+
+    // Verificar los campos obligatorios.
+    if (
+        $id_user === false ||
+        $id_user === null ||
+        $id_user <= 0 ||
+        $name_user === "" ||
+        $user === "" ||
+        $id_rol === false ||
+        $id_rol === null ||
+        $id_rol <= 0 ||
+        !in_array((string) $status, ["0", "1"], true)
+    ) {
+
+        http_response_code(400);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "Verifica los datos obligatorios del usuario."
+        ]);
+
+        exit;
+    }
+
+    // ==========================================
+// VALIDAR NUEVA CONTRASEÑA
+// ==========================================
+
+    // Recuperar las contraseñas enviadas.
+    $pass = $data_js["password"] ?? "";
+
+    $confirm_password = $data_js["confirm_password"] ?? "";
+
+    // Verificar que ambos datos sean cadenas de texto.
+    if (!is_string($pass) || !is_string($confirm_password)) {
+
+        http_response_code(400);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "Los datos de contraseña no son válidos."
+        ]);
+
+        exit;
+    }
+
+    // Inicialmente no modificaremos la contraseña.
+    $pass_hash = null;
+
+    // Verificar si se solicitó cambiar la contraseña.
+    if ($pass !== "" || $confirm_password !== "") {
+
+        // Validar longitud mínima.
+        if (strlen($pass) < 8) {
+
+            http_response_code(400);
+
+            echo json_encode([
+                "success" => false,
+                "message" => "La contraseña debe tener al menos 8 caracteres."
+            ]);
+
+            exit;
+        }
+
+        // Verificar que las contraseñas coincidan.
+        if ($pass !== $confirm_password) {
+
+            http_response_code(400);
+
+            echo json_encode([
+                "success" => false,
+                "message" => "Las contraseñas no coinciden."
+            ]);
+
+            exit;
+        }
+
+        // Generar el hash de la nueva contraseña.
+        $password_hash = password_hash($pass, PASSWORD_DEFAULT);
+    }
+
+    // ==========================================
+// ACTUALIZAR LOS DATOS DEL USUARIO
+// ==========================================
+
+    // Comprobar si se solicitó cambiar la contraseña.
+    if ($pass_hash === null) {
+
+        // Actualizar sin modificar la contraseña.
+        $sql = "UPDATE myr_users
+            SET name_user = ?,
+                user = ?,
+                id_rol = ?,
+                status_user = ?,
+                updated_at,
+                updated_at = NOW()
+            WHERE id_user = ?";
+
+        $query = $connection->prepare($sql);
+
+        $query->bind_param(
+            "ssiiii",
+            $name_user,
+            $user,
+            $id_rol,
+            $status,
+            $id_user,
+            $id_current_user
+        );
+
+    } else {
+
+        // Actualizar incluyendo la nueva contraseña.
+        $sql = "UPDATE myr_users
+            SET name_user = ?,
+                user = ?,
+                passwd_user = ?,
+                id_rol = ?,
+                status_user = ?,
+                updated_by,
+                updated_at = NOW()
+            WHERE id_user = ?";
+
+        $query = $connection->prepare($sql);
+
+        $query->bind_param(
+            "sssiiii",
+            $name_user,
+            $user,
+            $pass_hash,
+            $id_rol,
+            $status,
+            $id_user,
+            $id_current_user
+        );
+    }
+    // ==========================================
+// EJECUTAR LA ACTUALIZACIÓN
+// ==========================================
+
+    try {
+
+        // Ejecutar la consulta preparada.
+        $query->execute();
+
+        // Devolver una respuesta exitosa a JavaScript.
+        echo json_encode([
+            "success" => true,
+            "message" => "Los datos del usuario se actualizaron correctamente."
+        ]);
+
+    } catch (mysqli_sql_exception $error) {
+
+        // Informar que no fue posible actualizar.
+        http_response_code(500);
+
+        echo json_encode([
+            "success" => false,
+            "message" => "No fue posible actualizar los datos del usuario."
+        ]);
+    }
+
+    // Cerrar la consulta preparada.
+    $query->close();
+
+    // Finalizar la solicitud PUT.
+    exit;
+
+}
+
 ?>

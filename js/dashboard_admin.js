@@ -105,10 +105,10 @@ async function users_table() {
         table.innerHTML = "";
 
         // Recorrer los usuarios obtenidos.
-        data.users.forEach(function (u_database) {
+        data.users.forEach(function (u_database, index) {
 
             // Crear una fila.
-            const row = document.createElement("tr");
+            const row = table.insertRow();
 
             // Crear la casilla de selección.
             const selection = document.createElement("td");
@@ -125,9 +125,12 @@ async function users_table() {
             selection.appendChild(ch_box);
             row.appendChild(selection);
 
+            // Columna de los ID's consecutivos para la tabla de Controlix
+            const con_index = row.insertCell();
+            con_index.textContent = index + 1;
+
             // Crear las celdas de información.
             const in_user = [
-                u_database.id_user,
                 u_database.name_user,
                 u_database.user,
                 "********",

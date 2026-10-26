@@ -278,10 +278,24 @@
 
         </div>
 
-        <!-- ==========================================
-     BOTÓN DE NOTIFICACIÓN
-========================================== -->
+    </div>
 
+    <!-- ==========================================
+     NOTIFICACIÓN DE NUEVO USUARIO
+        ========================================== -->
+
+    <div id="new_user_notification" hidden>
+
+        <!-- Ícono de éxito o error -->
+        <div id="user_notification_icon"></div>
+
+        <!-- Título de la notificación -->
+        <h3 id="user_notification_title"></h3>
+
+        <!-- Mensaje de la notificación -->
+        <p id="user_notification_message"></p>
+
+        <!-- Botón de notificación -->
         <div class="user_notification_actions">
 
             <button type="button" id="btn_notification_accept">
@@ -290,13 +304,13 @@
 
         </div>
 
-
     </div>
+
 
 
     <!-- ==========================================
      MODAL EDITAR USUARIO
-========================================== -->
+        ========================================== -->
 
     <div id="edit_user_modal" class="edit_user_modal_overlay" hidden>
 
@@ -473,7 +487,7 @@
 
     <!-- ==========================================
      MODAL CONFIRMAR ELIMINACIÓN DE USUARIO
-========================================== -->
+        ========================================== -->
 
     <div id="delete_user_modal" class="delete_user_modal_overlay" hidden>
 

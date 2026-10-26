@@ -904,6 +904,105 @@
 
 
 /* ==========================================
+   NOTIFICACIÓN DE NUEVO USUARIO
+========================================== */
+
+/* Contenedor principal de la notificación */
+#new_user_notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 90%;
+    max-width: 400px;
+    padding: 30px;
+
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.20);
+
+    text-align: center;
+    z-index: 2000;
+}
+
+/* Mantener oculta la notificación */
+#new_user_notification[hidden] {
+    display: none;
+}
+
+/* ==========================================
+   ÍCONO DE NOTIFICACIÓN
+========================================== */
+
+#user_notification_icon {
+    font-size: 55px;
+    margin-bottom: 15px;
+}
+
+/* Notificación exitosa */
+#user_notification_icon.success {
+    color: #198754;
+}
+
+/* Notificación de error */
+#user_notification_icon.error {
+    color: #dc3545;
+}
+
+/* ==========================================
+   TÍTULO Y MENSAJE
+========================================== */
+
+#user_notification_title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #142b49;
+    margin-bottom: 12px;
+}
+
+#user_notification_message {
+    font-size: 15px;
+    color: #555555;
+    line-height: 1.5;
+    margin-bottom: 25px;
+}
+
+/* ==========================================
+   BOTÓN ACEPTAR
+========================================== */
+
+.user_notification_actions {
+    display: flex;
+    justify-content: center;
+}
+
+#btn_notification_accept {
+    display: inline-block;
+    background-color: #142b49;
+    color: #ffffff;
+
+    border: none;
+    border-radius: 6px;
+
+    padding: 10px 35px;
+    font-size: 15px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+#btn_notification_accept:hover {
+    background-color: #2454a6;
+}
+
+#btn_notification_accept:focus-visible {
+    outline: 3px solid #2454a6;
+    outline-offset: 3px;
+}
+
+
+/* ==========================================
    NUEVO USUARIO - DISEÑO RESPONSIVO
 ========================================== */
 
