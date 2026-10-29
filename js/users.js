@@ -742,6 +742,9 @@ document.addEventListener("click", function (event) {
         const user_table = cells[3].textContent.trim();
         const rol_table = cells[5].textContent.trim();
 
+        // Guardar el ID real para enviarlo a PHP.
+        document.getElementById("edit_user_id").dataset.idDb = id_db;
+
         // ------------------------- Limpiar el formulario  ------------------------------------------
         const form = document.getElementById("edit_user_form");
         form_clean(form);
@@ -919,7 +922,7 @@ document.addEventListener("submit", function (event) {
     // =====================================
 
     // Recuperar el ID del usuario seleccionado.
-    const id_user_edit_js = document.getElementById("edit_user_id").value;
+    const id_user_edit_js = document.getElementById("edit_user_id").dataset.idDb;
 
     // Agrupar los datos que enviaremos a PHP.
     const datosUsuario = {
