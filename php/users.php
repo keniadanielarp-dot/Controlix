@@ -60,12 +60,12 @@ if (
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Recuperar los datos del nuevo usuario */
-    $name_user = trim($_POST['name_user_js'] ?? '');
-    $user_new = trim($_POST['user_js'] ?? '');
-    $pass_new = $_POST['new_pass_js'] ?? '';
-    $conf_pass = $_POST['conf_pass_js'] ?? '';
-    $rol = $_POST['rol_js'] ?? '';
-    $status = $_POST['status_js'] ?? '';
+    $name_user = trim($_POST['name_user_php'] ?? '');
+    $user_new = trim($_POST['user_php'] ?? '');
+    $pass_new = $_POST['new_pass_php'] ?? '';
+    $conf_pass = $_POST['conf_pass_php'] ?? '';
+    $rol = $_POST['rol_php'] ?? '';
+    $status = $_POST['status_php'] ?? '';
 
     /* Obtener el ID del administrador autenticado */
     $id_current_user = (int) $_SESSION['id_user'];
@@ -345,10 +345,10 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 
     error_log(print_r([
         "id_user" => $data_js["id_user"] ?? null,
-        "name_user" => $data_js["name_user_js"] ?? null,
-        "user" => $data_js["user_js"] ?? null,
-        "id_rol" => $data_js["rol_js"] ?? null,
-        "status" => $data_js["status_js"] ?? null
+        "name_user" => $data_js["name_user"] ?? null,
+        "user" => $data_js["user"] ?? null,
+        "id_rol" => $data_js["id_rol"] ?? null,
+        "status" => $data_js["status"] ?? null
     ], true));
 
 
@@ -368,13 +368,13 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     // Recuperar los datos del usuario.
     $id_user = filter_var($data_js["id_user"] ?? null, FILTER_VALIDATE_INT);
 
-    $name_user = trim($data_js["name_user_js"] ?? "");
+    $name_user = trim($data_js["name_user"] ?? "");
 
-    $user = trim($data_js["user_js"] ?? "");
+    $user = trim($data_js["user"] ?? "");
 
-    $id_rol = filter_var($data_js["rol_js"] ?? null, FILTER_VALIDATE_INT);
+    $id_rol = filter_var($data_js["id_rol"] ?? null, FILTER_VALIDATE_INT);
 
-    $status = $data_js["status_js"] ?? null;
+    $status = $data_js["status"] ?? null;
 
     // ==========================================
 // IDENTIFICAR CAMPOS INVÁLIDOS
@@ -382,26 +382,32 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 
     $errores = [];
 
+    // Validar el ID del usuario.
     if (!$id_user || $id_user <= 0) {
         $errores[] = "id_user";
     }
 
+    // Validar el nombre.
     if ($name_user === "") {
-        $errores[] = "name_user_js";
+        $errores[] = "name_user";
     }
 
+    // Validar el usuario.
     if ($user === "") {
-        $errores[] = "user_js";
+        $errores[] = "user";
     }
 
+    // Validar el rol.
     if (!$id_rol || $id_rol <= 0) {
-        $errores[] = "rol_js";
+        $errores[] = "id_rol";
     }
 
+    // Validar el estado.
     if (!in_array((string) $status, ["0", "1"], true)) {
-        $errores[] = "status_js";
+        $errores[] = "status";
     }
 
+    // Mostrar los campos que no pasaron la validación.
     if (!empty($errores)) {
 
         http_response_code(400);
@@ -499,16 +505,17 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 // ACTUALIZAR LOS DATOS DEL USUARIO
 // ==========================================
 
-    // Comprobar si se solicitó cambiar la contraseña.
+    // Verificar si se cambiará la contraseña.
     if ($pass_hash === null) {
+        
 
-        // Actualizar sin modificar la contraseña.
+        // Actualizar los datos sin cambiar la contraseña.
         $sql = "UPDATE myr_users
             SET name_user = ?,
                 user = ?,
                 id_rol = ?,
                 status_user = ?,
-                updated_at,
+                updated_by = ?,
                 updated_at = NOW()
             WHERE id_user = ?";
 
@@ -520,20 +527,20 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
             $user,
             $id_rol,
             $status,
-            $id_user,
-            $id_current_user
+            $id_current_user,
+            $id_user
         );
 
     } else {
 
-        // Actualizar incluyendo la nueva contraseña.
+        // Actualizar los datos incluyendo la contraseña.
         $sql = "UPDATE myr_users
             SET name_user = ?,
                 user = ?,
                 passwd_user = ?,
                 id_rol = ?,
                 status_user = ?,
-                updated_by,
+                updated_by = ?,
                 updated_at = NOW()
             WHERE id_user = ?";
 
@@ -546,8 +553,8 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
             $pass_hash,
             $id_rol,
             $status,
-            $id_user,
-            $id_current_user
+            $id_current_user,
+            $id_user
         );
     }
     // ==========================================
@@ -558,6 +565,22 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 
         // Ejecutar la consulta preparada.
         $query->execute();
+
+        // ==========================================
+// COMPROBAR EL RESULTADO DEL UPDATE
+// ==========================================
+
+        // Obtener cuántas filas fueron modificadas.
+        $filas_modificadas = $query->affected_rows;
+
+        // Mostrar el resultado en la consola de JavaScript.
+        echo json_encode([
+            "success" => true,
+            "message" => "Filas modificadas: " . $filas_modificadas,
+            "id_user" => $id_user
+        ]);
+
+        exit;
 
         // Devolver una respuesta exitosa a JavaScript.
         echo json_encode([
