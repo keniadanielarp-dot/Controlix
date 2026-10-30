@@ -293,6 +293,7 @@ if (
             u.id_user,
             u.name_user,
             u.user,
+            u.status_user,
             r.rol
         FROM myr_users AS u
         INNER JOIN rol_users AS r

@@ -120,6 +120,9 @@ async function users_table() {
         // Crear una fila.
         const row = table.insertRow();
 
+        // Guardar el estado obtenido de MariaDB en la fila.
+        row.dataset.status = user_db.status_user;
+
         // Crear la casilla de selección.
         const selection = document.createElement("td");
         const ch_box = document.createElement("input");
@@ -199,7 +202,7 @@ function toggle_pass(icon_eye, input_pass) {
 }
 
 /************************************ BLOQUE: FUNCION CARGAR ROLES  **************************************** */
-function load_roles(id_menu) {
+async function load_roles(id_menu, rol_select = "") {
 
     // Obtener el menú desplegable
     const menu_rol = document.getElementById(id_menu);
@@ -208,51 +211,35 @@ function load_roles(id_menu) {
     menu_rol.innerHTML = '<option value="">Selecciona un rol</option>';
 
     // Solicitar los roles a PHP
-    fetch("/sistema_calidad/php/users.php?action=roles")
+    const response = await fetch("/sistema_calidad/php/users.php?action=roles");
 
-        .then(response => {
+    // Convertir la respuesta a json
+    const ans = await response.json();
 
-            // Verificar que la petición sea correcta
-            if (!response.ok) {
-                throw new Error("No se pudieron obtener los roles.");
-            }
 
-            return response.json();
-        })
+    // Crear las opciones del menú.
+    ans.roles.forEach(function (rol) {
 
-        .then(res => {
+        const option = document.createElement("option");
 
-            // Comprobar que PHP devolvió los roles
-            if (!res.success || !Array.isArray(res.roles)) {
-                throw new Error("Respuesta de roles no válida.");
-            }
+        option.value = rol.id_rol;
+        option.textContent = rol.rol;
 
-            // Recorrer los roles registrados
-            res.roles.forEach(rol => {
+        menu_rol.appendChild(option);
 
-                // Crear una opción para cada rol
-                const option_rol = document.createElement("option");
+    });
 
-                // Guardar el identificador del rol
-                option_rol.value = rol.id_rol;
+    // Seleccionar el rol actual del usuario.
+    if (rol_select !== "") {
 
-                // Mostrar el nombre del rol
-                option_rol.textContent = rol.rol;
+        const option_menu = Array.from(menu_rol.options).find(
+            option => option.textContent.trim() === rol_select
+        );
 
-                // Agregar la opción al menú
-                menu_rol.appendChild(option_rol);
-
-            });
-
-        })
-
-        .catch(error => {
-
-            // Mostrar el error en la consola
-            console.error("Error al cargar roles:", error);
-
-        });
-
+        if (option_menu) {
+            menu_rol.value = option_menu.value;
+        }
+    }
 }
 
 /************************************ BLOQUE FUNCION PARA LIMPIAR FORMULARIO  **************************************** */
@@ -318,73 +305,62 @@ function error_show(input, id_msg, text) {
     if (error) {
         error.textContent = text;
         error.hidden = false;
-
     }
-
 }
 
-// ==========================================
-// FUNCIÓN PARA LIMPIAR ERRORES DE LOS INPUTS
-// ==========================================
+/********************************* BLOQUE LIMPIAR ERRORES DE LOS INPUTS AL MODIFICARLO   ******************************************** */
 
-function limpiarError(input) {
+function error_clean(input) {
 
     // 1. Identificar si pertenece a Nuevo o Editar.
-    const nuevo = input.closest("#new_user_form") !== null;
+    const form_new = input.closest("#new_user_form") !== null;
 
     // 2. Buscar el contenedor del campo.
-    const contenedor = input.closest(
-        nuevo ? ".new_user_form_group" : ".edit_user_form_group"
+    const content = input.closest(
+        form_new ? ".new_user_form_group" : ".edit_user_form_group"
     );
 
     // 3. Verificar que exista el contenedor.
-    if (!contenedor) {
+    if (!content) {
         return;
     }
 
     // 4. Buscar el mensaje de error correspondiente.
-    const mensaje = contenedor.querySelector(
-        nuevo ? ".new_user_field_error" : ".edit_user_field_error"
+    const msg = content.querySelector(
+        form_new ? ".new_user_field_error" : ".edit_user_field_error"
     );
 
     // 5. Quitar el borde rojo del input.
     input.classList.remove("input_error");
 
     // 6. Ocultar y borrar el mensaje de error.
-    if (mensaje) {
+    if (msg) {
 
-        mensaje.textContent = "";
-        mensaje.hidden = true;
+        msg.textContent = "";
+        msg.hidden = true;
 
     }
-
 }
 
-// ==========================================
-// LIMPIAR ERRORES AL MODIFICAR LOS CAMPOS
-// ==========================================
-
+// Detectar un cambio en los inputs 
 document.addEventListener("input", function (event) {
 
     // 1. Identificar el formulario correspondiente.
-    const formulario = event.target.closest(
+    const form = event.target.closest(
         "#new_user_form, #edit_user_form"
     );
 
     // 2. Ignorar campos que no pertenezcan a estos formularios.
-    if (!formulario) {
+    if (!form) {
         return;
     }
 
     // 3. Limpiar el error del campo modificado.
-    limpiarError(event.target);
+    error_clean(event.target);
 
 });
 
-// ==========================================
-// LIMPIAR ERRORES AL CAMBIAR ROL O ESTADO
-// ==========================================
-
+// LIMPIAR ERROR DE ROL Y ESTADO
 document.addEventListener("change", function (event) {
 
     // 1. Verificar que sea un menú desplegable.
@@ -393,18 +369,19 @@ document.addEventListener("change", function (event) {
     }
 
     // 2. Verificar que pertenezca a Nuevo o Editar.
-    const formulario = event.target.closest(
+    const form = event.target.closest(
         "#new_user_form, #edit_user_form"
     );
 
-    if (!formulario) {
+    if (!form) {
         return;
     }
 
     // 3. Limpiar el error del menú modificado.
-    limpiarError(event.target);
+    error_clean(event.target);
 
 });
+
 
 /************************************ BLOQUE: BOTÓN NUEVO USUARIO  **************************************** */
 
@@ -478,9 +455,7 @@ document.addEventListener("submit", async function (event) {
     const rol_js = document.getElementById("new_user_role");
     const status_js = document.getElementById("new_user_status");
 
-    // ==========================================
-    // VALIDACIONES - NUEVO USUARIO
-    // ==========================================
+    // ---------------------------------  Validaciones  ------------------------------------------
 
     // Controlar si el formulario contiene errores.
     let form_valid = true;
@@ -577,18 +552,15 @@ document.addEventListener("submit", async function (event) {
         form_valid = false;
     }
 
-    // ==========================================
-    // COMPROBAR RESULTADO DE LAS VALIDACIONES
-    // ==========================================
-
+    // Resultado de las validaciones
     if (!form_valid) {
 
         // Buscar el primer campo marcado con error.
-        const primerError = data_form.querySelector(".input_error");
+        const first_error = data_form.querySelector(".input_error");
 
         // Colocar el cursor en el primer campo incorrecto.
-        if (primerError) {
-            primerError.focus();
+        if (first_error) {
+            first_error.focus();
         }
 
         // Detener el registro.
@@ -626,6 +598,9 @@ document.addEventListener("submit", async function (event) {
         // ------------------------ Mostrar mensaje de registro exitoso   ------------------------------------------
         // Cerrar el formulario Nuevo usuario.
         document.getElementById("new_user_modal").hidden = true;
+
+        // Actualizar la tabla del Dashboard 
+        users_table();
 
         // Mostrar la notificación de éxito.
         show_user_notifi("success", answer_php.message);
@@ -697,9 +672,10 @@ document.addEventListener("click", function (event) {
 });
 
 
+
 /************************************************** BLOQUE: BOTÓN EDITAR USUARIO  *************************************************** */
 // Detectar los clics de los botones de Editar usuario.
-document.addEventListener("click", function (event) {
+document.addEventListener("click", async function (event) {
 
     // Abrir el formulario 
     if (event.target.closest("#btn_edit_user")) {
@@ -730,6 +706,9 @@ document.addEventListener("click", function (event) {
         // Obtener la fila correspondiente al checkbox.
         const row = checkbox.closest("tr");
 
+        // Reccuperar el status del usuario 
+        const status_db = row.dataset.status;
+
         // Obtener todas las celdas de la fila.
         const cells = row.querySelectorAll("td");
 
@@ -755,10 +734,12 @@ document.addEventListener("click", function (event) {
         document.getElementById("edit_username").value = user_table;
         document.getElementById("edit_user_password").value = "";
         document.getElementById("edit_user_confirm_password").value = "";
-        document.getElementById("edit_user_role").value = rol_table;
 
-        //Llamamos la función para mostrar los roles en el menu desplegable
-        load_roles("edit_user_role");
+        // Cargar los roles desde MariaDB y seleccionar el actual.
+        await load_roles("edit_user_role", rol_table);
+
+        //Seleccionar el estado registrado en la base de datos 
+        document.getElementById("edit_user_status").value = status_db;
 
         // ------------------------- Mostrar el formulario   ------------------------------------------
         document.getElementById("edit_user_modal").hidden = false;
@@ -812,7 +793,7 @@ document.addEventListener("submit", function (event) {
     const status_edit_js = form_edit.querySelector("#edit_user_status");
 
     // Guardará el primer campo que tenga un error.
-    let primerCampoIncorrecto = null;
+    let first_input_error = null;
 
 
 
@@ -880,10 +861,7 @@ document.addEventListener("submit", function (event) {
         }
     }
 
-    // =====================================
-    // 8. VALIDAR ROL
-    // =====================================
-
+    // Validar Rol
     if (rol_edit_js.value === "") {
 
         error_show(
@@ -893,10 +871,7 @@ document.addEventListener("submit", function (event) {
         );
     }
 
-    // =====================================
-    // 9. VALIDAR ESTADO
-    // =====================================
-
+    // Validar status
     if (status_edit_js.value !== "1" && status_edit_js.value !== "0") {
 
         error_show(
@@ -906,26 +881,20 @@ document.addEventListener("submit", function (event) {
         );
     }
 
-    // =====================================
-    // 10. COMPROBAR RESULTADO
-    // =====================================
+    // Resultado
 
-    if (primerCampoIncorrecto !== null) {
-
-        primerCampoIncorrecto.focus();
-
+    if (first_input_error !== null) {
+        first_input_error.focus();
         return;
     }
 
-    // =====================================
-    // 11. PREPARAR LOS DATOS DEL USUARIO
-    // =====================================
+    // ------------------------------------------ Preparar datos del usuario  --------------------------------------------------------
 
-    // Recuperar el ID del usuario seleccionado.
+    // Recuperar el ID de la base de datos del usuario seleccionado.
     const id_user_edit_js = document.getElementById("edit_user_id").dataset.idDb;
 
     // Agrupar los datos que enviaremos a PHP.
-    const datosUsuario = {
+    const user_data = {
 
         id_user: id_user_edit_js,
         name_user: name_edit_js.value.trim(),
@@ -937,67 +906,38 @@ document.addEventListener("submit", function (event) {
 
     };
 
-    // ==========================================
-    // COMPROBAR LOS DATOS QUE ENVIAREMOS A PHP
-    // ==========================================
-
-    // Mostrar los datos sin exponer las contraseñas.
-    console.table({
-        id_user: datosUsuario.id_user,
-        name_user: datosUsuario.name_user,
-        user: datosUsuario.user,
-        id_rol: datosUsuario.id_rol,
-        status: datosUsuario.status
-    });
-
-    // =====================================
-    // 12. ENVIAR LOS DATOS A PHP
-    // =====================================
+    // ------------------------------------------Enviar datos a PHP -----------------------------------------------
 
     fetch("/sistema_calidad/php/users.php", {
-
         method: "PUT",
-
         headers: {
             "Content-Type": "application/json"
         },
 
-        body: JSON.stringify(datosUsuario)
+        body: JSON.stringify(user_data)
 
     })
-        .then(function (respuesta) {
-
-            return respuesta.json();
-
+        //Respuesta de php
+        .then(function (ans_php) {
+            return ans_php.json();
         })
-        // ==========================================
-        // 13. PROCESAR LA RESPUESTA DE PHP
-        // ==========================================
 
-        .then(function (resultado) {
+        // Procesar respuesta de php
+        .then(function (res_php) {
 
             // Verificar si PHP confirmó la actualización.
-            if (resultado.success === true) {
-
-                // Mostrar confirmación en la consola.
-                console.log(resultado.message);
+            if (res_php.success === true) {
 
                 // Cerrar el formulario Editar usuario.
                 document.getElementById("edit_user_modal").hidden = true;
+
+                // Actualizar la tabla del Dashboard
                 users_table();
-
-            } else {
-
-                // Mostrar el mensaje de error enviado por PHP.
-                console.error(resultado.message);
-
             }
 
         })
         .catch(function (error) {
-
             console.error("Error al enviar los datos:", error);
-
         });
 });
 
