@@ -1,0 +1,507 @@
+<!-- Contenido principal de POS -->
+<section class="pos_content">
+
+    <!-------------------- BLOQUE: Encabezado ---------------------->
+    <div class="pos_header">
+
+        <!-- Icono y título -->
+        <div class="pos_header_title">
+            <i class="bi bi-file-text-fill"></i>
+            <h2>Po's</h2>
+        </div>
+
+        <!-- Botones del encabezado -->
+        <div class="pos_header_buttons">
+
+            <button type="button" id="btn_load_excel" class="pos_btn pos_btn_excel">
+                <i class="bi bi-upload"></i>
+                Cargar Excel
+            </button>
+
+            <button type="button" id="btn_new_pos" class="pos_btn pos_btn_new">
+                <i class="bi bi-plus-lg"></i>
+                Crear
+            </button>
+
+            <button type="button" id="btn_edit_pos" class="pos_btn pos_btn_edit">
+                <i class="bi bi-pencil-square"></i>
+                Editar
+            </button>
+
+            <button type="button" id="btn_delete_pos" class="pos_btn pos_btn_delete">
+                <i class="bi bi-trash3"></i>
+                Eliminar
+            </button>
+        </div>
+    </div>
+
+    <!----------- BLOQUE: Buscador, filtros y botones de asignación   ---------------------->
+    <div class="pos_tools">
+        <div class="pos_tools_filters">
+
+            <!-- Buscador de artículos -->
+            <div class="pos_search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="search_pos" placeholder="Buscar por ID, po's o modelo..." autocomplete="off">
+            </div>
+
+            <!-- Filtro de mes y año -->
+            <div class="pos_filter">
+                <label for="dpdn_pos_mounth">
+                    Mes
+                </label>
+
+                <div class="pos_dropdown">
+                    <i class="bi bi-calendar3"></i>
+                    <input type="month" id="dpdn_pos_mounth" name="filter_pos_month">
+                </div>
+            </div>
+
+            <!-- Filtro por estado -->
+            <div class="pos_filter">
+
+                <label for="options_pos_status">
+                    Estado
+                </label>
+
+                <div class="pos_dropdown">
+                    <i class="bi bi-layers"></i>
+                    <select id="options_pos_status">
+                        <option value="">Todos</option>
+                        <option value="pending">Pendiente</option>
+                        <option value="assigned">Asignado</option>
+                        <option value="process">En proceso</option>
+                        <option value="finished">Finalizado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filtro por usuario asignado -->
+            <div class="pos_filter">
+
+                <label for="options_user_assing">
+                    Usuario asignado
+                </label>
+
+                <div class="pos_dropdown">
+                    <i class="bi bi-person"></i>
+                    <select id="options_user_assing">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!---------------------- Botones de asignación ---------------------->
+        <div class="pos_assign">
+
+            <!-- Asignar inspección -->
+            <button type="button" id="btn_type_ins" class="pos_assign_btn pos_type_inspection">
+                <i class="bi bi-clipboard-check"></i>
+                Asignar inspección
+            </button>
+
+            <!-- Asignar usuario -->
+            <button type="button" id="btn_assign_user" class="pos_assign_btn pos_assign_user">
+                <i class="bi bi-person-plus-fill"></i>
+                Asignar usuario
+            </button>
+        </div>
+    </div>
+
+
+    <!--------------------------------------------------- BLOQUE: Tabla Po's  ------------------------------------------------>
+
+    <section class="pos_table_section">
+
+        <!-- Desplazamiento horizontal -->
+        <div class="pos_table_scroll">
+
+            <table class="pos_table" id="pos_table">
+
+                <!-- Encabezados -->
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="checkbox" id="select_all_pos" aria-label="Seleccionar todos">
+                        </th>
+
+                        <th>ID</th>
+                        <th>Po's Adidas</th>
+                        <th>Model #</th>
+                        <th>Art #</th>
+                        <th>Color</th>
+                        <th>XS</th>
+                        <th>S</th>
+                        <th>M</th>
+                        <th>L</th>
+                        <th>XL</th>
+                        <th>2XL</th>
+                        <th>3XL</th>
+                        <th>4XL</th>
+                        <th>T.Units RQSTD</th>
+                        <th>T. Units DELVD</th>
+                        <th>Usuario asignado</th>
+                        <th>Estado</th>
+                        <th>Tipo de inspección</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+
+                <!-- Registros de ejemplo -->
+                <tbody id="pos_table_body">
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="1" aria-label="Seleccionar ART001"></td>
+                        <td>1</td>
+                        <td>ART001</td>
+                        <td>PO-4587</td>
+                        <td>MYR-101</td>
+                        <td>Playera local</td>
+                        <td>Adidas</td>
+                        <td>Navy</td>
+                        <td>M</td>
+                        <td>150</td>
+                        <td>03/11/2026</td>
+                        <td>Proveedor 1</td>
+                        <td>Dimensional</td>
+                        <td>Juan Pérez</td>
+                        <td><span class="pos_status pos_status_process">En proceso</span></td>
+                        <td>Sin observaciones</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART001"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART001"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART001"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="2" aria-label="Seleccionar ART002"></td>
+                        <td>2</td>
+                        <td>ART002</td>
+                        <td>PO-4588</td>
+                        <td>MYR-102</td>
+                        <td>Playera visitante</td>
+                        <td>Adidas</td>
+                        <td>Royal</td>
+                        <td>L</td>
+                        <td>200</td>
+                        <td>03/11/2026</td>
+                        <td>Proveedor 2</td>
+                        <td>Calidad visual</td>
+                        <td>María López</td>
+                        <td><span class="pos_status pos_status_assigned">Asignado</span></td>
+                        <td>Sin observaciones</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART002"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART002"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART002"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="3" aria-label="Seleccionar ART003"></td>
+                        <td>3</td>
+                        <td>ART003</td>
+                        <td>PO-4589</td>
+                        <td>MYR-103</td>
+                        <td>Chamarra ligera</td>
+                        <td>Adidas</td>
+                        <td>Negro</td>
+                        <td>XL</td>
+                        <td>100</td>
+                        <td>04/11/2026</td>
+                        <td>Proveedor 3</td>
+                        <td>Funcional</td>
+                        <td>Carlos Díaz</td>
+                        <td><span class="pos_status pos_status_pending">Pendiente</span></td>
+                        <td>Por revisar</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART003"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART003"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART003"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="4" aria-label="Seleccionar ART004"></td>
+                        <td>4</td>
+                        <td>ART004</td>
+                        <td>PO-4590</td>
+                        <td>MYR-104</td>
+                        <td>Short deportivo</td>
+                        <td>Adidas</td>
+                        <td>Blanco</td>
+                        <td>S</td>
+                        <td>180</td>
+                        <td>04/11/2026</td>
+                        <td>Proveedor 1</td>
+                        <td>Dimensional</td>
+                        <td>Juan Pérez</td>
+                        <td><span class="pos_status pos_status_finished">Finalizado</span></td>
+                        <td>Sin defectos</td>
+                        <td>Pass</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART004"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART004"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART004"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="5" aria-label="Seleccionar ART005"></td>
+                        <td>5</td>
+                        <td>ART005</td>
+                        <td>PO-4591</td>
+                        <td>MYR-105</td>
+                        <td>Jersey entrenamiento</td>
+                        <td>Adidas</td>
+                        <td>Azul</td>
+                        <td>M</td>
+                        <td>250</td>
+                        <td>05/11/2026</td>
+                        <td>Proveedor 2</td>
+                        <td>Visual</td>
+                        <td>María López</td>
+                        <td><span class="pos_status pos_status_process">En proceso</span></td>
+                        <td>Revisar costuras</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART005"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART005"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART005"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="6" aria-label="Seleccionar ART006"></td>
+                        <td>6</td>
+                        <td>ART006</td>
+                        <td>PO-4592</td>
+                        <td>MYR-106</td>
+                        <td>Pants deportivo</td>
+                        <td>Adidas</td>
+                        <td>Gris</td>
+                        <td>L</td>
+                        <td>120</td>
+                        <td>05/11/2026</td>
+                        <td>Proveedor 3</td>
+                        <td>Dimensional</td>
+                        <td>Carlos Díaz</td>
+                        <td><span class="pos_status pos_status_assigned">Asignado</span></td>
+                        <td>Sin observaciones</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART006"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART006"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART006"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="7" aria-label="Seleccionar ART007"></td>
+                        <td>7</td>
+                        <td>ART007</td>
+                        <td>PO-4593</td>
+                        <td>MYR-107</td>
+                        <td>Playera entrenamiento</td>
+                        <td>Adidas</td>
+                        <td>Verde</td>
+                        <td>XL</td>
+                        <td>175</td>
+                        <td>06/11/2026</td>
+                        <td>Proveedor 1</td>
+                        <td>Visual</td>
+                        <td>Juan Pérez</td>
+                        <td><span class="pos_status pos_status_pending">Pendiente</span></td>
+                        <td>Por inspeccionar</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART007"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART007"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART007"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="8" aria-label="Seleccionar ART008"></td>
+                        <td>8</td>
+                        <td>ART008</td>
+                        <td>PO-4594</td>
+                        <td>MYR-108</td>
+                        <td>Sudadera</td>
+                        <td>Adidas</td>
+                        <td>Negro</td>
+                        <td>M</td>
+                        <td>90</td>
+                        <td>06/11/2026</td>
+                        <td>Proveedor 2</td>
+                        <td>Funcional</td>
+                        <td>María López</td>
+                        <td><span class="pos_status pos_status_finished">Finalizado</span></td>
+                        <td>Sin defectos</td>
+                        <td>Pass</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART008"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART008"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART008"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="9" aria-label="Seleccionar ART009"></td>
+                        <td>9</td>
+                        <td>ART009</td>
+                        <td>PO-4595</td>
+                        <td>MYR-109</td>
+                        <td>Chaleco deportivo</td>
+                        <td>Adidas</td>
+                        <td>Royal</td>
+                        <td>L</td>
+                        <td>110</td>
+                        <td>07/11/2026</td>
+                        <td>Proveedor 3</td>
+                        <td>Visual</td>
+                        <td>Carlos Díaz</td>
+                        <td><span class="pos_status pos_status_process">En proceso</span></td>
+                        <td>Revisar acabado</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART009"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART009"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART009"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="10" aria-label="Seleccionar ART010"></td>
+                        <td>10</td>
+                        <td>ART010</td>
+                        <td>PO-4596</td>
+                        <td>MYR-110</td>
+                        <td>Playera polo</td>
+                        <td>Adidas</td>
+                        <td>Blanco</td>
+                        <td>S</td>
+                        <td>140</td>
+                        <td>07/11/2026</td>
+                        <td>Proveedor 1</td>
+                        <td>Dimensional</td>
+                        <td>Juan Pérez</td>
+                        <td><span class="pos_status pos_status_assigned">Asignado</span></td>
+                        <td>Sin observaciones</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART010"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART010"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART010"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td><input type="checkbox" class="select_pos" value="11" aria-label="Seleccionar ART011"></td>
+                        <td>11</td>
+                        <td>ART011</td>
+                        <td>PO-4597</td>
+                        <td>MYR-111</td>
+                        <td>Jersey visitante</td>
+                        <td>Adidas</td>
+                        <td>Azul</td>
+                        <td>XL</td>
+                        <td>160</td>
+                        <td>08/11/2026</td>
+                        <td>Proveedor 2</td>
+                        <td>Calidad visual</td>
+                        <td>María López</td>
+                        <td><span class="pos_status pos_status_pending">Pendiente</span></td>
+                        <td>Por revisar</td>
+                        <td>Pendiente</td>
+                        <td class="pos_row_actions">
+                            <button type="button" class="pos_action_read" aria-label="Leer ART011"><i
+                                    class="bi bi-eye"></i></button>
+                            <button type="button" class="pos_action_edit" aria-label="Editar ART011"><i
+                                    class="bi bi-pencil-square"></i></button>
+                            <button type="button" class="pos_action_delete" aria-label="Eliminar ART011"><i
+                                    class="bi bi-trash"></i></button>
+                        </td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <!-- Pie de tabla -->
+        <div class="pos_table_footer">
+
+            <span>Total de registros: 11</span>
+
+            <div class="pos_pagination">
+
+                <button type="button" disabled aria-label="Página anterior">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+
+                <button type="button" class="active" aria-current="page">
+                    1
+                </button>
+
+                <button type="button" disabled aria-label="Página siguiente">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- ==========================================
+     BOTÓN GUARDAR
+========================================== -->
+
+    <div class="pos_save_container">
+
+        <button type="button" id="btn_save_pos">
+            <i class="bi bi-database-check"></i>
+            Guardar
+        </button>
+
+    </div>
+
+
+</section>

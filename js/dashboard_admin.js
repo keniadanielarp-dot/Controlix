@@ -18,7 +18,7 @@ button_line.addEventListener("click", function () {
 });
 
 
-// Mostrar saludo en la barra superior derecha 
+/* ------------------------------MOSTRAR SALUDO EN LA BARRA SUPERIOR DERECHA -------------------------------------------------------------- */
 fetch("../php/dashboard_admin.php")
     .then(res => {
         if (!res.ok) {
@@ -85,4 +85,31 @@ option_users.addEventListener("click", async function (ev) {
     }
 
 });
+
+/* ---------------------------------------- OPCION POS -------------------------------------------------------------- */
+
+// Localiza el enlace de usuarios.
+const option_pos = document.getElementById("option_pos");
+
+// Cuando el usuario hace click...
+option_pos.addEventListener("click", async function (ev) {
+    ev.preventDefault();
+    try {
+        const res = await fetch("pos.html");
+        const content = await res.text();
+        const container = document.getElementById("module_content");
+        container.innerHTML = content;
+
+        // Cargar los registros reales en la tabla después de hacer click en la opcion Usuarios del panel.
+        //await users_table();
+
+        const module_name = document.getElementById("module_name");
+        if (module_name) {
+            module_name.textContent = "Po's";
+        }
+    } catch (error) {
+        console.error("Error al cargar Dashboard Po's:", error);
+    }
+});
+
 

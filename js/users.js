@@ -383,6 +383,78 @@ document.addEventListener("change", function (event) {
 });
 
 
+/********************************* BLOQUE FUNCION PARA MOSTRAR LAS NOTIFICACIONES   ******************************************** */
+function show_user_notifi(type, msg, action = "new") {
+
+    // Definir los títulos según la operación.
+    const titles = {
+        new: {
+            success: "Usuario registrado",
+            error: "No se pudo registrar"
+        },
+        edit: {
+            success: "Usuario actualizado",
+            error: "No se pudo actualizar"
+        },
+        delete: {
+            success: "Usuario eliminado",
+            error: "No se pudo eliminar"
+        }
+    };
+
+    // Seleccionar el título correspondiente.
+    const title = titles[action]?.[type] ?? "Notificación";
+
+    // Obtener los elementos de la notificación.
+    const new_user = document.getElementById("new_user_notification");
+    const icon = document.getElementById("user_notification_icon");
+    const title_element = document.getElementById("user_notification_title");
+    const text = document.getElementById("user_notification_message");
+
+    // Asignar el título y el mensaje.
+    title_element.textContent = title;
+    text.textContent = msg;
+
+    // Limpiar los estilos anteriores.
+    icon.classList.remove("success", "error");
+
+    // Notificación de éxito.
+    if (type === "success") {
+
+        icon.classList.add("success");
+        icon.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
+
+    }
+
+    // Notificación de error.
+    else if (type === "error") {
+
+        icon.classList.add("error");
+        icon.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
+
+    }
+
+    // Mostrar la notificación.
+    new_user.hidden = false;
+
+    // Enfocar el botón Aceptar.
+    document.getElementById("btn_notification_accept").focus();
+
+}
+
+// Cerrar la notificación
+document.addEventListener("click", function (event) {
+
+    if (event.target.closest("#btn_notification_accept")) {
+
+        // Ocultar la notificación.
+        document.getElementById("new_user_notification").hidden = true;
+
+    }
+
+});
+
+
 /************************************ BLOQUE: BOTÓN NUEVO USUARIO  **************************************** */
 
 // -------------------------------------  Abrir el formulario  -----------------------------------------------------
@@ -420,8 +492,7 @@ document.addEventListener("click", function (event) {
         return;
     }
 
-    // ---------------------------------  Cerrar el formulario en la "X"  ------------------------------------------
-
+    // --------------------------------------  Cerrar el formulario ----------------------------------------------------------------
     if (
         event.target.closest("#btn_close_new_user") || // "X"
         event.target.closest("#btn_cancel_new_user")   // Botón Cancelar
@@ -580,7 +651,6 @@ document.addEventListener("submit", async function (event) {
 
     //Enviar los datos a PHP
     try {
-
         const send_php = await fetch(
             "/sistema_calidad/php/users.php",
             {
@@ -595,7 +665,8 @@ document.addEventListener("submit", async function (event) {
         // Convertir el JSON recibido por php en un objeto JavaScript.
         const answer_php = await send_php.json();
 
-        // ------------------------ Mostrar mensaje de registro exitoso   ------------------------------------------
+
+        // ------------------------ Mostrar notificación de registro exitoso   ------------------------------------------
         // Cerrar el formulario Nuevo usuario.
         document.getElementById("new_user_modal").hidden = true;
 
@@ -603,14 +674,17 @@ document.addEventListener("submit", async function (event) {
         users_table();
 
         // Mostrar la notificación de éxito.
-        show_user_notifi("success", answer_php.message);
+        show_user_notifi(
+            "success",
+            "El usuario se registró correctamente.",
+            "new"
+        );
 
         // Limpiar los campos del formulario.
         data_form.reset();
-
     }
 
-    // ------------------------- Mostrar mensaje de registro fallido  ------------------------------------------
+    // ------------------------- Mostrar notificación de registro fallido  ------------------------------------------
     catch (error) {
 
         console.error("Error al registrar usuario:", error);
@@ -620,57 +694,6 @@ document.addEventListener("submit", async function (event) {
 
     }
 });
-
-// ------------------------- Función para las notificaciones  ------------------------------------------
-
-function show_user_notifi(type, msg) {
-
-    // Obtener los elementos de la notificación.
-    const new_user = document.getElementById("new_user_notification");
-    const icon = document.getElementById("user_notification_icon");
-    const title = document.getElementById("user_notification_title");
-    const text = document.getElementById("user_notification_message");
-
-    // Limpiar estilos anteriores.
-    icon.classList.remove("success", "error");
-
-    // Notificación de exito 
-    if (type === "success") {
-
-        icon.classList.add("success");
-        icon.innerHTML = '<i class="bi bi-check-circle-fill"></i>';
-
-        title.textContent = "Usuario registrado";
-        text.textContent = msg;
-
-    }
-
-    // Notificación de error 
-    else if (type === "error") {
-
-        icon.classList.add("error");
-        icon.innerHTML = '<i class="bi bi-x-circle-fill"></i>';
-        title.textContent = "No se pudo registrar";
-        text.textContent = msg;
-    }
-
-    // Mostrar la notificación.
-    new_user.hidden = false;
-
-    // Enfocar el botón Aceptar.
-    document.getElementById("btn_notification_accept").focus();
-
-}
-
-// Cerrar la notificación 
-document.addEventListener("click", function (event) {
-
-    if (event.target.closest("#btn_notification_accept")) {
-        // Ocultar la notificación.
-        document.getElementById("new_user_notification").hidden = true;
-    }
-});
-
 
 
 /************************************************** BLOQUE: BOTÓN EDITAR USUARIO  *************************************************** */
@@ -933,26 +956,28 @@ document.addEventListener("submit", function (event) {
 
                 // Actualizar la tabla del Dashboard
                 users_table();
+
+                // Mostrar la notificación de éxito.
+                show_user_notifi(
+                    "success",
+                    "El usuario se actualizó correctamente.",
+                    "edit"
+                );
             }
 
         })
         .catch(function (error) {
+            show_user_notifi("error", error.message);
             console.error("Error al enviar los datos:", error);
         });
 });
 
 
 
-/* ==========================================
-   ELIMINAR USUARIO - CONFIRMACIÓN
-========================================== */
+/************************************************** BLOQUE: BOTÓN ELIMINAR USUARIO  *************************************************** */
 
-document.addEventListener("click", function (event) {
-
-    // =====================================
-    // 1. ABRIR EL MODAL DE CONFIRMACIÓN
-    // =====================================
-
+document.addEventListener("click", async function (event) {
+    // Detectar click en el botón Eliminar
     if (event.target.closest("#btn_delete_user")) {
 
         // Obtener los usuarios seleccionados.
@@ -962,26 +987,21 @@ document.addEventListener("click", function (event) {
 
         // Verificar que exista al menos un usuario seleccionado.
         if (ch_selected.length === 0) {
-
             alert("Selecciona al menos un usuario para eliminar.");
-
             return;
         }
 
         // Obtener el mensaje del modal.
-        const mensaje = document.getElementById(
+        const msg_delete = document.getElementById(
             "delete_user_message"
         );
 
         // Adaptar el mensaje a la cantidad seleccionada.
         if (ch_selected.length === 1) {
-
-            mensaje.textContent =
+            msg_delete.textContent =
                 "¿Estás seguro de que deseas eliminar el usuario seleccionado?";
-
         } else {
-
-            mensaje.textContent =
+            msg_delete.textContent =
                 "¿Estás seguro de que deseas eliminar los " +
                 ch_selected.length +
                 " usuarios seleccionados?";
@@ -1001,11 +1021,7 @@ document.addEventListener("click", function (event) {
     }
 
 
-    // =====================================
-    // 2. CERRAR EL MODAL SIN ELIMINAR
-    // =====================================
-
-
+    // ------------------------------------------ Cerrar notificación sin eliminar -----------------------------------------------
     if (
         event.target.closest("#btn_cancel_delete_user") ||
         event.target.closest("#btn_close_delete_user")
@@ -1018,26 +1034,92 @@ document.addEventListener("click", function (event) {
         return;
     }
 
-
-    // =====================================
-    // 3. CONFIRMAR LA ELIMINACIÓN
-    // =====================================
-
+    // ---------------------------------------- Confirmación de borrado lógico -----------------------------------------------
     if (event.target.closest("#btn_confirm_delete_user")) {
 
-        // Todavía no eliminamos usuarios.
-        // La operación se implementará posteriormente en PHP.
-
-        console.log(
-            "El administrador confirmó la eliminación."
+        // Obtener los usuarios seleccionados en la tabla.
+        const selected = document.querySelectorAll(
+            ".select_user:checked"
         );
 
-        // Cerrar la ventana de confirmación.
-        document.getElementById(
-            "delete_user_modal"
-        ).hidden = true;
+        // Recuperar los IDs de la base de datos.
+        const ids = Array.from(selected).map(function (checkbox) {
+            return Number(checkbox.value);
+        });
 
+        // Verificar que existan usuarios seleccionados.
+        if (ids.length === 0) {
+            show_user_notifi(
+                "error",
+                "No se seleccionaron usuarios para eliminar."
+            );
+            return;
+        }
+        // ------------------------------------------Enviar datos a PHP -----------------------------------------------
+        try {
+
+            // Enviar los IDs al PHP para realizar el borrado lógico.
+            const response = await fetch(
+                "/sistema_calidad/php/users.php",
+                {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        ids: ids
+                    })
+                }
+            );
+
+            // Recuperar la respuesta enviada por PHP.
+            const result = await response.json();
+
+            // Verificar que la eliminación haya sido exitosa.
+            if (!response.ok || !result.success) {
+                throw new Error(
+                    result.message || "No se pudieron eliminar los usuarios."
+                );
+            }
+
+            // Actualizar la tabla para mostrar solo usuarios activos.
+            await users_table();
+
+            // Cerrar el modal de confirmación.
+            document.getElementById("delete_user_modal").hidden = true;
+
+            // Limpiar el checkbox Seleccionar todos.
+            const seleccionarTodos = document.getElementById("ch_sel_all_users");
+
+            if (seleccionarTodos) {
+                seleccionarTodos.checked = false;
+            }
+
+            show_user_notifi(
+                "success",
+                "Los usuarios seleccionados se eliminaron correctamente.",
+                "delete"
+            );
+
+        }
+
+        // Notificación de error
+        catch (error) {
+
+            // Mostrar el error en la consola.
+            console.error("Error al eliminar usuarios:", error);
+
+            // Cerrar el modal de confirmación.
+            document.getElementById("delete_user_modal").hidden = true;
+
+            // Mostrar la notificación general.
+            show_user_notifi(
+                "error",
+                error.message,
+                "delete"
+            );
+
+        }
         return;
     }
-
 });

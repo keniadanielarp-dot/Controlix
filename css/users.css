@@ -1457,6 +1457,11 @@
     box-sizing: border-box;
 }
 
+/* Ocultar modal */
+#delete_user_modal[hidden] {
+    display: none !important;
+}
+
 
 /* ==========================================
    ELIMINAR USUARIO - BOTÓN CERRAR

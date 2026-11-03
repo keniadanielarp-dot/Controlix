@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = $_POST['status_php'] ?? '';
 
     /* Obtener el ID del administrador autenticado */
-    $id_current_user = (int) $_SESSION['id_user'];
+    $id_admin = (int) $_SESSION['id_user'];
 
     // --------------------------------------------------
     /* Validar campos obligatorios */
@@ -233,7 +233,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Obtener el ID del usuario que realiza el registro
-    $id_current_user = (int) $_SESSION['id_user'];
+    $id_admin = (int) $_SESSION['id_user'];
 
 
     // -----------------------------------------------------------------------------
@@ -253,8 +253,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pass_new,
         $id_rol,
         $status,
-        $id_current_user,
-        $id_current_user
+        $id_admin,
+        $id_admin
     );
 
     // 6. Ejecutar y devolver el resultado.
@@ -298,7 +298,9 @@ if (
         FROM myr_users AS u
         INNER JOIN rol_users AS r
             ON u.id_rol = r.id_rol
+            WHERE u.status_user = 1
         ORDER BY u.id_user ASC";
+
 
         $res = $connection->query($sql);
         $users = [];
@@ -508,7 +510,9 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
 
     // Verificar si se cambiará la contraseña.
     if ($pass_hash === null) {
-        
+
+        $id_admin = $_SESSION['id_user'] ?? null;
+
 
         // Actualizar los datos sin cambiar la contraseña.
         $sql = "UPDATE myr_users
@@ -528,7 +532,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
             $user,
             $id_rol,
             $status,
-            $id_current_user,
+            $id_admin,
             $id_user
         );
 
@@ -554,7 +558,7 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
             $pass_hash,
             $id_rol,
             $status,
-            $id_current_user,
+            $id_admin,
             $id_user
         );
     }
@@ -606,6 +610,146 @@ if ($_SERVER["REQUEST_METHOD"] === "PUT") {
     // Finalizar la solicitud PUT.
     exit;
 
+}
+
+// ==========================================
+// DELETE - BORRADO LÓGICO DE USUARIOS
+// ==========================================
+
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+
+    // Recuperar los datos enviados desde JavaScript.
+    $data = json_decode(file_get_contents("php://input"), true);
+
+    // Obtener los IDs de los usuarios seleccionados.
+    $ids = $data['ids'] ?? [];
+
+    // Verificar que se haya seleccionado al menos un usuario.
+    if (!is_array($ids) || empty($ids)) {
+
+        http_response_code(400);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se seleccionaron usuarios.'
+        ]);
+
+        exit;
+    }
+
+    // Validar que todos los IDs sean números enteros positivos.
+    foreach ($ids as $id) {
+
+        if (filter_var($id, FILTER_VALIDATE_INT) === false || (int) $id <= 0) {
+
+            http_response_code(400);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'Se recibió un ID inválido.'
+            ]);
+
+            exit;
+        }
+    }
+
+    // Obtener el ID del administrador autenticado.
+    $id_admin = (int) ($_SESSION['id_user'] ?? 0);
+
+    if ($id_admin <= 0) {
+
+        http_response_code(401);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Sesión no válida.'
+        ]);
+
+        exit;
+    }
+
+    // ==========================================
+// IMPEDIR LA AUTOELIMINACIÓN DEL USUARIO
+// ==========================================
+
+    // Obtener el ID del usuario que inició sesión.
+    $id_admin = (int) $_SESSION["id_user"];
+
+    // Comprobar si su propio ID está entre los seleccionados.
+    if (in_array($id_admin, $ids, true)) {
+
+        // Rechazar la operación.
+        http_response_code(403);
+
+        // Enviar el mensaje al JavaScript.
+        echo json_encode([
+            "success" => false,
+            "message" => "No puedes eliminar tu propia cuenta. Se canceló toda la operación."
+        ]);
+
+        // Detener la ejecución para impedir el borrado lógico.
+        exit;
+    }
+
+    // Preparar la consulta para el borrado lógico.
+    $sql = "UPDATE myr_users
+            SET status_user = 0,
+                updated_by = ?,
+                updated_at = NOW()
+            WHERE id_user = ?
+              AND status_user = 1";
+
+    $stmt = $connection->prepare($sql);
+
+    if (!$stmt) {
+
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudo preparar la consulta.'
+        ]);
+
+        exit;
+    }
+
+    // Asociar los parámetros.
+    $id_user = 0;
+    $stmt->bind_param("ii", $id_admin, $id_user);
+
+    // Ejecutar la actualización para cada usuario.
+    $actualizados = 0;
+
+    foreach ($ids as $id) {
+
+        $id_user = (int) $id;
+
+        if (!$stmt->execute()) {
+
+            http_response_code(500);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'No se pudieron actualizar todos los usuarios.'
+            ]);
+
+            $stmt->close();
+            exit;
+        }
+
+        $actualizados += $stmt->affected_rows;
+    }
+
+    $stmt->close();
+
+    // Confirmar la operación.
+    echo json_encode([
+        'success' => true,
+        'message' => 'Usuarios desactivados correctamente.',
+        'actualizados' => $actualizados
+    ]);
+
+    exit;
 }
 
 ?>

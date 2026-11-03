@@ -1,0 +1,646 @@
+
+/* -------------------------------- BLOQUE: Encabezado ----------------------------------- */
+
+/* Contenedor principal */
+.pos_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    background-color: #e8f2ff;
+    border-radius: 12px;
+    padding: 25px 30px;
+    box-sizing: border-box;
+}
+
+/* Icono y titulo */
+.pos_header_title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    min-width: 0;
+}
+
+/* Icono del modulo */
+.pos_header_title i {
+    font-size: 45px;
+    color: #0056b3;
+}
+
+/* Titulo */
+.pos_header_title h2 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #142b49;
+}
+
+/* ----------------------- Botones de encabezado -----------------------------  */
+
+/* Distribucion */
+.pos_header_buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Estilo general */
+.pos_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: inherit;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* Cargar Excel */
+.pos_btn_excel {
+    background-color: white;
+    border: 1px solid #0064d8;
+    color: #0064d8;
+}
+
+.pos_btn_excel:hover {
+    background-color: #003d80;
+    color: white;
+}
+
+/* Crear */
+.pos_btn_new {
+    background-color: white;
+    border: 1px solid #198754;
+    color: #198754;
+}
+
+.pos_btn_new:hover {
+    background-color: #146c43;
+    color: white;
+}
+
+/* Editar */
+.pos_btn_edit {
+    background-color: white;
+    border: 1px solid #ff7707;
+    color: #ff7707;
+}
+
+.pos_btn_edit:hover {
+    background-color: #ff7707;
+    color: white;
+}
+
+/* Eliminar */
+.pos_btn_delete {
+    background-color: white;
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.pos_btn_delete:hover {
+    background-color: #b02a37;
+    color: white;
+}
+
+/* ------------- BLOQUE: Buscador, filtros y botones de asignación --------------------------- */
+
+/* Contenedor general de dos filas */
+.pos_tools {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    width: 100%;
+    min-width: 0;
+    padding: 25px;
+    margin-top: 15px;
+
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+/* Primera fila: buscador y filtros */
+.pos_tools_filters {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.7fr)
+        repeat(3, minmax(0, 1fr));
+
+    align-items: end;
+    gap: 20px;
+
+    width: 100%;
+    min-width: 0;
+}
+
+/* ----------------------------- Buscador -----------------------------  */
+
+/* Contenedor */
+.pos_search {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+
+    border: 1px solid #cbdff8;
+    border-radius: 40px;
+    padding: 0 15px;
+
+    box-sizing: border-box;
+}
+
+/* Icono */
+.pos_search i {
+    font-size: 20px;
+    color: #0056b3;
+    flex-shrink: 0;
+}
+
+/* Campo de texto */
+.pos_search input {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 14px;
+    color: #142b49;
+}
+
+/* Al seleccionar */
+.pos_search:focus-within {
+    border-color: #0056b3;
+}
+
+/* ----------------------------- Filtros -----------------------------  */
+
+/* Contenedor de cada filtro */
+.pos_filter {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    width: 100%;
+    min-width: 0;
+}
+
+/* Etiquetas */
+.pos_filter label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #142b49;
+}
+
+/* ----------------------- Menus desplegables -----------------------------  */
+/* Contenedor de icono y campo */
+.pos_dropdown {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+    height: 52px;
+    border: 1px solid #cbdff8;
+    border-radius: 7px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+/* Iconos */
+.pos_dropdown i {
+    flex-shrink: 0;
+    font-size: 17px;
+    color: #0056b3;
+}
+
+/* Select y calendario */
+.pos_dropdown select,
+.pos_dropdown input[type="month"] {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 13px;
+    color: #142b49;
+    cursor: pointer;
+}
+
+/* Evitar que el calendario desborde */
+.pos_dropdown input[type="month"] {
+    box-sizing: border-box;
+}
+
+/* Al seleccionar un filtro */
+.pos_dropdown:focus-within {
+    border-color: #0056b3;
+}
+
+/* ------------------------- Botones de asignación  -----------------------------  */
+/* Hacer segunda fila */
+.pos_assign {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+    margin: 0;
+    padding-top: 20px;
+    border-top: 1px solid #dce5f0;
+    box-sizing: border-box;
+}
+
+/* Estilo general */
+.pos_assign_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 10px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: inherit;
+
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+/* Iconos */
+.pos_assign_btn i {
+    font-size: 18px;
+}
+
+/* Asignar inspeccion */
+.pos_type_inspection {
+    background-color: #002d60;
+    border: 1px solid #003d80;
+    color: white;
+}
+
+.pos_type_inspection:hover {
+    background-color: #2454a6;
+    border-color: #2454a6;
+}
+
+/* Asignar usuario */
+.pos_assign_user {
+    background-color: #146c43;
+    border: 1px solid #146c43;
+    color: white;
+
+}
+
+.pos_assign_user:hover {
+    background-color: #137c43;
+    border-color: #137c43;
+}
+
+/* ---------------------------- BLOQUE: Navegación móvil --------------------------- */
+
+/* Navegacion con teclado */
+.pos_btn:focus-visible,
+.pos_assign_btn:focus-visible {
+    outline: 3px solid #2454a6;
+    outline-offset: 3px;
+}
+
+
+/* Pantallas medianas */
+@media (max-width: 1100px) {
+
+    .pos_tools_filters {
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+    }
+
+    .pos_search {
+        grid-column: auto;
+    }
+}
+
+/* Pantallas pequeñas */
+@media (max-width: 700px) {
+
+    .pos_tools_filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .pos_search {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Celulares */
+@media (max-width: 480px) {
+
+    .pos_tools_filters {
+        grid-template-columns: 1fr;
+    }
+
+    .pos_search {
+        grid-column: auto;
+    }
+}
+
+
+/* ==========================================
+   BLOQUE: CONTENEDOR DE TABLA
+========================================== */
+
+.pos_table_container {
+    width: 100%;
+    min-width: 0;
+    margin-top: 20px;
+    padding: 15px;
+
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+/* Desplazamiento horizontal */
+.pos_table_scroll {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #dce5f0;
+    border-radius: 8px;
+}
+
+/* ==========================================
+   TABLA DE PO'S
+========================================== */
+
+.pos_table {
+    width: 100%;
+    min-width: 1900px;
+
+    border-collapse: collapse;
+    font-size: 13px;
+    color: #142b49;
+}
+
+/* Celdas */
+.pos_table th,
+.pos_table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #dce5f0;
+    border-right: 1px solid #dce5f0;
+
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Encabezado de tabla */
+.pos_table thead {
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+.pos_table th {
+    font-weight: 600;
+}
+
+/* Filas alternadas */
+.pos_table tbody tr:nth-child(even) {
+    background-color: #f5f9ff;
+}
+
+/* Efecto al pasar el cursor */
+.pos_table tbody tr:hover {
+    background-color: #e8f2ff;
+}
+
+/* Casillas de selección */
+.pos_table input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #0056b3;
+    cursor: pointer;
+}
+
+/* ==========================================
+   ESTADOS
+========================================== */
+
+.pos_status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Pendiente */
+.pos_status_pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Asignado */
+.pos_status_assigned {
+    background-color: #cfe2ff;
+    color: #084298;
+}
+
+/* En proceso */
+.pos_status_process {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+/* Finalizado */
+.pos_status_finished {
+    background-color: #c6f6d5;
+    color: #166534;
+}
+
+/* ==========================================
+   ACCIONES POR FILA
+========================================== */
+
+.pos_row_actions {
+    white-space: nowrap;
+}
+
+/* Estilo general de botones */
+.pos_row_actions button {
+    width: 32px;
+    height: 32px;
+    margin: 0 3px;
+
+    background-color: #ffffff;
+    border-radius: 6px;
+
+    font-size: 15px;
+    cursor: pointer;
+}
+
+/* Leer */
+.pos_action_read {
+    border: 1px solid #0056b3;
+    color: #0056b3;
+}
+
+.pos_action_read:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+/* Editar */
+.pos_action_edit {
+    border: 1px solid #ff7707;
+    color: #ff7707;
+}
+
+.pos_action_edit:hover {
+    background-color: #ff7707;
+    color: white;
+}
+
+/* Eliminar */
+.pos_action_delete {
+    border: 1px solid #dc3545;
+    color: #dc3545;
+}
+
+.pos_action_delete:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* ==========================================
+   PIE DE TABLA
+========================================== */
+
+.pos_table_footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+
+    padding: 20px 5px 5px;
+    color: #142b49;
+    font-size: 13px;
+}
+
+/* ==========================================
+   PAGINACIÓN
+========================================== */
+
+.pos_pagination {
+    display: flex;
+    gap: 8px;
+}
+
+.pos_pagination button {
+    min-width: 36px;
+    height: 36px;
+
+    border: 1px solid #cbdff8;
+    border-radius: 7px;
+    background-color: white;
+
+    color: #142b49;
+    cursor: pointer;
+}
+
+.pos_pagination button.active {
+    background-color: #142b49;
+    color: white;
+}
+
+.pos_pagination button:hover:not(:disabled) {
+    background-color: #e8f2ff;
+}
+
+.pos_pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==========================================
+   BOTÓN GUARDAR
+========================================== */
+
+.pos_save_container {
+    display: flex;
+    justify-content: center;
+
+    width: 100%;
+    margin-top: 25px;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+#btn_save_pos {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    min-width: 220px;
+    padding: 13px 30px;
+
+    background-color: #142b49;
+    border: 1px solid #142b49;
+    border-radius: 8px;
+
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_save_pos:hover {
+    background-color: #2454a6;
+    border-color: #2454a6;
+}
+
+/* ==========================================
+   RESPONSIVE DE TABLA
+========================================== */
+
+@media (max-width: 600px) {
+
+    .pos_table_container {
+        padding: 10px;
+    }
+
+    .pos_table_footer {
+        flex-wrap: wrap;
+    }
+
+    .pos_save_container {
+        padding: 10px;
+    }
+
+    #btn_save_pos {
+        width: 100%;
+    }
+}
+
