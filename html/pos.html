@@ -23,7 +23,10 @@
                 Cargar Excel
             </label>
 
+            <!-- Archivo Excel seleccionado -->
+            <input type="file" id="file_pos_excel" accept=".xlsx,.xls" hidden>
 
+            <!-- Botón Crear -->
             <button type="button" id="btn_new_pos" class="pos_btn pos_btn_new">
                 <i class="bi bi-plus-lg"></i>
                 Crear
@@ -148,11 +151,17 @@
                         <th>T.Units RQSTD</th>
                         <th>T. Units DELVD</th>
                         <th>Usuario asignado</th>
+                        <th>Fecha de asignación</th>
                         <th>Estado</th>
                         <th>Tipo de inspección</th>
                         <th>Fecha</th>
                     </tr>
                 </thead>
+
+                <!-- Registros cargados desde Excel -->
+                <tbody id="pos_table_excel">
+
+                </tbody>
             </table>
         </div>
 
@@ -190,6 +199,7 @@
         </button>
     </div>
 
+
     <!-------------------------------------------------------------------------------------------------------- -->
     <!------------------------------- BLOQUE: Formulario Botón CREAR   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
@@ -223,7 +233,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_create_po" placeholder="Ingresar PO" autocomplete="off" required>
-                        <small class="error_input_po" id="error_new_po" hidden></small>
+                        <small class="input_error" id="error_new_po" hidden></small>
                     </div>
 
 
@@ -234,7 +244,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_model" placeholder="Ingrese modelo" autocomplete="on" required>
-                        <small class="error_input_po" id="error_new_model" hidden></small>
+                        <small class="input_error" id="error_new_model" hidden></small>
                     </div>
 
 
@@ -245,7 +255,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_art" placeholder="Ingrese artículo" autocomplete="on" required>
-                        <small class="error_input_po" id="error_new_art" hidden></small>
+                        <small class="input_error" id="error_new_art" hidden></small>
                     </div>
 
                     <!-- Color -->
@@ -255,7 +265,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_color" placeholder="Ingrese color" autocomplete="on" required>
-                        <small class="error_input_po" id="error_new_color" hidden></small>
+                        <small class="input_error" id="error_new_color" hidden></small>
                     </div>
                 </div>
 
@@ -349,7 +359,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_rqstd" placeholder="Ingrese RQSTD" autocomplete="off" required>
-                        <small class="error_input_po" id="error_new_rqstd" hidden></small>
+                        <small class="input_error" id="error_new_rqstd" hidden></small>
                     </div>
 
                     <!-- T.Units DELVD -->
@@ -359,7 +369,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_delvd" placeholder="Ingrese DELVD" autocomplete="off" required>
-                        <small class="error_input_po" id="error_new_delvd" hidden></small>
+                        <small class="input_error" id="error_new_delvd" hidden></small>
                     </div>
                 </div>
 
@@ -413,7 +423,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_po" placeholder="Ingresar PO" autocomplete="off" required>
-                        <small class="error_input_po" id="error_edit_po" hidden></small>
+                        <small class="input_error" id="error_edit_po" hidden></small>
                     </div>
 
 
@@ -424,7 +434,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_model" placeholder="Ingrese modelo" autocomplete="on" required>
-                        <small class="error_input_po" id="error_edit_model" hidden></small>
+                        <small class="input_error" id="error_edit_model" hidden></small>
                     </div>
 
 
@@ -435,7 +445,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_art" placeholder="Ingrese artículo" autocomplete="on" required>
-                        <small class="error_input_po" id="error_edit_art" hidden></small>
+                        <small class="input_error" id="error_edit_art" hidden></small>
                     </div>
 
                     <!-- Color -->
@@ -445,7 +455,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_color" placeholder="Ingrese color" autocomplete="on" required>
-                        <small class="error_input_po" id="error_edit_color" hidden></small>
+                        <small class="input_error" id="error_edit_color" hidden></small>
                     </div>
                 </div>
 
@@ -540,7 +550,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_rqstd" placeholder="Ingrese RQSTD" autocomplete="off" required>
-                        <small class="error_input_po" id="error_edit_rqstd" hidden></small>
+                        <small class="input_error" id="error_edit_rqstd" hidden></small>
                     </div>
 
                     <!-- T.Units DELVD -->
@@ -550,7 +560,7 @@
                             <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_delvd" placeholder="Ingrese DELVD" autocomplete="off" required>
-                        <small class="error_input_po" id="error_edit_delvd" hidden></small>
+                        <small class="input_error" id="error_edit_delvd" hidden></small>
                     </div>
                 </div>
 
@@ -566,117 +576,67 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 
 
-    <!-------------------------------------------------------------------------------------------------------- -->
-    <!----------------------------- BLOQUE: Formulario Botón Asignar Inspección   ---------------------------- -->
-    <!-------------------------------------------------------------------------------------------------------- -->
 
+    <!-- ==========================================
+     MODAL CONFIRMAR ELIMINACIÓN DE USUARIO
+        ========================================== -->
 
+    <div id="delete_po_js" class="delete_user_modal_overlay" hidden>
 
-<div id="modal_assign_inspection" class="pos_modal_overlay" hidden>
+        <div class="delete_user_modal" role="alertdialog" aria-modal="true" aria-labelledby="delete_user_title"
+            aria-describedby="delete_user_message">
 
-    <div class="pos_modal_css">
+            <!-- ENCABEZADO Y BOTÓN CERRAR -->
+            <div class="delete_user_modal_header">
 
-        <!-- ENCABEZADO -->
-        <div class="pos_modal_header">
+                <button type="button" id="btn_close_delete_user" aria-label="Cerrar ventana">
 
-            <h2>Asignar inspección</h2>
+                    <i class="bi bi-x-lg"></i>
 
-            <button type="button" class="pos_modal_close"
-                    aria-label="Cerrar">
-                <i class="bi bi-x-lg"></i>
-            </button>
-
-        </div>
-
-        <!-- FORMULARIO -->
-        <form id="form_assign_inspection" novalidate>
-
-            <!-- PO SELECCIONADA -->
-            <div class="assign_inspection_group">
-
-                <label for="inspection_po">PO</label>
-
-                <input type="text"
-                       id="inspection_po"
-                       name="po"
-                       readonly>
+                </button>
 
             </div>
 
-            <!-- TIPO DE INSPECCIÓN -->
-            <div class="assign_inspection_group">
+            <!-- ÍCONO DE ADVERTENCIA -->
+            <div class="delete_user_icon">
 
-                <label for="inspection_type">
-                    Inspección <span class="pos_required">*</span>
-                </label>
-
-                <select id="inspection_type" name="inspection_type" required>
-                    <option value="">Seleccione una inspección</option>
-                </select>
-
-                <small class="pos_field_error"
-                       id="error_inspection_type" hidden></small>
+                <i class="bi bi-exclamation-circle-fill"></i>
 
             </div>
 
-            <!-- CANTIDAD -->
-            <div class="assign_inspection_group">
+            <!-- MENSAJE DE CONFIRMACIÓN -->
+            <h2 id="delete_user_title">
+                ¿Eliminar usuario?
+            </h2>
 
-                <label>Cantidad:</label>
-
-                <span id="inspection_quantity">0</span>
-
-            </div>
-
-            <!-- DEFECTO -->
-            <div class="assign_inspection_group">
-
-                <label for="inspection_defect">Defecto:</label>
-
-                <input type="text"
-                       id="inspection_defect"
-                       name="defect">
-
-            </div>
+            <p id="delete_user_message">
+                ¿Estás seguro de que deseas eliminar
+                el usuario seleccionado?
+            </p>
 
             <!-- BOTONES -->
-            <div class="btns_po">
+            <div class="delete_user_modal_actions">
 
-                <button type="button" id="btn_cancel_inspection"
-                        class="pos_modal_close">
+                <button type="button" id="btn_cancel_delete_user">
                     Cancelar
                 </button>
 
-                <button type="submit" id="btn_save_inspection">
-                    <i class="bi bi-floppy"></i>
-                    Guardar
+                <button type="button" id="btn_confirm_delete_user">
+
+                    <i class="bi bi-trash-fill"></i>
+                    Eliminar
+
                 </button>
 
             </div>
 
-        </form>
+        </div>
 
     </div>
-
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
