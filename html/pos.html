@@ -183,8 +183,7 @@
 
 
     <!--------------------------------------------------- BLOQUE: Botón Guardar   ------------------------------------------------>
-    <div class="pos_save_container">
-
+    <div class="btn_pos_save">
         <button type="button" id="btn_save_pos">
             <i class="bi bi-database-check"></i>
             Guardar
@@ -214,149 +213,154 @@
             </div>
 
             <!-- Formulario -->
-            <form id="form_edit_pos" class="pos_form" novalidate>
+            <form id="form_create_pos" class="pos_form" novalidate>
 
-                <!-- PO -->
-                <div class="input_pos_form">
-                    <label for="lbl_edit_po">
-                        PO
-                        <span class="required_field">*</span>
-                    </label>
-                    <input type="text" id="txt_edit_po" placeholder="Ingresar PO" autocomplete="off" required>
-                    <small class="error_input_po" id="error_new_po" hidden></small>
+                <div class="input_grid">
+                    <!-- PO -->
+                    <div class="input_pos_form">
+                        <label for="lbl_create_po">
+                            PO
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_create_po" placeholder="Ingresar PO" autocomplete="off" required>
+                        <small class="error_input_po" id="error_new_po" hidden></small>
+                    </div>
+
+
+                    <!-- Modelo -->
+                    <div class="input_pos_form">
+                        <label for="lbl_create_model">
+                            Modelo
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_new_model" placeholder="Ingrese modelo" autocomplete="on" required>
+                        <small class="error_input_po" id="error_new_model" hidden></small>
+                    </div>
+
+
+                    <!-- Artículo -->
+                    <div class="input_pos_form">
+                        <label for="lbl_create_art">
+                            Artículo
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_new_art" placeholder="Ingrese artículo" autocomplete="on" required>
+                        <small class="error_input_po" id="error_new_art" hidden></small>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="input_pos_form">
+                        <label for="lbl_create_color">
+                            Color
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_new_color" placeholder="Ingrese color" autocomplete="on" required>
+                        <small class="error_input_po" id="error_new_color" hidden></small>
+                    </div>
                 </div>
 
+                <div class="input_size">
 
-                <!-- Modelo -->
-                <div class="input_pos_form">
-                    <label for="lbl_create_model">
-                        Modelo
-                        <span class="required_field">*</span>
-                    </label>
-                    <input type="text" id="txt_new_model" placeholder="Ingrese modelo" autocomplete="on" required>
-                    <small class="error_input_po" id="error_new_model" hidden></small>
-                </div>
-
-
-                <!-- Artículo -->
-                <div class="input_pos_form">
-                    <label for="lbl_create_art">
-                        Artículo
-                        <span class="required_field">*</span>
-                    </label>
-                    <input type="text" id="txt_new_art" placeholder="Ingrese artículo" autocomplete="on" required>
-                    <small class="error_input_po" id="error_new_art" hidden></small>
-                </div>
-
-                <!-- Color -->
-                <div class="input_pos_form">
-                    <label for="lbl_create_color">
-                        Color
-                        <span class="required_field">*</span>
-                    </label>
-                    <input type="text" id="txt_new_color" placeholder="Ingrese color" autocomplete="on" required>
-                    <small class="error_input_po" id="error_new_color" hidden></small>
-                </div>
-
-                <!-- Tallas  -->
-                <div class="input_pos_form">
-                    <label for="lbl_create_size">
+                    <!-- Tallas  -->
+                    <label for="lbl_size">
                         Talla
-                        <span class="required_field">*</span>
+                        <span class="pos_required">*</span>
                     </label>
 
-
-                    <!-- XS -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_xs">
-                            XS
-                        </label>
-                        <input type="text" id="txt_new_xs" autocomplete="on" required>
-                    </div>
-
-
-                    <!-- S -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_s">
-                            S
-                        </label>
-                        <input type="text" id="txt_new_s" autocomplete="on" required>
-                    </div>
+                    <div class="input_grid">
+                        <!-- XS -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_xs">
+                                XS
+                            </label>
+                            <input type="text" id="txt_new_xs" autocomplete="on" required>
+                        </div>
 
 
-                    <!-- M -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_m">
-                            M
-                        </label>
-                        <input type="text" id="txt_new_m" autocomplete="on" required>
-                    </div>
+                        <!-- S -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_s">
+                                S
+                            </label>
+                            <input type="text" id="txt_new_s" autocomplete="on" required>
+                        </div>
 
 
-                    <!-- L -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_l">
-                            L
-                        </label>
-                        <input type="text" id="txt_new_l" autocomplete="on" required>
-                    </div>
+                        <!-- M -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_m">
+                                M
+                            </label>
+                            <input type="text" id="txt_new_m" autocomplete="on" required>
+                        </div>
 
 
-                    <!-- XL -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_xl">
-                            XL
-                        </label>
-                        <input type="text" id="txt_new_xl" autocomplete="on" required>
-                    </div>
+                        <!-- L -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_l">
+                                L
+                            </label>
+                            <input type="text" id="txt_new_l" autocomplete="on" required>
+                        </div>
 
 
-                    <!-- 2XL -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_2xl">
-                            2XL
-                        </label>
-                        <input type="text" id="txt_new_2xl" autocomplete="on" required>
-                    </div>
+                        <!-- XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_xl">
+                                XL
+                            </label>
+                            <input type="text" id="txt_new_xl" autocomplete="on" required>
+                        </div>
 
 
-                    <!-- 3XL -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_3xl">
-                            3XL
-                        </label>
-                        <input type="text" id="txt_new_3xl" autocomplete="on" required>
-                    </div>
+                        <!-- 2XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_2xl">
+                                2XL
+                            </label>
+                            <input type="text" id="txt_new_2xl" autocomplete="on" required>
+                        </div>
 
 
-                    <!-- 4XL -->
-                    <div class="input_pos_form">
-                        <label for="lbl_po_4xl">
-                            4XL
-                        </label>
-                        <input type="text" id="txt_new_3xl" autocomplete="on" required>
+                        <!-- 3XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_3xl">
+                                3XL
+                            </label>
+                            <input type="text" id="txt_new_3xl" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- 4XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_4xl">
+                                4XL
+                            </label>
+                            <input type="text" id="txt_new_3xl" autocomplete="on" required>
+                        </div>
                     </div>
                 </div>
 
+                <div class="input_grid">
+                    <!-- T.Units RQSTD -->
+                    <div class="input_pos_form">
+                        <label for="lbl_rqstd">
+                            T.Units RQSTD
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_new_rqstd" placeholder="Ingrese RQSTD" autocomplete="off" required>
+                        <small class="error_input_po" id="error_new_rqstd" hidden></small>
+                    </div>
 
-                <!-- T.Units RQSTD -->
-                <div class="input_pos_form">
-                    <label for="lbl_create_rqstd">
-                        T.Units RQSTD
-                        <span class="required_field">*</span>
-                    </label>
-                    <input type="text" id="txt_new_rqstd" placeholder="Ingrese rqstd" autocomplete="off" required>
-                    <small class="error_input_po" id="error_new_rqstd" hidden></small>
-                </div>
-
-                <!-- T.Units DELVD -->
-                <div class="input_pos_form">
-                    <label for="lbl_create_delvd">
-                        T.Units DELVD
-                        <span class="required_field">*</span>
-                    </label>
-                    <input type="text" id="txt_new_delvd" placeholder="Ingrese delvd" autocomplete="off" required>
-                    <small class="error_input_po" id="error_new_delvd" hidden></small>
+                    <!-- T.Units DELVD -->
+                    <div class="input_pos_form">
+                        <label for="lbl_rqstd">
+                            T.Units DELVD
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_new_delvd" placeholder="Ingrese DELVD" autocomplete="off" required>
+                        <small class="error_input_po" id="error_new_delvd" hidden></small>
+                    </div>
                 </div>
 
 
@@ -378,6 +382,291 @@
     <!-------------------------------------------------------------------------------------------------------- -->
     <!------------------------------- BLOQUE: Formulario Botón Editar   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
+
+    <div id="edit_pos_js" class="pos_modal_overlay" hidden>
+
+        <!-- Cuadro central -->
+        <div class="pos_modal_css pos_modal_large" role="dialog" aria-modal="true" aria-labelledby="edit_pos_title">
+
+            <!-- Encabezado -->
+            <div class="pos_modal_header">
+
+                <h2 id="edit_modal_title">
+                    Editar PO
+                </h2>
+
+                <!-- Botón X  -->
+                <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="form_edit_pos" class="pos_form" novalidate>
+
+                <div class="input_grid"> <!-- Primera agrupación -->
+
+                    <!-- PO -->
+                    <div class="input_pos_form">
+                        <label for="lbl_edit_po">
+                            PO
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_edit_po" placeholder="Ingresar PO" autocomplete="off" required>
+                        <small class="error_input_po" id="error_edit_po" hidden></small>
+                    </div>
+
+
+                    <!-- Modelo -->
+                    <div class="input_pos_form">
+                        <label for="lbl_edit_model">
+                            Modelo
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_edit_model" placeholder="Ingrese modelo" autocomplete="on" required>
+                        <small class="error_input_po" id="error_edit_model" hidden></small>
+                    </div>
+
+
+                    <!-- Artículo -->
+                    <div class="input_pos_form">
+                        <label for="lbl_edit_art">
+                            Artículo
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_edit_art" placeholder="Ingrese artículo" autocomplete="on" required>
+                        <small class="error_input_po" id="error_edit_art" hidden></small>
+                    </div>
+
+                    <!-- Color -->
+                    <div class="input_pos_form">
+                        <label for="lbl_edit_color">
+                            Color
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_edit_color" placeholder="Ingrese color" autocomplete="on" required>
+                        <small class="error_input_po" id="error_edit_color" hidden></small>
+                    </div>
+                </div>
+
+                <div class="input_size">
+
+                    <!-- Tallas  -->
+                    <label for="lbl_size">
+                        Talla
+                        <span class="pos_required">*</span>
+                    </label>
+
+                    <div class="input_grid">
+                        <!-- XS -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_xs">
+                                XS
+                            </label>
+                            <input type="text" id="txt_edit_xs" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- S -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_s">
+                                S
+                            </label>
+                            <input type="text" id="txt_edit_s" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- M -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_m">
+                                M
+                            </label>
+                            <input type="text" id="txt_edit_m" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- L -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_l">
+                                L
+                            </label>
+                            <input type="text" id="txt_edit_l" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_xl">
+                                XL
+                            </label>
+                            <input type="text" id="txt_edit_xl" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- 2XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_2xl">
+                                2XL
+                            </label>
+                            <input type="text" id="txt_edit_2xl" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- 3XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_3xl">
+                                3XL
+                            </label>
+                            <input type="text" id="txt_edit_3xl" autocomplete="on" required>
+                        </div>
+
+
+                        <!-- 4XL -->
+                        <div class="input_pos_form">
+                            <label for="lbl_po_4xl">
+                                4XL
+                            </label>
+                            <input type="text" id="txt_edit_3xl" autocomplete="on" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input_grid">
+
+                    <!-- T.Units RQSTD -->
+                    <div class="input_pos_form">
+                        <label for="lbl_rqstd">
+                            T.Units RQSTD
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_edit_rqstd" placeholder="Ingrese RQSTD" autocomplete="off" required>
+                        <small class="error_input_po" id="error_edit_rqstd" hidden></small>
+                    </div>
+
+                    <!-- T.Units DELVD -->
+                    <div class="input_pos_form">
+                        <label for="lbl_rqstd">
+                            T.Units DELVD
+                            <span class="pos_required">*</span>
+                        </label>
+                        <input type="text" id="txt_edit_delvd" placeholder="Ingrese DELVD" autocomplete="off" required>
+                        <small class="error_input_po" id="error_edit_delvd" hidden></small>
+                    </div>
+                </div>
+
+
+                <!-- Botones del formulario  -->
+                <div class="btns_po">
+                    <button type="button" id="btn_cancel_po">
+                        Cancelar
+                    </button>
+                    <button type="submit" id="btn_save_po">
+                        <i class="bi bi-floppy-fill"></i>
+                        Guardar
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!----------------------------- BLOQUE: Formulario Botón Asignar Inspección   ---------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+
+
+
+<div id="modal_assign_inspection" class="pos_modal_overlay" hidden>
+
+    <div class="pos_modal_css">
+
+        <!-- ENCABEZADO -->
+        <div class="pos_modal_header">
+
+            <h2>Asignar inspección</h2>
+
+            <button type="button" class="pos_modal_close"
+                    aria-label="Cerrar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+
+        </div>
+
+        <!-- FORMULARIO -->
+        <form id="form_assign_inspection" novalidate>
+
+            <!-- PO SELECCIONADA -->
+            <div class="assign_inspection_group">
+
+                <label for="inspection_po">PO</label>
+
+                <input type="text"
+                       id="inspection_po"
+                       name="po"
+                       readonly>
+
+            </div>
+
+            <!-- TIPO DE INSPECCIÓN -->
+            <div class="assign_inspection_group">
+
+                <label for="inspection_type">
+                    Inspección <span class="pos_required">*</span>
+                </label>
+
+                <select id="inspection_type" name="inspection_type" required>
+                    <option value="">Seleccione una inspección</option>
+                </select>
+
+                <small class="pos_field_error"
+                       id="error_inspection_type" hidden></small>
+
+            </div>
+
+            <!-- CANTIDAD -->
+            <div class="assign_inspection_group">
+
+                <label>Cantidad:</label>
+
+                <span id="inspection_quantity">0</span>
+
+            </div>
+
+            <!-- DEFECTO -->
+            <div class="assign_inspection_group">
+
+                <label for="inspection_defect">Defecto:</label>
+
+                <input type="text"
+                       id="inspection_defect"
+                       name="defect">
+
+            </div>
+
+            <!-- BOTONES -->
+            <div class="btns_po">
+
+                <button type="button" id="btn_cancel_inspection"
+                        class="pos_modal_close">
+                    Cancelar
+                </button>
+
+                <button type="submit" id="btn_save_inspection">
+                    <i class="bi bi-floppy"></i>
+                    Guardar
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
 
 
 

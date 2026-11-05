@@ -1,7 +1,7 @@
 
-/* -------------------------------- BLOQUE: Encabezado ----------------------------------- */
+/* ------------------------- BLOQUE: Encabezado del Dashboard POS ----------------------------------- */
 
-/* Contenedor principal */
+/* Encabezado */
 .pos_header {
     display: flex;
     justify-content: space-between;
@@ -14,7 +14,7 @@
     box-sizing: border-box;
 }
 
-/* Icono y titulo */
+/* Distribución en pantalla: titulo */
 .pos_header_title {
     display: flex;
     align-items: center;
@@ -22,7 +22,7 @@
     min-width: 0;
 }
 
-/* Icono del modulo */
+/* Icono */
 .pos_header_title i {
     font-size: 45px;
     color: #0056b3;
@@ -36,9 +36,9 @@
     color: #142b49;
 }
 
-/* ----------------------- Botones de encabezado -----------------------------  */
+/* ----- Botones de encabezado ----- */
 
-/* Distribucion */
+/* Distribucion en pantalla */
 .pos_header_buttons {
     display: flex;
     align-items: center;
@@ -62,19 +62,20 @@
     cursor: pointer;
 }
 
-/* Cargar Excel */
+/* Botón Cargar Excel */
 .pos_btn_excel {
     background-color: white;
     border: 1px solid #0064d8;
     color: #0064d8;
 }
 
+/* Pasar cursor */
 .pos_btn_excel:hover {
     background-color: #003d80;
     color: white;
 }
 
-/* Crear */
+/* Botón Crear */
 .pos_btn_new {
     background-color: white;
     border: 1px solid #198754;
@@ -86,7 +87,7 @@
     color: white;
 }
 
-/* Editar */
+/* Botón Editar */
 .pos_btn_edit {
     background-color: white;
     border: 1px solid #ff7707;
@@ -98,7 +99,7 @@
     color: white;
 }
 
-/* Eliminar */
+/* Botón Eliminar */
 .pos_btn_delete {
     background-color: white;
     border: 1px solid #dc3545;
@@ -110,19 +111,18 @@
     color: white;
 }
 
-/* ------------- BLOQUE: Buscador, filtros y botones de asignación --------------------------- */
+
+/* ------------------------- BLOQUE: Buscador, filtros y botones de asignación --------------------------- */
 
 /* Contenedor general de dos filas */
 .pos_tools {
     display: flex;
     flex-direction: column;
     gap: 20px;
-
     width: 100%;
     min-width: 0;
     padding: 25px;
     margin-top: 15px;
-
     background-color: #ffffff;
     border-radius: 12px;
     box-sizing: border-box;
@@ -138,27 +138,24 @@
 
     align-items: end;
     gap: 20px;
-
     width: 100%;
     min-width: 0;
 }
 
-/* ----------------------------- Buscador -----------------------------  */
 
-/* Contenedor */
+/* ---------- Buscador ---------- */
+
+/* Distribución en pantalla */
 .pos_search {
     display: flex;
     align-items: center;
     gap: 12px;
-
     width: 100%;
     min-width: 0;
     height: 52px;
-
     border: 1px solid #cbdff8;
     border-radius: 40px;
     padding: 0 15px;
-
     box-sizing: border-box;
 }
 
@@ -174,11 +171,9 @@
     flex: 1;
     width: 100%;
     min-width: 0;
-
     border: none;
     outline: none;
     background: transparent;
-
     font-family: inherit;
     font-size: 14px;
     color: #142b49;
@@ -189,14 +184,14 @@
     border-color: #0056b3;
 }
 
-/* ----------------------------- Filtros -----------------------------  */
 
-/* Contenedor de cada filtro */
+/* ---------- Filtros ----------  */
+
+/* Distribución de cada filtro */
 .pos_filter {
     display: flex;
     flex-direction: column;
     gap: 6px;
-
     width: 100%;
     min-width: 0;
 }
@@ -208,8 +203,9 @@
     color: #142b49;
 }
 
-/* ----------------------- Menus desplegables -----------------------------  */
-/* Contenedor de icono y campo */
+
+/* ---------- Menus desplegables ----------- */
+
 .pos_dropdown {
     display: flex;
     align-items: center;
@@ -256,8 +252,10 @@
     border-color: #0056b3;
 }
 
-/* ------------------------- Botones de asignación  -----------------------------  */
-/* Hacer segunda fila */
+
+/* ---------- Botones de asignación (segunda fila) ---------- */
+
+/* Distribución en pantalla Botón Asignar inspección y Asignar usuario */
 .pos_assign {
     display: flex;
     align-items: center;
@@ -293,7 +291,7 @@
     font-size: 18px;
 }
 
-/* Asignar inspeccion */
+/* Botón Asignar inspeccion */
 .pos_type_inspection {
     background-color: #002d60;
     border: 1px solid #003d80;
@@ -305,12 +303,11 @@
     border-color: #2454a6;
 }
 
-/* Asignar usuario */
+/* Botón Asignar usuario */
 .pos_assign_user {
     background-color: #146c43;
     border: 1px solid #146c43;
     color: white;
-
 }
 
 .pos_assign_user:hover {
@@ -319,10 +316,9 @@
 }
 
 
-/* ==========================================
-   BLOQUE: CONTENEDOR DE TABLA
-========================================== */
+/* ------------------------------ BLOQUE: Tabla de PO'S ------------------------------ */
 
+/* Distribución en pantalla */
 .pos_table_section {
     width: 100%;
     min-width: 0;
@@ -342,14 +338,10 @@
     border-radius: 8px;
 }
 
-/* ==========================================
-   TABLA DE PO'S
-========================================== */
-
+/* ------- Tabla ------- */
 .pos_table_css {
     width: 100%;
     min-width: 1900px;
-
     border-collapse: collapse;
     font-size: 13px;
     color: #142b49;
@@ -361,7 +353,6 @@
     padding: 12px 14px;
     border-bottom: 1px solid #dce5f0;
     border-right: 1px solid #dce5f0;
-
     text-align: center;
     white-space: nowrap;
 }
@@ -394,15 +385,11 @@
     cursor: pointer;
 }
 
-/* ==========================================
-   ESTADOS
-========================================== */
-
+/* ------ Diseño columa ESTADO ------ */
 .pos_status {
     display: inline-block;
     padding: 6px 12px;
     border-radius: 6px;
-
     font-size: 12px;
     font-weight: 600;
 }
@@ -431,25 +418,21 @@
     color: #166534;
 }
 
-/* ==========================================
-   PIE DE TABLA
-========================================== */
-
+/* ------------------------------ BLOQUE: Pie de tabla ------------------------------ */
 .pos_table_footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 15px;
 
+    /* Label */
     padding: 20px 5px 5px;
     color: #142b49;
     font-size: 13px;
 }
 
-/* ==========================================
-   PAGINACIÓN
-========================================== */
 
+/* Paginación */
 .pos_pag {
     display: flex;
     gap: 8px;
@@ -458,11 +441,9 @@
 .pos_pag button {
     min-width: 36px;
     height: 36px;
-
     border: 1px solid #cbdff8;
     border-radius: 7px;
     background-color: white;
-
     color: #142b49;
     cursor: pointer;
 }
@@ -481,14 +462,11 @@
     cursor: not-allowed;
 }
 
-/* ==========================================
-   BOTÓN GUARDAR
-========================================== */
 
-.pos_save_container {
+/* --- Botón Guardar --- */
+.btn_pos_save {
     display: flex;
     justify-content: center;
-
     width: 100%;
     margin-top: 25px;
     padding: 15px;
@@ -519,34 +497,10 @@
     border-color: #2454a6;
 }
 
-/* ==========================================
-   RESPONSIVE DE TABLA
-========================================== */
 
-@media (max-width: 600px) {
+/* ---------------------------------- BLOQUE: FORMULARIO CREAR y EDITAR PO --------------------------- */
 
-    .pos_table_section {
-        padding: 10px;
-    }
-
-    .pos_table_footer {
-        flex-wrap: wrap;
-    }
-
-    .pos_save_container {
-        padding: 10px;
-    }
-
-    #btn_save_pos {
-        width: 100%;
-    }
-}
-
-
-/* ---------------------------------- BLOQUE: FORMULARIO CREAR PO --------------------------- */
-
-
-/* Fondo */
+/* Fondo del formulario */
 .pos_modal_overlay {
     position: fixed;
     inset: 0;
@@ -567,12 +521,9 @@
 }
 
 
-/* ==========================================
-   NUEVO USUARIO - CUADRO CENTRAL
-========================================== */
-
+/* Cuadro central */
 .pos_modal_css {
-    width: 100%;
+    width: 90%;
     max-width: 700px;
     max-height: 90vh;
     overflow-y: auto;
@@ -580,21 +531,22 @@
     border-radius: 12px;
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
     color: #092b60;
+    box-sizing: border-box;
 }
 
 
-/* ==========================================
-   NUEVO USUARIO - ENCABEZADO
-========================================== */
-
+/* ------------ Encabezado ------------ */
 .pos_modal_header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    width: 100%;
     padding: 20px 25px;
     border-bottom: 1px solid #dce6f2;
+    box-sizing: border-box;
 }
 
+/* Título del modal */
 .pos_modal_header h2 {
     margin: 0;
     font-size: 21px;
@@ -602,7 +554,7 @@
     color: #092b60;
 }
 
-/* Botón cerrar */
+/* Botón cerrar X */
 #btn_x_modal {
     border: none;
     background: transparent;
@@ -616,99 +568,58 @@
 }
 
 
-/* ==========================================
-   NUEVO USUARIO - FORMULARIO
-========================================== */
-
-#form_create_pos {
-    padding: 25px;
-}
-
-.create_pos_form {
-    margin-bottom: 18px;
-}
-
-.create_pos_form label {
-    display: block;
-    margin-bottom: 7px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #092b60;
-}
-
-
-/* ==========================================
-   DISTRIBUCIÓN DE CAMPOS DEL FORMULARIO
-========================================== */
-
-.pos_modal_css {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
-    width: 100%;
-}
-
-/* ==========================================
-   ESTILO DE CADA CAMPO
-========================================== */
-
-.create_pos_form {
+/* -------------- Formulario Crear y Editar ----------- */
+#form_create_pos, #form_edit_pos {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    min-width: 0;
-}
-
-.create_pos_form label {
-    font-size: 14px;
-    font-weight: 600;
-    color: #142b49;
-}
-
-.create_pos_form input,
-.create_pos_form select {
     width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #a9c5f5;
-    border-radius: 7px;
+    padding: 25px;
+    gap: 22px;
     box-sizing: border-box;
 }
 
-.pos_modal_overlay[hidden] {
-    display: none;
-}
 
-/* ==========================================
-   ADAPTACIÓN A PANTALLAS PEQUEÑAS
-========================================== */
-
-@media (max-width: 900px) {
-    .pos_modal_css {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 600px) {
-    .pos_modal_css {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-
-/* Campos obligatorios */
-.create_pos_form .required_field {
-    color: #dc3545;
-}
-
-
-/* ==========================================
-   NUEVO USUARIO - INPUTS Y SELECTORES
-========================================== */
-
-.create_pos_form input,
-.create_pos_form select {
+/* Distribución en dos columnas para los inputs*/
+.input_grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+    row-gap: 18px;
     width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Label de los inputs sin negritas*/
+.input_pos_form label {
+    display: block;
+    margin: 0;
+
+    font-size: 14px;
+    font-weight: 400;
+    color: #092b60;
+}
+
+/*-------------- Agrupación de los inputs "Tallas" ---------------- */
+.input_size {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Título Talla en negritas */
+.input_size > label {
+    display: block;
+    margin: 0 0 15px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #092b60;
+}
+
+/* -------------- Distribución en pantalla para inputs ---------------- */
+.input_pos_form input {
+    display: block;
+    width: 100%;
+    min-width: 0;
     height: 44px;
     padding: 10px 14px;
     border: 1px solid #d4e1f0;
@@ -716,53 +627,53 @@
     outline: none;
     box-sizing: border-box;
     font-size: 14px;
+    font-weight: 400;
     color: #092b60;
     background-color: #ffffff;
 }
 
-.create_pos_form input:focus,
-.create_pos_form select:focus {
-    border-color: #0064d8;
-    box-shadow: 0 0 0 3px rgba(0, 100, 216, 0.12);
-}
 
-.create_pos_form input::placeholder {
+/* Placeholder de inputs */
+.input_pos_form input::placeholder {
     color: #8999ad;
 }
 
 
-/* ==========================================
-   NUEVO USUARIO - MENSAJES DE ERROR
-========================================== */
+/* Asterisco en rojo " * " para campos obligatorios */
+.pos_required {
+    color: #dc3545;
+}
+
+
+/* ------------------- Mensajes de error ------------- */
 
 .new_user_field_error {
     display: block;
     margin-top: 6px;
     padding: 8px 10px;
+
     border: 1px solid #f1b7bd;
     border-radius: 5px;
+
     background-color: #fde8ea;
     color: #b42332;
     font-size: 12px;
 }
 
-/* Ocultar mensajes cuando no hay error */
+/* Ocultar mensajes sin error */
 .new_user_field_error[hidden] {
     display: none;
 }
 
 /* Resaltar campos con errores */
-.create_pos_form input.input_error,
-.create_pos_form select.input_error {
+.input_pos_form input.input_error,
+.input_pos_form select.input_error {
     border-color: #dc3545;
     background-color: #fffafa;
 }
 
 
-/* ==========================================
-   NUEVO USUARIO - BOTONES
-========================================== */
-
+/* ------------------- Botones del formulario ------------- */
 .btns_po {
     display: flex;
     align-items: center;
@@ -771,6 +682,7 @@
     margin-top: 25px;
 }
 
+/* Estilo general de botones */
 .btns_po button {
     display: inline-flex;
     align-items: center;
@@ -783,7 +695,8 @@
     cursor: pointer;
 }
 
-/* Botón Cancelar */
+
+/* Botón Cancelar*/
 #btn_cancel_po {
     border: 1px solid #d4dce8;
     background-color: #e9edf3;
@@ -793,6 +706,7 @@
 #btn_cancel_po:hover {
     background-color: #dce4ee;
 }
+
 
 /* Botón Guardar */
 #btn_save_po {
@@ -811,8 +725,8 @@
 }
 
 
-/* ------------------------------------------------ BLOQUE: Navegación móvil --------------------------- */
 
+/* ------------------------------------------------ BLOQUE: Navegación móvil --------------------------- */
 
 /* --------------- Navegación con teclado ------------  */
 
@@ -866,5 +780,86 @@
         grid-column: auto;
     }
 }
+
+/* ----- Tabla ----- */
+@media (max-width: 600px) {
+
+    .pos_table_section {
+        padding: 10px;
+    }
+
+    .pos_table_footer {
+        flex-wrap: wrap;
+    }
+
+    .btn_pos_save {
+        padding: 10px;
+    }
+
+    #btn_save_pos {
+        width: 100%;
+    }
+
+    /* Formulario Celulares */
+    .pos_modal_overlay {
+        padding: 10px;
+    }
+
+    .pos_modal_css {
+        width: 100%;
+        max-height: 90vh;
+    }
+
+    .pos_modal_header {
+        padding: 15px;
+    }
+
+    .pos_modal_header h2 {
+        font-size: 18px;
+    }
+
+    #form_create_pos {
+        padding: 15px;
+        gap: 18px;
+    }
+
+    /* Una columna para los inputs */
+    .input_grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    /* Título Talla */
+    .input_size > label {
+        font-size: 15px;
+    }
+
+    /* Botones */
+    .btns_po,
+    .pos_form_actions {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
+
+/* Formulario Tablets*/
+@media (max-width: 900px) {
+
+    .pos_modal_css {
+        width: 95%;
+        max-width: 650px;
+    }
+
+    #form_create_pos {
+        padding: 20px;
+        gap: 18px;
+    }
+
+    .input_grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+}
+
 
 
