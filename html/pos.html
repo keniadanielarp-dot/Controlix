@@ -17,7 +17,7 @@
             <!-- Campo para seleccionar archivos Excel -->
             <input type="file" id="file_pos_excel" accept=".xlsx,.xls" hidden>
 
-            <!-- Botón visual para abrir el explorador -->
+            <!-- Botón Cargar Excel -->
             <label for="file_pos_excel" id="btn_load_excel" class="pos_btn pos_btn_excel" role="button" tabindex="0">
                 <i class="bi bi-upload"></i>
                 Cargar Excel
@@ -151,21 +151,128 @@
                         <th>T.Units RQSTD</th>
                         <th>T. Units DELVD</th>
                         <th>Usuario asignado</th>
-                        <th>Fecha de asignación</th>
                         <th>Estado</th>
                         <th>Tipo de inspección</th>
-                        <th>Fecha</th>
+
+                        <!-- Fecha ícono -->
+                        <td>
+                            <button type="button" class="btn_po_dates" data-id-po="1" aria-label="Ver fechas de PO">
+                                <i class="bi bi-calendar3"></i>
+                            </button>
+                        </td>
                     </tr>
                 </thead>
 
                 <!-- Registros cargados desde Excel -->
                 <tbody id="pos_table_excel">
-
                 </tbody>
             </table>
         </div>
 
-        <!--------------------------------------------------- BLOQUE: Pie de tabla  ------------------------------------------------>
+
+
+
+        <!-------------------------------------------------------------------------------------------------------- -->
+        <!------------------------------- BLOQUE: Modal FECHAS DE PO --------------------------------------------- -->
+        <!-------------------------------------------------------------------------------------------------------- -->
+        <div id="dates_po_js" class="pos_modal_overlay" hidden>
+
+            <div class="po_dates_modal" role="dialog" aria-modal="true" aria-labelledby="po_dates_title">
+
+                <!-- Encabezado -->
+                <div class="po_dates_header">
+                    <h2 id="po_dates_title">Detalle de PO</h2>
+
+                    <!-- Botón X -->
+                    <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+
+                <!-- Información de la PO -->
+                <div class="po_dates_info">
+
+                    <div class="po_dates_info_item">
+                        <span>PO</span>
+                        <strong id="detail_po_number">—</strong>
+                    </div>
+
+                    <div class="po_dates_info_item">
+                        <span>Usuario asignado</span>
+                        <strong>
+                            <i class="bi bi-person-circle"></i>
+                            <span id="detail_po_user">—</span>
+                        </strong>
+                    </div>
+                </div>
+
+
+                <!-- Fechas del trabajo -->
+                <h3 class="po_dates_subtitle">Fechas del trabajo</h3>
+                <div class="po_dates_grid">
+
+                    <div class="po_date_item">
+                        <span>Fecha de asignación</span>
+                        <strong id="detail_date_assign">—</strong>
+                    </div>
+
+                    <div class="po_date_item">
+                        <span>Fecha de inicio</span>
+                        <strong id="detail_date_start">—</strong>
+                    </div>
+
+                    <div class="po_date_item">
+                        <span>Fecha de finalización</span>
+                        <strong id="detail_date_end">—</strong>
+                    </div>
+                </div>
+
+                <!-- Historial de Inspecciones -->
+                <section class="po_inspections_section">
+                    <div class="po_inspections_header">
+                        <h3>Historial de inspecciones</h3>
+
+                        <span id="po_inspections_count">
+                            0 inspecciones
+                        </span>
+                    </div>
+
+                    <div class="po_inspections_scroll">
+                        <table class="po_inspections_table">
+
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tipo de inspección</th>
+                                    <th>Inspector</th>
+                                    <th>Fecha y hora</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="po_inspections_body">
+                                <tr>
+                                    <td colspan="4">
+                                        No hay inspecciones registradas.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Botón cerrar -->
+                <div class="btns_po">
+                    <button type="button" id="btn_cancel_po">
+                        Cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!---------------------------------- BLOQUE: Pie de tabla  ------------------------------------------------>
         <!-- Label Total -->
         <div class="pos_table_footer">
             <span>Total de registros: null </span>
@@ -191,13 +298,14 @@
     </section>
 
 
-    <!--------------------------------------------------- BLOQUE: Botón Guardar   ------------------------------------------------>
+    <!-------------------------------- BLOQUE: Botón Guardar   ------------------------------------------------>
     <div class="btn_pos_save">
         <button type="button" id="btn_save_pos">
             <i class="bi bi-database-check"></i>
             Guardar
         </button>
     </div>
+
 
 
     <!-------------------------------------------------------------------------------------------------------- -->
@@ -581,63 +689,195 @@
 
 
 
-    <!-- ==========================================
-     MODAL CONFIRMAR ELIMINACIÓN DE USUARIO
-        ========================================== -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Botón Eliminar   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
 
-    <div id="delete_po_js" class="delete_user_modal_overlay" hidden>
+    <div id="delete_po_js" class="delete_modal_overlay" hidden>
 
-        <div class="delete_user_modal" role="alertdialog" aria-modal="true" aria-labelledby="delete_user_title"
+        <div class="delete_pos_modal" role="alertdialog" aria-modal="true" aria-labelledby="delete_pos_title"
             aria-describedby="delete_user_message">
 
-            <!-- ENCABEZADO Y BOTÓN CERRAR -->
-            <div class="delete_user_modal_header">
-
-                <button type="button" id="btn_close_delete_user" aria-label="Cerrar ventana">
-
+            <!-- Encabezado -->
+            <div class="delete_modal_header">
+                <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
                     <i class="bi bi-x-lg"></i>
-
                 </button>
-
             </div>
 
-            <!-- ÍCONO DE ADVERTENCIA -->
-            <div class="delete_user_icon">
-
+            <!-- Ícono -->
+            <div class="delete_icon_po">
                 <i class="bi bi-exclamation-circle-fill"></i>
-
             </div>
 
-            <!-- MENSAJE DE CONFIRMACIÓN -->
-            <h2 id="delete_user_title">
-                ¿Eliminar usuario?
+            <!-- Titulo -->
+            <h2 id="delete_po_title">
+                ¿Eliminar PO(S)?
             </h2>
 
-            <p id="delete_user_message">
-                ¿Estás seguro de que deseas eliminar
-                el usuario seleccionado?
+            <p id="delete_po_msg">
+                ¿Estás seguro de que deseas eliminar la PO seleccionada?
             </p>
 
-            <!-- BOTONES -->
-            <div class="delete_user_modal_actions">
+            <!-- Botones -->
+            <div class="btn_delete_po">
 
-                <button type="button" id="btn_cancel_delete_user">
+                <button type="button" id="btn_cancel_po">
                     Cancelar
                 </button>
 
-                <button type="button" id="btn_confirm_delete_user">
-
+                <button type="button" id="btn_confirm_delete">
                     <i class="bi bi-trash-fill"></i>
                     Eliminar
-
                 </button>
-
             </div>
-
         </div>
-
     </div>
 
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Botón Asignar inspección   ------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="assign_ins_js" class="pos_modal_overlay" hidden>
+        <div class="pos_modal_css">
+
+            <!-- Encabezado -->
+            <div class="pos_modal_header">
+                <h2>Asignar inspección</h2>
+
+                <button type="button" class="pos_modal_close" id="btn_x_modal" aria-label="Cerrar">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="form_assign_ins" novalidate>
+
+                <!-- PO y cantidad en una sola fila -->
+                <div class="row_po_info">
+
+                    <!-- Po seleccionada -->
+                    <div class="pos_form_group inspection_po_group">
+                        <label for="inspection_po">PO</label>
+                        <input type="text" id="inspection_po" name="po" readonly>
+                    </div>
+
+                    <!-- Cantidad -->
+                    <div class="pos_form_group inspection_quantity_group">
+                        <label>Cantidad</label>
+                        <span id="inspection_quantity">0</span>
+                    </div>
+                </div>
+
+                <!-- Tipo de inspección -->
+                <div class="pos_form_group">
+                    <label for="inspection_type">
+                        Tipo de inspección
+                        <span class="pos_required">*</span>
+                    </label>
+
+                    <select id="inspection_type" name="inspection_type" required>
+                        <option value="">
+                            Seleccione una inspección
+                        </option>
+                    </select>
+                    <small id="error_inspection_type" class="field_error" hidden></small>
+                </div>
+
+
+                <!-- Defecto -->
+                <div class="pos_form_group">
+                    <label for="inspection_defect">Defecto</label>
+                    <input type="text" id="inspection_defect" name="defect">
+                </div>
+
+
+                <!-- Botones -->
+                <div class="btns_po">
+                    <button type="button" id="btn_cancel_po">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" id="btn_save_inspection">
+                        Guardar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Botón Asignar Usuario   ------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="asing_user_js" class="pos_modal_overlay" hidden>
+        <div class="assign_user_modal">
+
+            <!-- Encabezado -->
+            <div class="pos_modal_header">
+                <h2>Asignar usuario</h2>
+
+                <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="form_assign_user" novalidate>
+
+                <!-- Asignación masiva -->
+                <div class="assign_user_bulk">
+
+                    <label for="bulk_user">
+                        Asignación masiva:
+                    </label>
+                    <select id="bulk_user">
+                        <option value="">Seleccione un usuario</option>
+                    </select>
+
+                    <button type="button" id="btn_apply_user">
+                        <i class="bi bi-person-plus-fill"></i>
+                        Aplicar
+                    </button>
+                </div>
+
+
+                <!-- Tabla de PO -->
+                <div class="assign_user_table_scroll">
+                    <table class="assign_user_table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="select_all_assign">
+                                </th>
+                                <th>PO</th>
+                                <th>Model #</th>
+                                <th>Art #</th>
+                                <th>Color</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="assign_user_table_body">
+                            <!-- Las filas se cargarán con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Botones -->
+                <div class="btns_po">
+                    <button type="button" id="btn_cancel_po">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" id="btn_save_assign_user">
+                        Guardar asignación
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 
 

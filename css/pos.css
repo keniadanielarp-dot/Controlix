@@ -418,6 +418,219 @@
     color: #166534;
 }
 
+
+/* ------------------------- BLOQUE: Botón Fecha Detalle de PO --------------------------- */
+.btn_po_dates {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #142b49;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* Ícono blanco */
+.btn_po_dates i {
+    color: #ffffff;
+}
+
+/* Efecto al pasar el cursor */
+.btn_po_dates:hover {
+    background-color: #2454a6;
+}
+
+/* Accesibilidad */
+.btn_po_dates:focus-visible {
+    outline: 2px solid #2454a6;
+    outline-offset: 3px;
+}
+
+
+/* ----- Modal Fechas ----- */
+
+/* Ventana principal */
+.po_dates_modal {
+    background: #ffffff;
+    width: 100%;
+    max-width: 850px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Encabezado */
+
+.po_dates_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.po_dates_header h2 {
+    margin: 0;
+    color: #142b49;
+    font-size: 23px;
+    font-weight: 700;
+}
+
+
+/* Información de la PO */
+
+.po_dates_info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid #d8def0;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 25px;
+}
+
+.po_dates_info_item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 15px;
+}
+
+.po_dates_info_item:first-child {
+    border-right: 1px solid #d8def0;
+}
+
+.po_dates_info_item > span {
+    color: #34476c;
+    font-size: 14px;
+}
+
+.po_dates_info_item strong {
+    color: #142b49;
+    font-size: 19px;
+}
+
+.po_dates_info_item strong i {
+    margin-right: 7px;
+}
+
+
+/* Fechas del trabajo*/
+
+.po_dates_subtitle {
+    color: #142b49;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.po_dates_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.po_date_item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: #f1f2fc;
+    border: 1px solid #e0e2f2;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.po_date_item span {
+    color: #34476c;
+    font-size: 13px;
+}
+
+.po_date_item strong {
+    color: #142b49;
+    font-size: 17px;
+}
+
+
+/* Hiatorial de inspecciones */
+
+.po_inspections_section {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #d8def0;
+}
+
+.po_inspections_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.po_inspections_header h3 {
+    margin: 0;
+    color: #142b49;
+    font-size: 19px;
+    font-weight: 600;
+}
+
+/* Contador */
+#po_inspections_count {
+    background: #eee5ff;
+    color: #2323c6;
+    border-radius: 20px;
+    padding: 7px 15px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* Contenedor con desplazamiento vertical */
+.po_inspections_scroll {
+    max-height: 240px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border: 1px solid #d8def0;
+    border-radius: 10px;
+}
+
+/* Tabla */
+.po_inspections_table {
+    width: 100%;
+    min-width: 600px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.po_inspections_table th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: #142b49;
+    color: #ffffff;
+    padding: 12px;
+    text-align: center;
+}
+
+.po_inspections_table td {
+    padding: 12px;
+    text-align: center;
+    color: #142b49;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.po_inspections_table tbody tr:nth-child(even) {
+    background: #eaf2ff;
+}
+
+
+
 /* ------------------------------ BLOQUE: Pie de tabla ------------------------------ */
 .pos_table_footer {
     display: flex;
@@ -716,11 +929,9 @@
 }
 
 
-/* ==========================================
-   ELIMINAR USUARIO - FONDO DEL MODAL
-========================================== */
 
-.delete_user_modal_overlay {
+/* ---------------------------------- BLOQUE: ELIMINAR PO  --------------------------- */
+.delete_modal_overlay {
     position: fixed;
     inset: 0;
     width: 100%;
@@ -735,16 +946,13 @@
 }
 
 /* Mantener el modal oculto inicialmente */
-.delete_user_modal_overlay[hidden] {
+.delete_modal_overlay[hidden] {
     display: none;
 }
 
 
-/* ==========================================
-   ELIMINAR USUARIO - CUADRO CENTRAL
-========================================== */
-
-.delete_user_modal {
+/* ------------------- Cuadro central ------------- */
+.delete_pos_modal {
     width: 100%;
     max-width: 420px;
     padding: 20px 25px 25px;
@@ -757,38 +965,20 @@
 }
 
 /* Ocultar modal */
-#delete_user_modal[hidden] {
+#delete_pos_modal[hidden] {
     display: none !important;
 }
 
 
-/* ==========================================
-   ELIMINAR USUARIO - BOTÓN CERRAR
-========================================== */
-
-.delete_user_modal_header {
+/* ------------------- Botón " x " cerrar ------------- */
+.delete_modal_header {
     display: flex;
     justify-content: flex-end;
 }
 
-#btn_close_delete_user {
-    border: none;
-    background: transparent;
-    color: #526789;
-    font-size: 18px;
-    cursor: pointer;
-}
 
-#btn_close_delete_user:hover {
-    color: #dc3545;
-}
-
-
-/* ==========================================
-   ELIMINAR USUARIO - ÍCONO DE ADVERTENCIA
-========================================== */
-
-.delete_user_icon {
+/* ------------------- Ícono  ------------- */
+.delete_icon_po {
     margin-bottom: 15px;
     color: #f28c00;
     font-size: 55px;
@@ -796,18 +986,15 @@
 }
 
 
-/* ==========================================
-   ELIMINAR USUARIO - TÍTULO Y MENSAJE
-========================================== */
-
-.delete_user_modal h2 {
+/* -----------------Título y mensaje  ------------- */
+.delete_pos_modal h2 {
     margin: 0 0 12px;
     color: #092b60;
     font-size: 22px;
     font-weight: 700;
 }
 
-.delete_user_modal p {
+.delete_pos_modal p {
     margin: 0 0 25px;
     color: #526789;
     font-size: 15px;
@@ -815,18 +1002,15 @@
 }
 
 
-/* ==========================================
-   ELIMINAR USUARIO - BOTONES
-========================================== */
-
-.delete_user_modal_actions {
+/* ------------------- Botones  ------------- */
+.btn_delete_po {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
 }
 
-.delete_user_modal_actions button {
+.btn_delete_po button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -839,59 +1023,315 @@
     cursor: pointer;
 }
 
-/* Botón Cancelar */
-#btn_cancel_delete_user {
-    border: 1px solid #d4dce8;
-    background-color: #e9edf3;
-    color: #092b60;
-}
-
-#btn_cancel_delete_user:hover {
-    background-color: #dce4ee;
-}
-
-/* Botón Eliminar */
-#btn_confirm_delete_user {
+/* Botón Confirmar eliminar */
+#btn_confirm_delete {
     border: 1px solid #dc3545;
     background-color: #dc3545;
     color: #ffffff;
 }
 
-#btn_confirm_delete_user:hover {
+#btn_confirm_delete:hover {
     background-color: #b42332;
 }
 
-#btn_confirm_delete_user:disabled {
+#btn_confirm_delete:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
 
-/* ==========================================
-   ELIMINAR USUARIO - DISEÑO RESPONSIVO
-========================================== */
 
-@media (max-width: 600px) {
-
-    .delete_user_modal_overlay {
-        padding: 12px;
-    }
-
-    .delete_user_modal {
-        max-width: 100%;
-        padding: 16px;
-    }
-
-    .delete_user_modal h2 {
-        font-size: 19px;
-    }
-
-    .delete_user_modal_actions button {
-        padding: 10px 12px;
-        font-size: 13px;
-    }
-
+/* ------------------------------- BLOQUE: MODAL ASIGNAR INSPECCION  --------------------------- */
+/* Fondo oscuro del modal */
+.pos_modal_overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
 }
+
+/* Mantener oculto el modal */
+.pos_modal_overlay[hidden] {
+    display: none;
+}
+
+/* Contenedor principal */
+.pos_modal_css {
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 480px;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Encabezado */
+.pos_modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.pos_modal_header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #142b49;
+    margin: 0;
+}
+
+
+/* Campos del formulario */
+#form_assign_ins {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+#form_assign_ins .pos_form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#form_assign_ins .pos_form_group label {
+    color: #142b49;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* Inputs y select */
+#form_assign_ins input,
+#form_assign_ins select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #334155;
+    font-size: 14px;
+    outline: none;
+}
+
+/* Campos seleccionados */
+#form_assign_ins input:focus,
+#form_assign_ins select:focus {
+    border-color: #2454a6;
+    box-shadow: 0 0 0 2px rgba(36, 84, 166, 0.12);
+}
+
+/* PO de solo lectura */
+#inspection_po[readonly] {
+    background-color: #f1f5f9;
+    color: #64748b;
+    cursor: default;
+}
+
+/* Cantidad informativa */
+#inspection_quantity {
+    color: #334155;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* Campos obligatorios */
+.pos_required {
+    color: #dc3545;
+}
+
+
+/* Botones del formulario */
+
+#form_assign_ins .btns_po {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+
+/* Botón Guardar */
+#btn_save_inspection {
+    background-color: #142b49;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_save_inspection:hover {
+    background-color: #2454a6;
+}
+
+
+/* PO y cantidad en una fila */
+
+/* Contenedor horizontal */
+#form_assign_ins .row_po_info {
+    display: grid;
+    grid-template-columns: 7fr 3fr;
+    gap: 15px;
+    align-items: start;
+}
+
+/* Evitar desbordamiento de los campos */
+#form_assign_ins .inspection_po_group,
+#form_assign_ins .inspection_quantity_group {
+    min-width: 0;
+}
+
+/* Cantidad con apariencia de campo informativo */
+#form_assign_ins #inspection_quantity {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 41px;
+    padding: 10px 12px;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    color: #334155;
+}
+
+
+
+/* ------------------------------- BLOQUE: MODAL ASIGNAR USUARIO  --------------------------- */
+.assign_user_modal {
+    background: #ffffff;
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Formulario */
+
+#form_assign_user {
+    padding: 25px;
+}
+
+.assign_user_bulk {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.assign_user_bulk label {
+    font-weight: 600;
+    color: #142b49;
+    white-space: nowrap;
+}
+
+#bulk_user {
+    flex: 1;
+    min-width: 180px;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    color: #334155;
+}
+
+#btn_apply_user {
+    background: #0866e9;
+    color: #ffffff;
+    border: none;
+    padding: 11px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_apply_user i {
+    margin-right: 7px;
+}
+
+#btn_apply_user:hover {
+    background: #0754c1;
+}
+
+/* ----- Tabla ----- */
+
+.assign_user_table_scroll {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.assign_user_table {
+    width: 100%;
+    min-width: 400px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.assign_user_table th {
+    background: #142b49;
+    color: #ffffff;
+    padding: 13px 10px;
+    text-align: center;
+}
+
+.assign_user_table td {
+    padding: 10px;
+    border-bottom: 1px solid #dbe4ef;
+    text-align: center;
+    color: #142b49;
+}
+
+.assign_user_table tbody tr:nth-child(even) {
+    background: #eaf2ff;
+}
+
+.assign_user_table input[type="checkbox"] {
+    width: 17px;
+    height: 17px;
+    accent-color: #0866e9;
+    cursor: pointer;
+}
+
+.assign_user_table select {
+    width: 100%;
+    min-width: 145px;
+    padding: 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    color: #142b49;
+}
+
+/* ----- Botones ----- */
+
+#btn_save_assign_user {
+    border: none;
+    border-radius: 6px;
+    padding: 11px 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_save_assign_user {
+    background: #142b49;
+    color: #ffffff;
+}
+
+#btn_save_assign_user:hover {
+    background: #2454a6;
+}
+
+
 
 
 /* ------------------------------------------------ BLOQUE: Navegación móvil --------------------------- */
@@ -1008,6 +1448,47 @@
         flex-wrap: wrap;
         gap: 10px;
     }
+
+    /* Eliminar PO */
+    .delete_modal_overlay {
+        padding: 12px;
+    }
+
+    .delete_pos_modal {
+        max-width: 100%;
+        padding: 16px;
+    }
+
+    .delete_pos_modal h2 {
+        font-size: 19px;
+    }
+
+    .btn_delete_po button {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    /* Fecha de PO */
+    .po_dates_info,
+    .po_dates_grid {
+        grid-template-columns: 1fr;
+    }
+
+    .po_dates_info_item:first-child {
+        border-right: none;
+        border-bottom: 1px solid #d8def0;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .po_dates_modal {
+        padding: 20px;
+    }
+
+    .po_inspections_header {
+        flex-wrap: wrap;
+    }
+
 }
 
 /* Formulario Tablets*/
@@ -1029,5 +1510,11 @@
     }
 }
 
+/* Adaptación a pantallas pequeñas */
+@media (max-width: 400px) {
 
+    #form_assign_ins .row_po_info {
+        grid-template-columns: 1fr;
+    }
 
+}
