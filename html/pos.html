@@ -153,13 +153,7 @@
                         <th>Usuario asignado</th>
                         <th>Estado</th>
                         <th>Tipo de inspección</th>
-
-                        <!-- Fecha ícono -->
-                        <td>
-                            <button type="button" class="btn_po_dates" data-id-po="1" aria-label="Ver fechas de PO">
-                                <i class="bi bi-calendar3"></i>
-                            </button>
-                        </td>
+                        <th>Fechas</th>
                     </tr>
                 </thead>
 
@@ -320,7 +314,7 @@
             <!-- Encabezado -->
             <div class="pos_modal_header">
 
-                <h2 id="edit_modal_title">
+                <h2 id="create_pos_title">
                     Crear PO
                 </h2>
 
@@ -391,8 +385,19 @@
                             <label for="lbl_po_xs">
                                 XS
                             </label>
-                            <input type="text" id="txt_new_xs" autocomplete="on" required>
+                            <input type="text" id="txt_new_xs" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
                         </div>
+
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_bxs">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_bxs" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
 
 
                         <!-- S -->
@@ -401,7 +406,18 @@
                                 S
                             </label>
                             <input type="text" id="txt_new_s" autocomplete="on" required>
+                            <small class="input_error" hidden></small>
                         </div>
+
+                         <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_bs">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_bs" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
 
 
                         <!-- M -->
@@ -410,7 +426,18 @@
                                 M
                             </label>
                             <input type="text" id="txt_new_m" autocomplete="on" required>
+                            <small class="input_error" hidden></small>
                         </div>
+
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_bm">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_bm" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
 
 
                         <!-- L -->
@@ -419,7 +446,18 @@
                                 L
                             </label>
                             <input type="text" id="txt_new_l" autocomplete="on" required>
+                            <small class="input_error" hidden></small>
                         </div>
+
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_bl">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_bl" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
 
 
                         <!-- XL -->
@@ -428,7 +466,18 @@
                                 XL
                             </label>
                             <input type="text" id="txt_new_xl" autocomplete="on" required>
+                            <small class="input_error" hidden></small>
                         </div>
+
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_bxl">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_bxl" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
 
 
                         <!-- 2XL -->
@@ -437,7 +486,18 @@
                                 2XL
                             </label>
                             <input type="text" id="txt_new_2xl" autocomplete="on" required>
+                            <small class="input_error" hidden></small>
                         </div>
+
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_b2xl">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_b2xl" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
 
 
                         <!-- 3XL -->
@@ -446,15 +506,36 @@
                                 3XL
                             </label>
                             <input type="text" id="txt_new_3xl" autocomplete="on" required>
+                            <small class="input_error" hidden></small>
                         </div>
 
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_b3xl">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_b3xl" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                        
 
                         <!-- 4XL -->
                         <div class="input_pos_form">
                             <label for="lbl_po_4xl">
                                 4XL
                             </label>
-                            <input type="text" id="txt_new_3xl" autocomplete="on" required>
+                            <input type="text" id="txt_new_4xl" autocomplete="on" required>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="lbl_pos_b4xl">
+                                Caja
+                            </label>
+                            <input type="text" id="txt_new_b4xl" autocomplete="off" required>
+                            <small class="input_error" hidden></small>
                         </div>
                     </div>
                 </div>
