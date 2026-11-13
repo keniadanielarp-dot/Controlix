@@ -530,7 +530,7 @@
 
 .po_dates_grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 15px;
 }
 
@@ -754,12 +754,6 @@
     display: none;
 }
 
-/* Resaltar los campos incorrectos */
-.pos_form input.input_error,
-.pos_form select.input_error {
-    border: 1px solid #dc3545;
-}
-
 
 
 /* ---------------------------------- BLOQUE: FORMULARIO CREAR y EDITAR PO --------------------------- */
@@ -819,7 +813,7 @@
 }
 
 /* Botón cerrar X */
-#btn_x_modal {
+.btn_x_modal {
     border: none;
     background: transparent;
     color: #526789;
@@ -827,7 +821,7 @@
     cursor: pointer;
 }
 
-#btn_x_modal:hover {
+.btn_x_modal:hover {
     color: #dc3545;
 }
 
@@ -953,33 +947,60 @@
 
 
 /* Botón Cancelar*/
-#btn_cancel_po {
+.btn_cancel_po {
     border: 1px solid #d4dce8;
     background-color: #e9edf3;
     color: #092b60;
 }
 
-#btn_cancel_po:hover {
+.btn_cancel_po:hover {
     background-color: #dce4ee;
 }
 
 
-/* Botón Guardar */
-#btn_save_po {
+/* Botón Guardar del formulario CREAR */
+#btn_save_create_pos {
     border: 1px solid #0064d8;
     background-color: #0064d8;
     color: #ffffff;
 }
 
-#btn_save_po:hover {
+#btn_save_create_pos:hover {
     background-color: #004ba8;
 }
 
-#btn_save_po:disabled {
+#btn_save_create_pos:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
+
+/* Botón Guardar del formulario EDITAR */
+#edit_pos_js #btn_save_edit_pos {
+    background-color: #0064d8;
+    color: #ffffff;
+    border: 1px solid #0064d8;
+
+    padding: 12px 25px;
+    border-radius: 8px;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#edit_pos_js #btn_save_edit_pos:hover {
+    background-color: #004ba8;
+    border-color: #004ba8;
+    color: #ffffff;
+}
+
+#edit_pos_js #btn_save_edit_pos:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 
 
 /* ---------------------------------- BLOQUE: ELIMINAR PO  --------------------------- */
@@ -1015,12 +1036,6 @@
     color: #092b60;
     box-sizing: border-box;
 }
-
-/* Ocultar modal */
-#delete_pos_modal[hidden] {
-    display: none !important;
-}
-
 
 /* ------------------- Botón " x " cerrar ------------- */
 .delete_modal_header {
@@ -1094,25 +1109,8 @@
 
 
 /* ------------------------------- BLOQUE: MODAL ASIGNAR INSPECCION  --------------------------- */
-/* Fondo oscuro del modal */
-.pos_modal_overlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
-}
-
-/* Mantener oculto el modal */
-.pos_modal_overlay[hidden] {
-    display: none;
-}
-
 /* Contenedor principal */
-.pos_modal_css {
+#assign_ins_js .pos_modal_css {
     background-color: #ffffff;
     width: 100%;
     max-width: 480px;
@@ -1124,14 +1122,14 @@
 }
 
 /* Encabezado */
-.pos_modal_header {
+#assign_ins_js .pos_modal_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 22px;
 }
 
-.pos_modal_header h2 {
+#assign_ins_js .pos_modal_header h2 {
     font-size: 20px;
     font-weight: 600;
     color: #142b49;
@@ -1192,12 +1190,6 @@
     font-weight: 600;
 }
 
-/* Campos obligatorios */
-.pos_required {
-    color: #dc3545;
-}
-
-
 /* Botones del formulario */
 
 #form_assign_ins .btns_po {
@@ -1252,6 +1244,42 @@
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     color: #334155;
+}
+
+/* Resultado de la inspección */
+.inspection_result {
+    padding: 12px 15px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.inspection_result[hidden] {
+    display: none;
+}
+
+/* Información del rango */
+.inspection_result_info {
+    background-color: #e8f2ff;
+    color: #142b49;
+}
+
+/* Aceptado */
+.inspection_result_accepted {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+/* Rechazado */
+.inspection_result_rejected {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* Dato inválido o fuera de tabla */
+.inspection_result_invalid {
+    background-color: #fff3cd;
+    color: #856404;
 }
 
 
@@ -1372,9 +1400,6 @@
     padding: 11px 20px;
     font-weight: 600;
     cursor: pointer;
-}
-
-#btn_save_assign_user {
     background: #142b49;
     color: #ffffff;
 }
@@ -1441,6 +1466,31 @@
     }
 }
 
+/* Formulario Tablets*/
+@media (max-width: 900px) {
+
+    .pos_modal_css {
+        width: 95%;
+        max-width: 650px;
+    }
+
+    #form_create_pos,
+    #form_edit_pos {
+        padding: 20px;
+        gap: 18px;
+    }
+
+    .input_grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    /* Fechas de PO en dos columnas */
+    .po_dates_grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 /* ----- Tabla ----- */
 @media (max-width: 600px) {
 
@@ -1478,7 +1528,8 @@
         font-size: 18px;
     }
 
-    #form_create_pos {
+    #form_create_pos,
+    #form_edit_pos {
         padding: 15px;
         gap: 18px;
     }
@@ -1495,8 +1546,7 @@
     }
 
     /* Botones */
-    .btns_po,
-    .pos_form_actions {
+    .btns_po {
         flex-wrap: wrap;
         gap: 10px;
     }
@@ -1543,25 +1593,6 @@
 
 }
 
-/* Formulario Tablets*/
-@media (max-width: 900px) {
-
-    .pos_modal_css {
-        width: 95%;
-        max-width: 650px;
-    }
-
-    #form_create_pos {
-        padding: 20px;
-        gap: 18px;
-    }
-
-    .input_grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 15px;
-    }
-}
-
 /* Adaptación a pantallas pequeñas */
 @media (max-width: 400px) {
 
@@ -1570,5 +1601,3 @@
     }
 
 }
-
-

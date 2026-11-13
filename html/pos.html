@@ -13,7 +13,6 @@
         <!-- Botones del encabezado -->
         <div class="pos_header_buttons">
 
-            <!-- Botón Cargar Excel -->
             <!-- Campo para seleccionar archivos Excel -->
             <input type="file" id="file_pos_excel" accept=".xlsx,.xls" hidden>
 
@@ -23,26 +22,26 @@
                 Cargar Excel
             </label>
 
-            <!-- Archivo Excel seleccionado -->
-            <input type="file" id="file_pos_excel" accept=".xlsx,.xls" hidden>
-
             <!-- Botón Crear -->
             <button type="button" id="btn_new_pos" class="pos_btn pos_btn_new">
                 <i class="bi bi-plus-lg"></i>
                 Crear
             </button>
 
+            <!-- Botón Editar -->
             <button type="button" id="btn_edit_pos" class="pos_btn pos_btn_edit">
                 <i class="bi bi-pencil-square"></i>
                 Editar
             </button>
 
+            <!-- Botón Eliminar -->
             <button type="button" id="btn_delete_pos" class="pos_btn pos_btn_delete">
                 <i class="bi bi-trash3"></i>
                 Eliminar
             </button>
         </div>
     </div>
+
 
     <!--------------- BLOQUE: Buscador, filtros y botones de asignación   ---------------------->
     <div class="pos_tools">
@@ -51,14 +50,13 @@
             <!-- Buscador de artículos -->
             <div class="pos_search">
                 <i class="bi bi-search"></i>
-                <input type="search" id="search_pos" placeholder="Buscar por ID, po's o modelo..." autocomplete="off">
+                <input type="search" id="search_pos" placeholder="Buscar por ID, po's o modelo..." autocomplete="off"
+                    aria-label="Buscar PO">
             </div>
 
             <!-- Filtro de mes y año -->
             <div class="pos_filter">
-                <label for="dpdn_pos_mounth">
-                    Mes
-                </label>
+                <label for="dpdn_pos_mounth">Mes</label>
 
                 <div class="pos_dropdown">
                     <i class="bi bi-calendar3"></i>
@@ -68,10 +66,7 @@
 
             <!-- Filtro por estado -->
             <div class="pos_filter">
-
-                <label for="options_pos_status">
-                    Estado
-                </label>
+                <label for="options_pos_status">Estado</label>
 
                 <div class="pos_dropdown">
                     <i class="bi bi-layers"></i>
@@ -87,10 +82,7 @@
 
             <!-- Filtro por usuario asignado -->
             <div class="pos_filter">
-
-                <label for="options_user_assing">
-                    Usuario asignado
-                </label>
+                <label for="options_user_assing">Usuario asignado</label>
 
                 <div class="pos_dropdown">
                     <i class="bi bi-person"></i>
@@ -120,7 +112,6 @@
 
 
     <!--------------------------------------------------- BLOQUE: Tabla Po's  ------------------------------------------------>
-
     <section class="pos_table_section">
 
         <!-- Desplazamiento horizontal -->
@@ -132,9 +123,8 @@
                 <thead>
                     <tr>
                         <th>
-                            <input type="checkbox" id="select_all_pos" aria-label="Seleccionar todos">
+                            <input type="checkbox" id="select_all_pos" aria-label="Seleccionar todas las PO">
                         </th>
-
                         <th>ID</th>
                         <th>Po's Adidas</th>
                         <th>Model #</th>
@@ -149,7 +139,7 @@
                         <th>3XL</th>
                         <th>4XL</th>
                         <th>T.Units RQSTD</th>
-                        <th>T. Units DELVD</th>
+                        <th>T.Units DELVD</th>
                         <th>Usuario asignado</th>
                         <th>Estado</th>
                         <th>Tipo de inspección</th>
@@ -158,118 +148,15 @@
                 </thead>
 
                 <!-- Registros cargados desde Excel -->
-                <tbody id="pos_table_excel">
-                </tbody>
+                <tbody id="pos_table_excel"></tbody>
             </table>
         </div>
-
-
-
-
-        <!-------------------------------------------------------------------------------------------------------- -->
-        <!------------------------------- BLOQUE: Modal FECHAS DE PO --------------------------------------------- -->
-        <!-------------------------------------------------------------------------------------------------------- -->
-        <div id="dates_po_js" class="pos_modal_overlay" hidden>
-
-            <div class="po_dates_modal" role="dialog" aria-modal="true" aria-labelledby="po_dates_title">
-
-                <!-- Encabezado -->
-                <div class="po_dates_header">
-                    <h2 id="po_dates_title">Detalle de PO</h2>
-
-                    <!-- Botón X -->
-                    <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
-
-
-                <!-- Información de la PO -->
-                <div class="po_dates_info">
-
-                    <div class="po_dates_info_item">
-                        <span>PO</span>
-                        <strong id="detail_po_number">—</strong>
-                    </div>
-
-                    <div class="po_dates_info_item">
-                        <span>Usuario asignado</span>
-                        <strong>
-                            <i class="bi bi-person-circle"></i>
-                            <span id="detail_po_user">—</span>
-                        </strong>
-                    </div>
-                </div>
-
-
-                <!-- Fechas del trabajo -->
-                <h3 class="po_dates_subtitle">Fechas del trabajo</h3>
-                <div class="po_dates_grid">
-
-                    <div class="po_date_item">
-                        <span>Fecha de asignación</span>
-                        <strong id="detail_date_assign">—</strong>
-                    </div>
-
-                    <div class="po_date_item">
-                        <span>Fecha de inicio</span>
-                        <strong id="detail_date_start">—</strong>
-                    </div>
-
-                    <div class="po_date_item">
-                        <span>Fecha de finalización</span>
-                        <strong id="detail_date_end">—</strong>
-                    </div>
-                </div>
-
-                <!-- Historial de Inspecciones -->
-                <section class="po_inspections_section">
-                    <div class="po_inspections_header">
-                        <h3>Historial de inspecciones</h3>
-
-                        <span id="po_inspections_count">
-                            0 inspecciones
-                        </span>
-                    </div>
-
-                    <div class="po_inspections_scroll">
-                        <table class="po_inspections_table">
-
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Tipo de inspección</th>
-                                    <th>Inspector</th>
-                                    <th>Fecha y hora</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="po_inspections_body">
-                                <tr>
-                                    <td colspan="4">
-                                        No hay inspecciones registradas.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- Botón cerrar -->
-                <div class="btns_po">
-                    <button type="button" id="btn_cancel_po">
-                        Cerrar
-                    </button>
-                </div>
-            </div>
-        </div>
-
-
 
         <!---------------------------------- BLOQUE: Pie de tabla  ------------------------------------------------>
         <!-- Label Total -->
         <div class="pos_table_footer">
-            <span>Total de registros: null </span>
+
+            <span>Total de registros: <strong id="pos_total_records">0</strong></span>
 
             <!-- Paginación -->
             <div class="pos_pag">
@@ -279,9 +166,7 @@
                     <i class="bi bi-chevron-left"></i>
                 </button>
 
-                <button type="button" class="active" aria-current="page">
-                    1
-                </button>
+                <button type="button" class="active" aria-current="page">1</button>
 
                 <!-- Siguiente -->
                 <button type="button" disabled aria-label="Página siguiente">
@@ -301,25 +186,119 @@
     </div>
 
 
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal FECHAS DE PO   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="dates_po_js" class="pos_modal_overlay" hidden>
+
+        <div class="po_dates_modal" role="dialog" aria-modal="true" aria-labelledby="po_dates_title">
+
+            <!-- Encabezado -->
+            <div class="po_dates_header">
+                <h2 id="po_dates_title">Detalle de PO</h2>
+
+                <!-- Botón X -->
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Información de la PO -->
+            <div class="po_dates_info">
+
+                <div class="po_dates_info_item">
+                    <span>PO</span>
+                    <strong id="detail_po_number">—</strong>
+                </div>
+
+                <div class="po_dates_info_item">
+                    <span>Usuario asignado</span>
+                    <strong>
+                        <i class="bi bi-person-circle"></i>
+                        <span id="detail_po_user">—</span>
+                    </strong>
+                </div>
+            </div>
+
+            <!-- Fechas del trabajo -->
+            <h3 class="po_dates_subtitle">Fechas del trabajo</h3>
+
+            <div class="po_dates_grid">
+
+                <div class="po_date_item">
+                    <span>Fecha de registro</span>
+                    <strong id="detail_date_register">—</strong>
+                </div>
+
+                <div class="po_date_item">
+                    <span>Fecha de asignación</span>
+                    <strong id="detail_date_assign">—</strong>
+                </div>
+
+                <div class="po_date_item">
+                    <span>Fecha de inicio</span>
+                    <strong id="detail_date_start">—</strong>
+                </div>
+
+                <div class="po_date_item">
+                    <span>Fecha de finalización</span>
+                    <strong id="detail_date_end">—</strong>
+                </div>
+            </div>
+
+            <!-- Historial de Inspecciones -->
+            <section class="po_inspections_section">
+
+                <div class="po_inspections_header">
+                    <h3>Historial de inspecciones</h3>
+                    <span id="po_inspections_count">0 inspecciones</span>
+                </div>
+
+                <div class="po_inspections_scroll">
+                    <table class="po_inspections_table">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>División</th>
+                                <th>Tipo de inspección</th>
+                                <th>Nivel de Inspección</th>
+                                <th>Inspector</th>
+                                <th>Fecha y hora</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="po_inspections_body">
+                            <tr>
+                                <td colspan="4">No hay inspecciones registradas.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Botón cerrar -->
+            <div class="btns_po">
+                <button type="button" class="btn_cancel_po">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-------------------------------------------------------------------------------------------------------- -->
     <!------------------------------- BLOQUE: Formulario Botón CREAR   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
-
     <div id="create_pos_js" class="pos_modal_overlay" hidden>
 
-        <!-- Cuadro central -->
         <div class="pos_modal_css pos_modal_large" role="dialog" aria-modal="true" aria-labelledby="create_pos_title">
 
             <!-- Encabezado -->
             <div class="pos_modal_header">
-
-                <h2 id="create_pos_title">
-                    Crear PO
-                </h2>
+                <h2 id="create_pos_title">Crear PO</h2>
 
                 <!-- Botón X  -->
-                <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
@@ -328,274 +307,208 @@
             <form id="form_create_pos" class="pos_form" novalidate>
 
                 <div class="input_grid">
+
                     <!-- PO -->
                     <div class="input_pos_form">
-                        <label for="lbl_create_po">
-                            PO
-                            <span class="pos_required">*</span>
+                        <label for="txt_create_po">
+                            PO <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_create_po" placeholder="Ingresar PO" autocomplete="off" required>
-                        <small class="input_error" id="error_new_po" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
-
 
                     <!-- Modelo -->
                     <div class="input_pos_form">
-                        <label for="lbl_create_model">
-                            Modelo
-                            <span class="pos_required">*</span>
+                        <label for="txt_new_model">
+                            Modelo <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_model" placeholder="Ingrese modelo" autocomplete="on" required>
-                        <small class="input_error" id="error_new_model" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
-
 
                     <!-- Artículo -->
                     <div class="input_pos_form">
-                        <label for="lbl_create_art">
-                            Artículo
-                            <span class="pos_required">*</span>
+                        <label for="txt_new_art">
+                            Artículo <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_art" placeholder="Ingrese artículo" autocomplete="on" required>
-                        <small class="input_error" id="error_new_art" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
 
                     <!-- Color -->
                     <div class="input_pos_form">
-                        <label for="lbl_create_color">
-                            Color
-                            <span class="pos_required">*</span>
+                        <label for="txt_new_color">
+                            Color <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_color" placeholder="Ingrese color" autocomplete="on" required>
-                        <small class="input_error" id="error_new_color" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
                 </div>
 
                 <div class="input_size">
 
                     <!-- Tallas  -->
-                    <label for="lbl_size">
-                        Talla
-                        <span class="pos_required">*</span>
+                    <label>
+                        Talla <span class="pos_required">*</span>
                     </label>
 
                     <div class="input_grid">
+
                         <!-- XS -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_xs">
-                                XS
-                            </label>
-                            <input type="text" id="txt_new_xs" autocomplete="off" required>
+                            <label for="txt_new_xs">XS</label>
+                            <input type="text" id="txt_new_xs" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
                         <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_bxs">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_bxs" autocomplete="off" required>
+                            <label for="txt_new_bxs">Caja</label>
+                            <input type="text" id="txt_new_bxs" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-
 
                         <!-- S -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_s">
-                                S
-                            </label>
-                            <input type="text" id="txt_new_s" autocomplete="on" required>
+                            <label for="txt_new_s">S</label>
+                            <input type="text" id="txt_new_s" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-                         <!-- Caja -->
+                        <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_bs">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_bs" autocomplete="off" required>
+                            <label for="txt_new_bs">Caja</label>
+                            <input type="text" id="txt_new_bs" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-
 
                         <!-- M -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_m">
-                                M
-                            </label>
-                            <input type="text" id="txt_new_m" autocomplete="on" required>
+                            <label for="txt_new_m">M</label>
+                            <input type="text" id="txt_new_m" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
                         <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_bm">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_bm" autocomplete="off" required>
+                            <label for="txt_new_bm">Caja</label>
+                            <input type="text" id="txt_new_bm" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-
 
                         <!-- L -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_l">
-                                L
-                            </label>
-                            <input type="text" id="txt_new_l" autocomplete="on" required>
+                            <label for="txt_new_l">L</label>
+                            <input type="text" id="txt_new_l" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
                         <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_bl">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_bl" autocomplete="off" required>
+                            <label for="txt_new_bl">Caja</label>
+                            <input type="text" id="txt_new_bl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-
 
                         <!-- XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_xl">
-                                XL
-                            </label>
-                            <input type="text" id="txt_new_xl" autocomplete="on" required>
+                            <label for="txt_new_xl">XL</label>
+                            <input type="text" id="txt_new_xl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
                         <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_bxl">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_bxl" autocomplete="off" required>
+                            <label for="txt_new_bxl">Caja</label>
+                            <input type="text" id="txt_new_bxl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-
 
                         <!-- 2XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_2xl">
-                                2XL
-                            </label>
-                            <input type="text" id="txt_new_2xl" autocomplete="on" required>
+                            <label for="txt_new_2xl">2XL</label>
+                            <input type="text" id="txt_new_2xl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
                         <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_b2xl">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_b2xl" autocomplete="off" required>
+                            <label for="txt_new_b2xl">Caja</label>
+                            <input type="text" id="txt_new_b2xl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-
 
                         <!-- 3XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_3xl">
-                                3XL
-                            </label>
-                            <input type="text" id="txt_new_3xl" autocomplete="on" required>
+                            <label for="txt_new_3xl">3XL</label>
+                            <input type="text" id="txt_new_3xl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
                         <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_b3xl">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_b3xl" autocomplete="off" required>
+                            <label for="txt_new_b3xl">Caja</label>
+                            <input type="text" id="txt_new_b3xl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
-                        
 
                         <!-- 4XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_4xl">
-                                4XL
-                            </label>
-                            <input type="text" id="txt_new_4xl" autocomplete="on" required>
+                            <label for="txt_new_4xl">4XL</label>
+                            <input type="text" id="txt_new_4xl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
-
                         <!-- Caja -->
                         <div class="input_pos_form">
-                            <label for="lbl_pos_b4xl">
-                                Caja
-                            </label>
-                            <input type="text" id="txt_new_b4xl" autocomplete="off" required>
+                            <label for="txt_new_b4xl">Caja</label>
+                            <input type="text" id="txt_new_b4xl" autocomplete="off">
                             <small class="input_error" hidden></small>
                         </div>
                     </div>
                 </div>
 
                 <div class="input_grid">
+
                     <!-- T.Units RQSTD -->
                     <div class="input_pos_form">
-                        <label for="lbl_rqstd">
-                            T.Units RQSTD
-                            <span class="pos_required">*</span>
+                        <label for="txt_new_rqstd">
+                            T.Units RQSTD <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_rqstd" placeholder="Ingrese RQSTD" autocomplete="off" required>
-                        <small class="input_error" id="error_new_rqstd" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
 
                     <!-- T.Units DELVD -->
                     <div class="input_pos_form">
-                        <label for="lbl_rqstd">
-                            T.Units DELVD
-                            <span class="pos_required">*</span>
+                        <label for="txt_new_delvd">
+                            T.Units DELVD <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_new_delvd" placeholder="Ingrese DELVD" autocomplete="off" required>
-                        <small class="input_error" id="error_new_delvd" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
                 </div>
 
-
                 <!-- Botones del formulario  -->
                 <div class="btns_po">
-                    <button type="button" id="btn_cancel_po">
-                        Cancelar
-                    </button>
-                    <button type="submit" id="btn_save_po">
+                    <button type="button" class="btn_cancel_po">Cancelar</button>
+
+                    <button type="submit" id="btn_save_create_pos">
                         <i class="bi bi-floppy-fill"></i>
                         Guardar
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
+
+
 
     <!-------------------------------------------------------------------------------------------------------- -->
     <!------------------------------- BLOQUE: Formulario Botón Editar   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
-
     <div id="edit_pos_js" class="pos_modal_overlay" hidden>
 
-        <!-- Cuadro central -->
         <div class="pos_modal_css pos_modal_large" role="dialog" aria-modal="true" aria-labelledby="edit_pos_title">
 
             <!-- Encabezado -->
             <div class="pos_modal_header">
-
-                <h2 id="edit_modal_title">
-                    Editar PO
-                </h2>
+                <h2 id="edit_pos_title">Editar PO</h2>
 
                 <!-- Botón X  -->
-                <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
@@ -607,125 +520,152 @@
 
                     <!-- PO -->
                     <div class="input_pos_form">
-                        <label for="lbl_edit_po">
-                            PO
-                            <span class="pos_required">*</span>
+                        <label for="txt_edit_po">
+                            PO <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_po" placeholder="Ingresar PO" autocomplete="off" required>
-                        <small class="input_error" id="error_edit_po" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
-
 
                     <!-- Modelo -->
                     <div class="input_pos_form">
-                        <label for="lbl_edit_model">
-                            Modelo
-                            <span class="pos_required">*</span>
+                        <label for="txt_edit_model">
+                            Modelo <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_model" placeholder="Ingrese modelo" autocomplete="on" required>
-                        <small class="input_error" id="error_edit_model" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
-
 
                     <!-- Artículo -->
                     <div class="input_pos_form">
-                        <label for="lbl_edit_art">
-                            Artículo
-                            <span class="pos_required">*</span>
+                        <label for="txt_edit_art">
+                            Artículo <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_art" placeholder="Ingrese artículo" autocomplete="on" required>
-                        <small class="input_error" id="error_edit_art" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
 
                     <!-- Color -->
                     <div class="input_pos_form">
-                        <label for="lbl_edit_color">
-                            Color
-                            <span class="pos_required">*</span>
+                        <label for="txt_edit_color">
+                            Color <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_color" placeholder="Ingrese color" autocomplete="on" required>
-                        <small class="input_error" id="error_edit_color" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
                 </div>
 
                 <div class="input_size">
 
                     <!-- Tallas  -->
-                    <label for="lbl_size">
-                        Talla
-                        <span class="pos_required">*</span>
+                    <label>
+                        Talla <span class="pos_required">*</span>
                     </label>
 
                     <div class="input_grid">
+
                         <!-- XS -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_xs">
-                                XS
-                            </label>
-                            <input type="text" id="txt_edit_xs" autocomplete="on" required>
+                            <label for="txt_edit_xs">XS</label>
+                            <input type="text" id="txt_edit_xs" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
-
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_bxs">Caja</label>
+                            <input type="text" id="txt_edit_bxs" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
 
                         <!-- S -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_s">
-                                S
-                            </label>
-                            <input type="text" id="txt_edit_s" autocomplete="on" required>
+                            <label for="txt_edit_s">S</label>
+                            <input type="text" id="txt_edit_s" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
-
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_bs">Caja</label>
+                            <input type="text" id="txt_edit_bs" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
 
                         <!-- M -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_m">
-                                M
-                            </label>
-                            <input type="text" id="txt_edit_m" autocomplete="on" required>
+                            <label for="txt_edit_m">M</label>
+                            <input type="text" id="txt_edit_m" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
-
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_bm">Caja</label>
+                            <input type="text" id="txt_edit_bm" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
 
                         <!-- L -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_l">
-                                L
-                            </label>
-                            <input type="text" id="txt_edit_l" autocomplete="on" required>
+                            <label for="txt_edit_l">L</label>
+                            <input type="text" id="txt_edit_l" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
-
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_bl">Caja</label>
+                            <input type="text" id="txt_edit_bl" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
 
                         <!-- XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_xl">
-                                XL
-                            </label>
-                            <input type="text" id="txt_edit_xl" autocomplete="on" required>
+                            <label for="txt_edit_xl">XL</label>
+                            <input type="text" id="txt_edit_xl" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
-
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_bxl">Caja</label>
+                            <input type="text" id="txt_edit_bxl" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
 
                         <!-- 2XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_2xl">
-                                2XL
-                            </label>
-                            <input type="text" id="txt_edit_2xl" autocomplete="on" required>
+                            <label for="txt_edit_2xl">2XL</label>
+                            <input type="text" id="txt_edit_2xl" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
-
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_b2xl">Caja</label>
+                            <input type="text" id="txt_edit_b2xl" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
 
                         <!-- 3XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_3xl">
-                                3XL
-                            </label>
-                            <input type="text" id="txt_edit_3xl" autocomplete="on" required>
+                            <label for="txt_edit_3xl">3XL</label>
+                            <input type="text" id="txt_edit_3xl" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
-
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_b3xl">Caja</label>
+                            <input type="text" id="txt_edit_b3xl" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
 
                         <!-- 4XL -->
                         <div class="input_pos_form">
-                            <label for="lbl_po_4xl">
-                                4XL
-                            </label>
-                            <input type="text" id="txt_edit_3xl" autocomplete="on" required>
+                            <label for="txt_edit_4xl">4XL</label>
+                            <input type="text" id="txt_edit_4xl" autocomplete="off">
+                            <small class="input_error" hidden></small>
+                        </div>
+                        <!-- Caja -->
+                        <div class="input_pos_form">
+                            <label for="txt_edit_b4xl">Caja</label>
+                            <input type="text" id="txt_edit_b4xl" autocomplete="off">
+                            <small class="input_error" hidden></small>
                         </div>
                     </div>
                 </div>
@@ -734,32 +674,28 @@
 
                     <!-- T.Units RQSTD -->
                     <div class="input_pos_form">
-                        <label for="lbl_rqstd">
-                            T.Units RQSTD
-                            <span class="pos_required">*</span>
+                        <label for="txt_edit_rqstd">
+                            T.Units RQSTD <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_rqstd" placeholder="Ingrese RQSTD" autocomplete="off" required>
-                        <small class="input_error" id="error_edit_rqstd" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
 
                     <!-- T.Units DELVD -->
                     <div class="input_pos_form">
-                        <label for="lbl_rqstd">
-                            T.Units DELVD
-                            <span class="pos_required">*</span>
+                        <label for="txt_edit_delvd">
+                            T.Units DELVD <span class="pos_required">*</span>
                         </label>
                         <input type="text" id="txt_edit_delvd" placeholder="Ingrese DELVD" autocomplete="off" required>
-                        <small class="input_error" id="error_edit_delvd" hidden></small>
+                        <small class="input_error" hidden></small>
                     </div>
                 </div>
 
-
                 <!-- Botones del formulario  -->
                 <div class="btns_po">
-                    <button type="button" id="btn_cancel_po">
-                        Cancelar
-                    </button>
-                    <button type="submit" id="btn_save_po">
+                    <button type="button" class="btn_cancel_po">Cancelar</button>
+
+                    <button type="submit" id="btn_save_edit_pos">
                         <i class="bi bi-floppy-fill"></i>
                         Guardar
                     </button>
@@ -773,15 +709,14 @@
     <!-------------------------------------------------------------------------------------------------------- -->
     <!------------------------------- BLOQUE: Botón Eliminar   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
-
     <div id="delete_po_js" class="delete_modal_overlay" hidden>
 
-        <div class="delete_pos_modal" role="alertdialog" aria-modal="true" aria-labelledby="delete_pos_title"
-            aria-describedby="delete_user_message">
+        <div class="delete_pos_modal" role="alertdialog" aria-modal="true" aria-labelledby="delete_po_title"
+            aria-describedby="delete_po_msg">
 
             <!-- Encabezado -->
             <div class="delete_modal_header">
-                <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
@@ -792,20 +727,15 @@
             </div>
 
             <!-- Titulo -->
-            <h2 id="delete_po_title">
-                ¿Eliminar PO(S)?
-            </h2>
+            <h2 id="delete_po_title">¿Eliminar PO(s)?</h2>
 
             <p id="delete_po_msg">
-                ¿Estás seguro de que deseas eliminar la PO seleccionada?
+                ¿Estás seguro de que deseas eliminar las PO seleccionadas?
             </p>
 
             <!-- Botones -->
             <div class="btn_delete_po">
-
-                <button type="button" id="btn_cancel_po">
-                    Cancelar
-                </button>
+                <button type="button" class="btn_cancel_po">Cancelar</button>
 
                 <button type="button" id="btn_confirm_delete">
                     <i class="bi bi-trash-fill"></i>
@@ -818,16 +748,17 @@
 
 
     <!-------------------------------------------------------------------------------------------------------- -->
-    <!------------------------------- BLOQUE: Botón Asignar inspección   ------------------------------------- -->
+    <!------------------------------- BLOQUE: Botón Asignar inspección   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
     <div id="assign_ins_js" class="pos_modal_overlay" hidden>
-        <div class="pos_modal_css">
+
+        <div class="pos_modal_css" role="dialog" aria-modal="true" aria-labelledby="assign_ins_title">
 
             <!-- Encabezado -->
             <div class="pos_modal_header">
-                <h2>Asignar inspección</h2>
+                <h2 id="assign_ins_title">Asignar inspección</h2>
 
-                <button type="button" class="pos_modal_close" id="btn_x_modal" aria-label="Cerrar">
+                <button type="button" class="pos_modal_close btn_x_modal" aria-label="Cerrar ventana">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
@@ -854,18 +785,15 @@
                 <!-- Tipo de inspección -->
                 <div class="pos_form_group">
                     <label for="inspection_type">
-                        Tipo de inspección
-                        <span class="pos_required">*</span>
+                        Tipo de inspección <span class="pos_required">*</span>
                     </label>
 
                     <select id="inspection_type" name="inspection_type" required>
-                        <option value="">
-                            Seleccione una inspección
-                        </option>
+                        <option value="">Seleccione una inspección</option>
                     </select>
+
                     <small id="error_inspection_type" class="field_error" hidden></small>
                 </div>
-
 
                 <!-- Defecto -->
                 <div class="pos_form_group">
@@ -873,16 +801,13 @@
                     <input type="text" id="inspection_defect" name="defect">
                 </div>
 
+                <!-- Resultado de la inspección -->
+                <div id="inspection_result" class="inspection_result" hidden></div>
 
                 <!-- Botones -->
                 <div class="btns_po">
-                    <button type="button" id="btn_cancel_po">
-                        Cancelar
-                    </button>
-
-                    <button type="submit" id="btn_save_inspection">
-                        Guardar
-                    </button>
+                    <button type="button" class="btn_cancel_po">Cancelar</button>
+                    <button type="submit" id="btn_save_inspection">Guardar</button>
                 </div>
             </form>
         </div>
@@ -891,16 +816,17 @@
 
 
     <!-------------------------------------------------------------------------------------------------------- -->
-    <!------------------------------- BLOQUE: Botón Asignar Usuario   ------------------------------------- -->
+    <!------------------------------- BLOQUE: Botón Asignar Usuario   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
     <div id="asing_user_js" class="pos_modal_overlay" hidden>
-        <div class="assign_user_modal">
+
+        <div class="assign_user_modal" role="dialog" aria-modal="true" aria-labelledby="assign_user_title">
 
             <!-- Encabezado -->
             <div class="pos_modal_header">
-                <h2>Asignar usuario</h2>
+                <h2 id="assign_user_title">Asignar usuario</h2>
 
-                <button type="button" id="btn_x_modal" aria-label="Cerrar ventana">
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
                     <i class="bi bi-x-lg"></i>
                 </button>
             </div>
@@ -911,9 +837,8 @@
                 <!-- Asignación masiva -->
                 <div class="assign_user_bulk">
 
-                    <label for="bulk_user">
-                        Asignación masiva:
-                    </label>
+                    <label for="bulk_user">Asignación masiva:</label>
+
                     <select id="bulk_user">
                         <option value="">Seleccione un usuario</option>
                     </select>
@@ -924,19 +849,20 @@
                     </button>
                 </div>
 
-
                 <!-- Tabla de PO -->
                 <div class="assign_user_table_scroll">
                     <table class="assign_user_table">
+
                         <thead>
                             <tr>
                                 <th>
-                                    <input type="checkbox" id="select_all_assign">
+                                    <input type="checkbox" id="select_all_assign" aria-label="Seleccionar todas las PO">
                                 </th>
                                 <th>PO</th>
                                 <th>Model #</th>
                                 <th>Art #</th>
                                 <th>Color</th>
+                                <th>Usuario asignado</th>
                             </tr>
                         </thead>
 
@@ -948,19 +874,11 @@
 
                 <!-- Botones -->
                 <div class="btns_po">
-                    <button type="button" id="btn_cancel_po">
-                        Cancelar
-                    </button>
-
-                    <button type="submit" id="btn_save_assign_user">
-                        Guardar asignación
-                    </button>
+                    <button type="button" class="btn_cancel_po">Cancelar</button>
+                    <button type="submit" id="btn_save_assign_user">Guardar asignación</button>
                 </div>
             </form>
         </div>
     </div>
-
-
-
 
 </section>
