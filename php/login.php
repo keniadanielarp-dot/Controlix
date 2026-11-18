@@ -9,24 +9,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     exit("Metodo no permitido");
 }
+
 //Recibir datos del formulario 
 $user = trim($_POST["user_login"] ?? "");
 $pass = $_POST["pass_login"] ?? "";
 
-//Búsqueda del usuario en la BD 
-$sql = "SELECT id_user, passwd_user, name_user, status_user
-       FROM myr_users 
-       WHERE user = ?";
-
-$query = $connection -> prepare($sql);
-//Recibir datos del formulario 
-$user = trim($_POST["user_login"] ?? "");
-$pass = $_POST["pass_login"] ?? "";
+// Campos vacíos
+if ($user === "" || $pass === "") {
+    header("Location: ../html/login.html?error=credentials");
+    exit;
+}
 
 //Búsqueda del usuario en la BD 
 $sql = "SELECT id_user, user, passwd_user, name_user, status_user
        FROM myr_users 
-       WHERE user = ?";
+       WHERE user = ?
+       LIMIT 1";
 
 $query = $connection -> prepare($sql);
 $query -> bind_param("s", $user); 
@@ -40,17 +38,23 @@ if ($res->num_rows === 1) {
 
     // Recupera los datos del usuario.
     $row = $res->fetch_assoc();
+    $query->close();
 
-   //Comparación de contraseña.
-   if ($pass === $row["passwd_user"]) {
-    //Si es correcta...
+    //Comparación de contraseña.
+    if ($pass === $row["passwd_user"]) {
+        //Si es correcta...
 
         // Comparación de status activo
         if ((int)$row["status_user"] === 1) {
+
+            // Generar un nuevo ID de sesión al iniciar sesión
+            session_regenerate_id(true);
+
             $_SESSION["auth"] = true;
             $_SESSION["id_user"] = (int)$row["id_user"];
             header("Location: ../html/dashboard_admin.html");
-            
+            exit;
+
         // Comparación de status inactivo
         } else{  
             header("Location: ../html/login.html?error=inac_user");
@@ -59,18 +63,13 @@ if ($res->num_rows === 1) {
 
     } else {
         
-        // El usuario es incorrecto. 
+        // La contraseña es incorrecta
         header("Location: ../html/login.html?error=credentials2");
         exit;
     }
 
 } else {
-    // La contraseña es incorrecta
+    // El usuario es incorrecto. 
     header("Location: ../html/login.html?error=credentials");
     exit;
 }
-?> 
-
-
-
-

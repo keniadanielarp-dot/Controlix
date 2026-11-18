@@ -59,6 +59,9 @@ let next_inspection_id = 1;
 // Usuario asignado a cada PO: { po_id: { id_user, name_user, assigned_at } }.
 let pos_assignments = {};
 
+// Copia de las PO tal como se guardaron por última vez en la base de datos.
+let last_saved_pos = "[]";
+
 
 
 /* -------------------------------------  BLOQUE:  Utilidades ------------------------------------- */
@@ -125,7 +128,9 @@ function create_status_cell(status, rowspan = 1) {
         "pendiente": "pos_status_pending",
         "asignado": "pos_status_assigned",
         "en proceso": "pos_status_process",
-        "finalizado": "pos_status_finished"
+        "finalizado": "pos_status_finished",
+        "aceptado": "inspection_result_accepted",
+        "rechazado": "inspection_result_rejected"
     };
 
     const td = create_cell("", rowspan);
@@ -348,8 +353,11 @@ function create_po_rows(quantity_row, box_row) {
     // Estado con su color.
     tr_quantities.appendChild(create_status_cell(assignment ? "Asignado" : "Pendiente", 2));
 
-    // Tipo de inspección.
-    tr_quantities.appendChild(create_cell("—", 2));
+    // Tipo de inspección (la más reciente de la PO).
+    const inspections = pos_inspections[po_id] ?? [];
+    const last_inspection = inspections[inspections.length - 1];
+
+    tr_quantities.appendChild(create_cell(last_inspection?.type_name ?? "—", 2));
 
 
     /* ==========================================
@@ -1209,98 +1217,20 @@ function open_pos_dates(po_id) {
     document.getElementById("detail_date_assign").textContent =
         format_pos_date(assignment?.assigned_at);
 
-    // Historial de inspecciones.
-    render_inspection_history(po_id);
-
     open_form("dates_po_js");
 
     console.log("Detalle de PO con ID:", po_id);
 }
 
 
-// Mostrar el historial de inspecciones de una PO en el Detalle.
-function render_inspection_history(po_id) {
+// Sumar las piezas de la PO (XS a 4XL).
+function get_pos_quantity(po_id) {
 
-    const body = document.getElementById("po_inspections_body");
-    const counter = document.getElementById("po_inspections_count");
-
-    if (!body) return;
-
-    const inspections = pos_inspections[po_id] ?? [];
-
-    // Limpiar filas anteriores.
-    body.innerHTML = "";
-
-    // Actualizar el contador.
-    if (counter) {
-        counter.textContent =
-            `${inspections.length} ${inspections.length === 1 ? "inspección" : "inspecciones"}`;
-    }
-
-    // Sin inspecciones: mostrar el mensaje.
-    if (inspections.length === 0) {
-
-        const tr = document.createElement("tr");
-        const td = create_cell("No hay inspecciones registradas.");
-
-        td.colSpan = 6;
-        tr.appendChild(td);
-        body.appendChild(tr);
-
-        return;
-    }
-
-
-    /* ==========================================
-       AGREGAR UNA FILA POR INSPECCIÓN
-    ========================================== */
-
-    inspections.forEach(function (inspection) {
-
-        const tr = document.createElement("tr");
-
-        tr.appendChild(create_cell(inspection.id));
-        tr.appendChild(create_cell(inspection.division));
-        tr.appendChild(create_cell(inspection.type_name));
-        tr.appendChild(create_cell(inspection.level));
-        tr.appendChild(create_cell(inspection.inspector));
-        tr.appendChild(create_cell(inspection.date_time));
-
-        body.appendChild(tr);
-    });
-}
-
-
-// Abrir el modal Asignar inspección con la PO seleccionada.
-function open_assign_ins() {
-
-    const selected = get_selected_pos();
-
-    // Debe haber exactamente una PO seleccionada.
-    if (selected.length !== 1) {
-        alert(
-            selected.length === 0
-                ? "Selecciona una PO para asignar la inspección."
-                : "Solo puedes asignar inspección a una PO a la vez."
-        );
-        return;
-    }
-
-    const po_id = selected[0];
     const record = get_pos_by_id(po_id);
-
-    if (!record) {
-        alert("No se encontró la PO seleccionada.");
-        return;
-    }
-
-
-    /* ==========================================
-       CALCULAR CANTIDAD (XS A 4XL)
-    ========================================== */
+    if (!record) return 0;
 
     // Las tallas están en las columnas 5 a 12 de la fila de cantidades.
-    const quantity = record.quantities
+    return record.quantities
         .slice(5, 13)
         .reduce(function (sum, value) {
 
@@ -1310,6 +1240,51 @@ function open_assign_ins() {
             return sum + (Number.isFinite(number) ? number : 0);
 
         }, 0);
+}
+
+
+// Abrir el modal Asignar inspección con las PO seleccionadas.
+function open_assign_ins() {
+
+    const selected = get_selected_pos();
+
+    // Debe haber al menos una PO seleccionada.
+    if (selected.length === 0) {
+        alert("Selecciona al menos una PO para asignar la inspección.");
+        return;
+    }
+
+
+    /* ==========================================
+       REVISAR QUE TODAS SE PUEDAN ASIGNAR
+    ========================================== */
+
+    // La inspección la realiza el usuario asignado a la PO.
+    const without_user = selected.filter(po_id => !pos_assignments[po_id]);
+
+    // No asignar otra mientras haya una sin resultado.
+    const with_pending = selected.filter(function (po_id) {
+        return (pos_inspections[po_id] ?? [])
+            .some(inspection => inspection.result === "Pendiente");
+    });
+
+    // Número de PO para los mensajes.
+    const po_numbers = list => list
+        .map(po_id => get_pos_by_id(po_id)?.quantities[1] ?? po_id)
+        .join(", ");
+
+    if (without_user.length > 0) {
+        alert(`Asigna un usuario antes de asignar la inspección a: ${po_numbers(without_user)}`);
+        return;
+    }
+
+    if (with_pending.length > 0) {
+        alert(
+            `Estas PO ya tienen una inspección pendiente: ${po_numbers(with_pending)}. ` +
+            "Registra su resultado en Inspecciones antes de asignar otra."
+        );
+        return;
+    }
 
 
     /* ==========================================
@@ -1328,173 +1303,52 @@ function open_assign_ins() {
         "name_ins"
     );
 
-    // Guardar el ID para usarlo al guardar.
-    document.getElementById("form_assign_ins").dataset.idPo = po_id;
+    // Guardar los IDs para usarlos al guardar.
+    document.getElementById("form_assign_ins").dataset.idsPo = JSON.stringify(selected);
 
-    // Mostrar la PO y la cantidad.
-    document.getElementById("inspection_po").value = record.quantities[1] ?? "";
-    document.getElementById("inspection_quantity").textContent = quantity;
+    // Mostrar cuántas PO se seleccionaron.
+    document.getElementById("inspection_po_count").textContent = selected.length;
 
-    // Olvidar el rango y el resultado de la PO anterior.
-    current_aql = null;
-    hide_inspection_result();
+    // Mostrar cada PO como una etiqueta.
+    const list = document.getElementById("inspection_po_list");
+    list.innerHTML = "";
 
-    console.log("Asignar inspección a PO con ID:", po_id, "Cantidad:", quantity);
+    selected.forEach(function (po_id) {
+        const item = document.createElement("li");
+        item.textContent = get_pos_by_id(po_id)?.quantities[1] ?? po_id;
+        list.appendChild(item);
+    });
+
+    console.log("Asignar inspección a PO con ID:", selected);
 }
 
 
-// Renglón AQL que corresponde a la PO y tipo de inspección actuales.
-let current_aql = null;
+// Actualizar el número rojo de Defectos con las inspecciones rechazadas.
+function update_defects_badge() {
 
+    const badge = document.getElementById("defects_badge");
+    if (!badge) return;
 
-// Consultar en PHP el LOAD SIZE que corresponde a la cantidad.
-async function load_aql_range() {
+    // Contar las inspecciones rechazadas que todavía no tienen defectos registrados.
+    const total = Object.values(pos_inspections)
+        .flat()
+        .filter(inspection => inspection.result === "Rechazado" && !inspection.defect_details?.length)
+        .length;
 
-    const type_id = document.getElementById("inspection_type")?.value ?? "";
-    const quantity = Number(document.getElementById("inspection_quantity")?.textContent ?? 0);
+    badge.textContent = total;
+    badge.setAttribute("aria-label", `${total} pendientes`);
 
-    // Olvidar el rango anterior.
-    current_aql = null;
-
-    // Sin tipo de inspección no hay nada que buscar.
-    if (type_id === "") {
-        hide_inspection_result();
-        return;
-    }
-
-    try {
-
-        const response = await fetch(
-            `/sistema_calidad/php/pos.php?action=aql_range&id_ins_type=${type_id}&quantity=${quantity}`
-        );
-
-        // Detener si el servidor respondió con error (404, 500...).
-        if (!response.ok) {
-            throw new Error(`El servidor respondió ${response.status} (${response.statusText})`);
-        }
-
-        const result = await response.json();
-
-        // Verificar que PHP respondió correctamente.
-        if (!result.success) {
-            throw new Error(result.message || "No se pudo consultar la tabla AQL.");
-        }
-
-        // Ignorar la respuesta si mientras tanto cambiaron el tipo.
-        if (document.getElementById("inspection_type")?.value !== type_id) return;
-
-        current_aql = result.aql;
-
-        // Comparar con los defectos que ya estén escritos.
-        evaluate_inspection();
-
-    } catch (error) {
-
-        console.error("Error al consultar la tabla AQL:", error);
-        show_inspection_result("No se pudo consultar la tabla AQL.", "invalid");
-
-    }
+    // Ocultar el número cuando no hay rechazadas.
+    badge.hidden = total === 0;
 }
 
 
-// Comparar los defectos con el renglón AQL encontrado.
-function evaluate_inspection() {
-
-    const type_id = document.getElementById("inspection_type")?.value ?? "";
-    const defect_text = document.getElementById("inspection_defect")?.value.trim() ?? "";
-    const quantity = Number(document.getElementById("inspection_quantity")?.textContent ?? 0);
-
-    // Sin tipo de inspección no hay nada que mostrar.
-    if (type_id === "") {
-        hide_inspection_result();
-        return;
-    }
-
-    // Sin renglón: cantidad fuera de tabla o tipo sin tabla AQL.
-    if (!current_aql) {
-        show_inspection_result(
-            `No hay un LOAD SIZE para la cantidad (${quantity}) en este tipo de inspección.`,
-            "invalid"
-        );
-        return;
-    }
-
-    const accept = Number(current_aql.accept);
-    const sample_size = Number(current_aql.sample_size);
-
-    const range_text =
-        `LOAD SIZE ${current_aql.load_size}: revisar ${sample_size} piezas, ` +
-        `acepta ${accept}, rechaza ${current_aql.reject}.`;
-
-
-    /* ==========================================
-       VALIDAR LOS DEFECTOS
-    ========================================== */
-
-    // Sin defectos capturados, mostrar solo el rango.
-    if (defect_text === "") {
-        show_inspection_result(range_text, "info");
-        return;
-    }
-
-    // Aceptar únicamente números enteros.
-    if (!/^\d+$/.test(defect_text)) {
-        show_inspection_result("Ingrese un número entero de defectos.", "invalid");
-        return;
-    }
-
-    const defects = Number(defect_text);
-
-    // Los defectos no pueden superar las piezas revisadas.
-    if (defects > sample_size) {
-        show_inspection_result(
-            `Los defectos no pueden ser más que las piezas revisadas (${sample_size}).`,
-            "invalid"
-        );
-        return;
-    }
-
-
-    /* ==========================================
-       RESULTADO: ACEPTADO O RECHAZADO
-    ========================================== */
-
-    if (defects <= accept) {
-        show_inspection_result(`✅ Aceptado. ${range_text}`, "accepted");
-    } else {
-        show_inspection_result(`❌ Rechazado. ${range_text}`, "rejected");
-    }
-}
-
-
-// Mostrar un mensaje en el cuadro de resultado.
-function show_inspection_result(text, type) {
-
-    const box = document.getElementById("inspection_result");
-    if (!box) return;
-
-    box.textContent = text;
-    box.className = `inspection_result inspection_result_${type}`;
-    box.hidden = false;
-}
-
-
-// Ocultar el cuadro de resultado.
-function hide_inspection_result() {
-
-    const box = document.getElementById("inspection_result");
-    if (box) box.hidden = true;
-}
-
-
-// Guardar la inspección en el historial de la PO.
+// Guardar la misma inspección en cada PO seleccionada (queda Pendiente).
 function save_inspection(form) {
 
-    const po_id = form.dataset.idPo;
+    const ids_po = JSON.parse(form.dataset.idsPo || "[]");
     const type_select = document.getElementById("inspection_type");
     const type_error = document.getElementById("error_inspection_type");
-    const defect_field = document.getElementById("inspection_defect");
-    const defect_text = defect_field.value.trim();
 
     // Limpiar el error anterior del tipo.
     if (type_error) {
@@ -1519,28 +1373,6 @@ function save_inspection(form) {
         return;
     }
 
-    // Debe existir un LOAD SIZE para la cantidad.
-    if (!current_aql) {
-        show_inspection_result("No se puede guardar: no hay un LOAD SIZE para esta cantidad.", "invalid");
-        return;
-    }
-
-    // Los defectos son obligatorios y deben ser enteros.
-    if (!/^\d+$/.test(defect_text)) {
-        show_inspection_result("Ingrese el número de defectos encontrados.", "invalid");
-        defect_field.focus();
-        return;
-    }
-
-    const defects = Number(defect_text);
-
-    // Los defectos no pueden superar las piezas revisadas.
-    if (defects > Number(current_aql.sample_size)) {
-        evaluate_inspection();
-        defect_field.focus();
-        return;
-    }
-
 
     /* ==========================================
        REGISTRAR LA INSPECCIÓN
@@ -1551,31 +1383,53 @@ function save_inspection(form) {
         return String(item.id_ins_type) === type_select.value;
     });
 
-    const inspection = {
-        id: next_inspection_id++,
-        id_ins_type: type_select.value,
-        division: type_data?.division ?? "—",
-        type_name: type_data?.name_ins ?? type_select.options[type_select.selectedIndex].text,
-        level: type_data?.level ?? "—",
-        inspector: "—",
-        date_time: get_date_time(),
-        defects: defects,
-        load_size: current_aql.load_size,
-        sample_size: Number(current_aql.sample_size),
-        result: defects <= Number(current_aql.accept) ? "Aceptado" : "Rechazado"
-    };
+    // Una inspección por cada PO, con el inspector asignado a esa PO.
+    ids_po.forEach(function (po_id) {
 
-    // Crear el historial de la PO si todavía no existe.
-    if (!pos_inspections[po_id]) {
-        pos_inspections[po_id] = [];
-    }
+        // El inspector es el usuario asignado a la PO.
+        const assignment = pos_assignments[po_id];
 
-    pos_inspections[po_id].push(inspection);
+        const inspection = {
+            id: next_inspection_id++,
+            po_id: po_id,
+            po_number: get_pos_by_id(po_id)?.quantities[1] ?? "—",
+            created_at: get_pos_date(),
+            id_ins_type: type_select.value,
+            division: type_data?.division ?? "—",
+            type_name: type_data?.name_ins ?? type_select.options[type_select.selectedIndex].text,
+            level: type_data?.level ?? "—",
+            id_inspector: assignment?.id_user ?? null,
+            inspector: assignment?.name_user ?? "—",
+            date_time: get_date_time(),
+
+            // Se llenan al registrar el resultado en Inspecciones.
+            defects: null,
+            load_size: null,
+            sample_size: null,
+            result: "Pendiente",
+            result_date_time: null,
+
+            // Renglón de la tabla AQL que se usó (para ins_aqls).
+            id_aql: null
+        };
+
+        // Crear el historial de la PO si todavía no existe.
+        if (!pos_inspections[po_id]) {
+            pos_inspections[po_id] = [];
+        }
+
+        pos_inspections[po_id].push(inspection);
+    });
+
+    // Actualizar el número de Defectos.
+    update_defects_badge();
+
+    // Mostrar el tipo de inspección en la tabla de PO.
+    load_pos_table(pos_records);
 
     close_form("assign_ins_js");
 
-    console.log("Inspección guardada en PO con ID:", po_id);
-    console.table(pos_inspections[po_id]);
+    console.log("Inspección guardada en PO con ID:", ids_po);
 }
 
 
@@ -1824,6 +1678,9 @@ function confirm_delete_pos() {
         // Eliminar su historial de inspecciones.
         delete pos_inspections[po_id];
 
+        // Actualizar el número de Defectos.
+        update_defects_badge();
+
         // Eliminar su asignación.
         delete pos_assignments[po_id];
     });
@@ -1931,6 +1788,30 @@ async function save_pos_to_db() {
         return;
     }
 
+
+    /* ==========================================
+       VALIDAR USUARIO ASIGNADO
+    ========================================== */
+
+    // PO que todavía no tienen usuario.
+    const without_user = pos
+        .filter(po => !po.id_user)
+        .map(po => po.number_po);
+
+    if (without_user.length > 0) {
+
+        // Mostrar máximo 10 PO para que la alerta no sea muy larga.
+        const list = without_user.slice(0, 10).join(", ");
+        const extra = without_user.length > 10 ? ` y ${without_user.length - 10} más` : "";
+
+        alert(
+            `No se pueden guardar las PO sin usuario asignado.\n\n` +
+            `Pendientes (${without_user.length}): ${list}${extra}.`
+        );
+
+        return;
+    }
+
     // Evitar que se presione dos veces mientras se guarda.
     const button = document.getElementById("btn_save_pos");
     if (button) button.disabled = true;
@@ -1950,6 +1831,9 @@ async function save_pos_to_db() {
             throw new Error(result?.message || `El servidor respondió ${response.status} (${response.statusText})`);
         }
 
+        // Recordar lo que quedó guardado para saber si hay cambios pendientes.
+        last_saved_pos = JSON.stringify(build_pos_payload());
+
         alert(result.message);
         console.log("PO guardadas:", result);
 
@@ -1965,6 +1849,40 @@ async function save_pos_to_db() {
 
     }
 }
+
+
+
+// Saber si hay PO con cambios que todavía no se suben a la base de datos.
+function has_unsaved_pos() {
+    return JSON.stringify(build_pos_payload()) !== last_saved_pos;
+}
+
+
+// Preguntar antes de salir de Po's si hay cambios sin guardar.
+// Regresa true si se puede salir.
+function confirm_leave_pos() {
+
+    // Solo aplica cuando se está en la opción Po's.
+    if (!document.getElementById("pos_table_js")) return true;
+
+    if (!has_unsaved_pos()) return true;
+
+    return confirm(
+        "La información de las PO aún no se ha subido a la base de datos.\n" +
+        "Si sales, se conservará solo mientras no recargues la página.\n\n" +
+        "¿Deseas salir de todos modos?"
+    );
+}
+
+
+// Avisar si se recarga o cierra la página con cambios sin guardar.
+window.addEventListener("beforeunload", function (event) {
+
+    if (has_unsaved_pos()) {
+        event.preventDefault();
+        event.returnValue = "";
+    }
+});
 
 
 
@@ -2023,11 +1941,6 @@ document.addEventListener("change", function (event) {
         update_select_all_assign();
     }
 
-    // Asignar inspección: buscar el LOAD SIZE al cambiar el tipo.
-    if (target.matches("#inspection_type")) {
-        load_aql_range();
-    }
-
     // Filtros de estado y mes/año.
     if (target.matches("#options_pos_status, #dpdn_pos_mounth")) {
         current_page = 1;
@@ -2059,11 +1972,6 @@ document.addEventListener("input", function (event) {
     // Quitar errores al escribir en los formularios.
     if (target.matches(".pos_form input, .pos_form select")) {
         clear_field_error(target);
-    }
-
-    // Asignar inspección: evaluar al escribir los defectos.
-    if (target.matches("#inspection_defect")) {
-        evaluate_inspection();
     }
 });
 

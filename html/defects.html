@@ -1,0 +1,286 @@
+<!-- Contenido principal de Defectos -->
+<section class="pos_content">
+
+    <!-------------------- BLOQUE: Encabezado ---------------------->
+    <div class="pos_header">
+
+        <!-- Icono, título y descripción -->
+        <div class="pos_header_title">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+
+            <div class="pos_header_text">
+                <h2>Defectos</h2>
+                <p>Inspecciones rechazadas: registra qué defectos se encontraron.</p>
+            </div>
+        </div>
+    </div>
+
+
+    <!--------------- BLOQUE: Resumen   ---------------------->
+    <div class="defects_summary">
+
+        <!-- Inspecciones rechazadas sin defectos registrados -->
+        <div class="defects_card">
+            <span>Pendientes de registrar</span>
+            <strong id="defects_pending_total" class="defects_card_alert">0</strong>
+        </div>
+
+        <!-- Inspecciones rechazadas con defectos registrados -->
+        <div class="defects_card">
+            <span>Registradas</span>
+            <strong id="defects_registered_total">0</strong>
+        </div>
+
+        <!-- Defectos registrados en el mes actual -->
+        <div class="defects_card">
+            <span>Defectos registrados este mes</span>
+            <strong id="defects_month_total">0</strong>
+        </div>
+    </div>
+
+
+    <!--------------- BLOQUE: Buscador, filtro y botón de registro   ---------------------->
+    <div class="pos_tools">
+        <div class="pos_tools_filters defects_filters">
+
+            <!-- Buscador de defectos -->
+            <div class="pos_search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="search_defects" placeholder="Buscar por PO o tipo de inspección..."
+                    autocomplete="off" aria-label="Buscar defecto">
+            </div>
+
+            <!-- Filtro de mes y año -->
+            <div class="pos_filter">
+                <label for="filter_def_month">Mes</label>
+
+                <div class="pos_dropdown">
+                    <i class="bi bi-calendar3"></i>
+                    <input type="month" id="filter_def_month">
+                </div>
+            </div>
+
+            <!-- Registrar defectos -->
+            <button type="button" id="btn_register_defects" class="pos_assign_btn pos_type_inspection">
+                <i class="bi bi-clipboard-plus"></i>
+                Registrar defectos
+            </button>
+        </div>
+    </div>
+
+
+    <!--------------------------------------------------- BLOQUE: Tabla de defectos  ------------------------------------------------>
+    <section class="pos_table_section">
+
+        <!-- Desplazamiento horizontal -->
+        <div class="pos_table_scroll">
+
+            <table class="pos_table_css defects_table">
+
+                <!-- Encabezados -->
+                <thead>
+                    <tr>
+                        <!-- Seleccionar todas las PO -->
+                        <th>
+                            <input type="checkbox" id="select_all_defects" aria-label="Seleccionar todas las PO">
+                        </th>
+                        <th>ID</th>
+                        <th>PO</th>
+                        <th>Tipo de inspección</th>
+                        <th>Defectos</th>
+                        <th>Ver defectos</th>
+                    </tr>
+                </thead>
+
+                <!-- Inspecciones rechazadas -->
+                <tbody id="defects_table_body">
+                    <tr>
+                        <td colspan="6">No hay inspecciones rechazadas.</td>
+                    </tr>
+
+                    <!-- Ejemplo de cómo quedará cada fila (la armará el JS):
+                    <tr>
+                        <td><input type="checkbox" class="select_def_check" aria-label="Seleccionar PO 62629592"></td>
+                        <td>1</td>
+                        <td>62629592</td>
+                        <td>AQL OUTBOUND INSPECTION - REGULAR ORDERS</td>
+                        <td>3</td>
+                        <td>
+                            <button type="button" class="btn_defect_view" aria-label="Ver defectos de la PO 62629592">
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    -->
+                </tbody>
+            </table>
+        </div>
+
+        <!---------------------------------- BLOQUE: Pie de tabla  ------------------------------------------------>
+        <!-- Label Total -->
+        <div class="pos_table_footer">
+            <span>Total de registros: <strong id="defects_total_records">0</strong></span>
+        </div>
+    </section>
+
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal REGISTRAR DEFECTOS   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="register_defects_js" class="pos_modal_overlay" hidden>
+
+        <div class="po_dates_modal register_defects_modal" role="dialog" aria-modal="true"
+            aria-labelledby="register_defects_title">
+
+            <!-- Encabezado -->
+            <div class="po_dates_header">
+                <h2 id="register_defects_title">
+                    <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+                    Registrar defectos · PO <span id="def_info_po">—</span>
+                </h2>
+
+                <!-- Botón X -->
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="form_register_defects" novalidate>
+
+                <!-- Datos de la inspección -->
+                <div class="po_dates_grid">
+
+                    <div class="po_date_item">
+                        <span>Tipo de inspección</span>
+                        <strong id="def_info_type">—</strong>
+                    </div>
+
+                    <div class="po_date_item">
+                        <span>Inspector</span>
+                        <strong id="def_info_inspector">—</strong>
+                    </div>
+
+                    <div class="po_date_item">
+                        <span>LOAD SIZE · Muestra</span>
+                        <strong id="def_info_load">—</strong>
+                    </div>
+
+                    <div class="po_date_item">
+                        <span>Defectos encontrados</span>
+                        <strong id="def_info_found">0</strong>
+                    </div>
+                </div>
+
+                <!-- Título y contador -->
+                <div class="register_defects_subtitle">
+                    <h3 class="po_dates_subtitle">Detalle de defectos</h3>
+                    <p class="ins_dates_count"><strong id="def_count">Registrados: 0 de 0</strong></p>
+                </div>
+
+                <!-- Un renglón por defecto -->
+                <div class="pos_table_scroll">
+                    <table class="pos_table_css def_rows_table">
+
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CTQ</th>
+                                <th>Code</th>
+                                <th>Defect Classification</th>
+                                <th>
+                                    <span class="visually_hidden">Foto</span>
+                                </th>
+                                <th>
+                                    <span class="visually_hidden">Quitar</span>
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <!-- Las filas se agregan con JavaScript -->
+                        <tbody id="def_rows_body"></tbody>
+                    </table>
+                </div>
+
+                <!-- Agregar otro defecto -->
+                <button type="button" id="btn_add_defect">
+                    <i class="bi bi-plus-lg"></i>
+                    Agregar defecto
+                </button>
+
+                <!-- Mensaje de error -->
+                <small id="def_error" class="def_error" hidden></small>
+
+                <!-- Submenú de la cámara (se coloca debajo del botón con JavaScript) -->
+                <div id="photo_menu" class="photo_menu" role="menu" hidden>
+                    <button type="button" role="menuitem" data-photo="take">
+                        <i class="bi bi-camera-fill"></i>
+                        Tomar foto
+                    </button>
+                    <button type="button" role="menuitem" data-photo="upload">
+                        <i class="bi bi-upload"></i>
+                        Subir foto
+                    </button>
+                </div>
+
+                <!-- Botones -->
+                <div class="btns_po">
+                    <button type="button" class="btn_cancel_po">Cancelar</button>
+                    <button type="submit" id="btn_save_defects">
+                        <i class="bi bi-check-lg"></i>
+                        Guardar defectos
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal VER DEFECTOS   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="view_defects_js" class="pos_modal_overlay" hidden>
+
+        <div class="po_dates_modal register_defects_modal" role="dialog" aria-modal="true"
+            aria-labelledby="view_defects_title">
+
+            <!-- Encabezado -->
+            <div class="po_dates_header">
+                <h2 id="view_defects_title">
+                    <i class="bi bi-eye-fill" aria-hidden="true"></i>
+                    Defectos · PO <span id="view_def_po">—</span>
+                </h2>
+
+                <!-- Botón X -->
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Defectos registrados (solo lectura) -->
+            <div class="pos_table_scroll">
+                <table class="pos_table_css def_rows_table view_defects_table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>CTQ</th>
+                            <th>Code</th>
+                            <th>Defect Classification</th>
+                            <th>Foto</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="view_def_body"></tbody>
+                </table>
+            </div>
+
+            <!-- Botón cerrar -->
+            <div class="btns_po">
+                <button type="button" class="btn_cancel_po">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+</section>

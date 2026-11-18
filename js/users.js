@@ -120,9 +120,6 @@ async function users_table() {
         // Crear una fila.
         const row = table.insertRow();
 
-        // Guardar el estado obtenido de MariaDB en la fila.
-        row.dataset.status = user_db.status_user;
-
         // Crear la casilla de selección.
         const selection = document.createElement("td");
         const ch_box = document.createElement("input");
@@ -524,7 +521,6 @@ document.addEventListener("submit", async function (event) {
     const pass_js = document.getElementById("new_user_password");
     const conf_pass_js = document.getElementById("new_user_confirm_password");
     const rol_js = document.getElementById("new_user_role");
-    const status_js = document.getElementById("new_user_status");
 
     // ---------------------------------  Validaciones  ------------------------------------------
 
@@ -611,18 +607,6 @@ document.addEventListener("submit", async function (event) {
         form_valid = false;
     }
 
-    // Validar estado.
-    if (status_js.value !== "1" && status_js.value !== "0") {
-
-        error_show(
-            status_js,
-            "error_new_user_status",
-            "Selecciona un estado."
-        );
-
-        form_valid = false;
-    }
-
     // Resultado de las validaciones
     if (!form_valid) {
 
@@ -647,7 +631,6 @@ document.addEventListener("submit", async function (event) {
     data.append("new_pass_php", pass_js.value);
     data.append("conf_pass_php", conf_pass_js.value);
     data.append("rol_php", rol_js.value);
-    data.append("status_php", status_js.value);
 
     //Enviar los datos a PHP
     try {
@@ -664,6 +647,13 @@ document.addEventListener("submit", async function (event) {
 
         // Convertir el JSON recibido por php en un objeto JavaScript.
         const answer_php = await send_php.json();
+
+        // Verificar que PHP haya registrado el usuario.
+        if (!send_php.ok || !answer_php.success) {
+            throw new Error(
+                answer_php.message || "No se pudo registrar el usuario."
+            );
+        }
 
 
         // ------------------------ Mostrar notificación de registro exitoso   ------------------------------------------
@@ -729,9 +719,6 @@ document.addEventListener("click", async function (event) {
         // Obtener la fila correspondiente al checkbox.
         const row = checkbox.closest("tr");
 
-        // Reccuperar el status del usuario 
-        const status_db = row.dataset.status;
-
         // Obtener todas las celdas de la fila.
         const cells = row.querySelectorAll("td");
 
@@ -760,9 +747,6 @@ document.addEventListener("click", async function (event) {
 
         // Cargar los roles desde MariaDB y seleccionar el actual.
         await load_roles("edit_user_role", rol_table);
-
-        //Seleccionar el estado registrado en la base de datos 
-        document.getElementById("edit_user_status").value = status_db;
 
         // ------------------------- Mostrar el formulario   ------------------------------------------
         document.getElementById("edit_user_modal").hidden = false;
@@ -813,7 +797,6 @@ document.addEventListener("submit", function (event) {
     const pass_edit_js = form_edit.querySelector("#edit_user_password");
     const conf_edit_js = form_edit.querySelector("#edit_user_confirm_password");
     const rol_edit_js = form_edit.querySelector("#edit_user_role");
-    const status_edit_js = form_edit.querySelector("#edit_user_status");
 
     // Guardará el primer campo que tenga un error.
     let first_input_error = null;
@@ -894,17 +877,10 @@ document.addEventListener("submit", function (event) {
         );
     }
 
-    // Validar status
-    if (status_edit_js.value !== "1" && status_edit_js.value !== "0") {
-
-        error_show(
-            status_edit_js,
-            "error_edit_user_status",
-            "Selecciona un estado válido."
-        );
-    }
-
     // Resultado
+
+    // Buscar el primer campo marcado con error.
+    first_input_error = form_edit.querySelector(".input_error");
 
     if (first_input_error !== null) {
         first_input_error.focus();
@@ -922,10 +898,9 @@ document.addEventListener("submit", function (event) {
         id_user: id_user_edit_js,
         name_user: name_edit_js.value.trim(),
         user: user_edit_js.value.trim(),
-        pass: pass_edit_js.value,
-        confirm_pass: conf_edit_js.value,
-        id_rol: rol_edit_js.value,
-        status: status_edit_js.value
+        password: pass_edit_js.value,
+        confirm_password: conf_edit_js.value,
+        id_rol: rol_edit_js.value
 
     };
 
@@ -965,9 +940,18 @@ document.addEventListener("submit", function (event) {
                 );
             }
 
+            // Mostrar el motivo cuando PHP rechaza la actualización.
+            else {
+                show_user_notifi(
+                    "error",
+                    res_php.message || "No se pudo actualizar el usuario.",
+                    "edit"
+                );
+            }
+
         })
         .catch(function (error) {
-            show_user_notifi("error", error.message);
+            show_user_notifi("error", error.message, "edit");
             console.error("Error al enviar los datos:", error);
         });
 });

@@ -42,6 +42,19 @@ fetch("../php/dashboard_admin.php")
     });
 
 
+/* ---------------------------------------- FUNCION MARCAR OPCION -------------------------------------------------------------- */
+
+// Quitar el resaltado de todas las opciones y marcar la seleccionada.
+function mark_option(option) {
+
+    document
+        .querySelectorAll(".option_menu, .option_submenu")
+        .forEach(item => item.classList.remove("activo"));
+
+    option.classList.add("activo");
+}
+
+
 /* ------------------------------------------------ OPCION USUARIOS -------------------------------------------------------------- */
 
 // Localiza el enlace de usuarios.
@@ -77,6 +90,9 @@ option_users.addEventListener("click", async function (ev) {
             module_name.textContent = "Usuarios";
         }
 
+        // Marcar Usuarios en el panel.
+        mark_option(option_users);
+
     } catch (error) {
 
         // Muestra el error en la consola.
@@ -85,7 +101,6 @@ option_users.addEventListener("click", async function (ev) {
     }
 
 });
-
 /* ---------------------------------------- OPCION POS -------------------------------------------------------------- */
 
 // Localiza el enlace de usuarios.
@@ -100,16 +115,88 @@ option_pos.addEventListener("click", async function (ev) {
         const container = document.getElementById("module_content");
         container.innerHTML = content;
 
-        // Cargar los registros reales en la tabla después de hacer click en la opcion Usuarios del panel.
-        //await users_table();
+        // Volver a dibujar las PO que ya estaban cargadas.
+        load_pos_table(pos_records);
 
         const module_name = document.getElementById("module_name");
         if (module_name) {
             module_name.textContent = "Po's";
         }
+
+        // Marcar Po's en el panel.
+        mark_option(option_pos);
+
     } catch (error) {
         console.error("Error al cargar Dashboard Po's:", error);
     }
 });
 
+/* ---------------------------------------- FUNCION CARGAR MODULO -------------------------------------------------------------- */
 
+// Cargar un archivo HTML dentro del Dashboard y actualizar la ruta.
+async function load_module(file, name, option) {
+
+    const res = await fetch(file);
+
+    // Detener si el archivo no existe (404).
+    if (!res.ok) {
+        throw new Error(`No se encontró ${file} (${res.status})`);
+    }
+
+    const content = await res.text();
+    const container = document.getElementById("module_content");
+    container.innerHTML = content;
+
+    // Actualizar el nombre del módulo en la ruta de navegación.
+    const module_name = document.getElementById("module_name");
+
+    if (module_name) {
+        module_name.textContent = name;
+    }
+
+    // Marcar la opción seleccionada en el panel.
+    mark_option(option);
+}
+
+
+/* ---------------------------------------- OPCION INSPECCIONES -------------------------------------------------------------- */
+
+const option_inspections = document.getElementById("option_inspections");
+
+option_inspections.addEventListener("click", async function (ev) {
+    ev.preventDefault();
+
+    // Avisar si hay PO sin guardar en la base de datos.
+    if (!confirm_leave_pos()) return;
+
+    try {
+        await load_module("inspections.html", "Po's / Inspecciones", option_inspections);
+
+        // Llenar el filtro de inspectores y dibujar la tabla.
+        init_inspections_module();
+
+    } catch (error) {
+        console.error("Error al cargar Inspecciones:", error);
+    }
+});
+
+
+/* ---------------------------------------- OPCION DEFECTOS -------------------------------------------------------------- */
+
+const option_defects = document.getElementById("option_defects");
+
+option_defects.addEventListener("click", async function (ev) {
+    ev.preventDefault();
+
+    // Avisar si hay PO sin guardar en la base de datos.
+    if (!confirm_leave_pos()) return;
+
+    try {
+        await load_module("defects.html", "Po's / Defectos", option_defects);
+
+        // Llenar los cuadros y dibujar la tabla de rechazadas.
+        init_defects_module();
+    } catch (error) {
+        console.error("Error al cargar Defectos:", error);
+    }
+});

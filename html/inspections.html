@@ -1,0 +1,233 @@
+<!-- Contenido principal de Inspecciones -->
+<section class="pos_content">
+
+    <!-------------------- BLOQUE: Encabezado ---------------------->
+    <div class="pos_header">
+
+        <!-- Icono y título -->
+        <div class="pos_header_title">
+            <i class="bi bi-clipboard-check-fill"></i>
+            <h2>Inspecciones</h2>
+        </div>
+    </div>
+
+
+    <!--------------- BLOQUE: Buscador y filtros   ---------------------->
+    <div class="pos_tools">
+        <div class="pos_tools_filters">
+
+            <!-- Buscador de inspecciones -->
+            <div class="pos_search">
+                <i class="bi bi-search"></i>
+                <input type="search" id="search_inspections" placeholder="Buscar por PO o tipo de inspección..."
+                    autocomplete="off" aria-label="Buscar inspección">
+            </div>
+
+            <!-- Filtro de mes y año -->
+            <div class="pos_filter">
+                <label for="filter_ins_month">Mes</label>
+
+                <div class="pos_dropdown">
+                    <i class="bi bi-calendar3"></i>
+                    <input type="month" id="filter_ins_month">
+                </div>
+            </div>
+
+            <!-- Filtro por estado -->
+            <div class="pos_filter">
+                <label for="filter_ins_status">Estado</label>
+
+                <div class="pos_dropdown">
+                    <i class="bi bi-layers"></i>
+                    <select id="filter_ins_status">
+                        <option value="">Todos</option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Aceptado">Aceptado</option>
+                        <option value="Rechazado">Rechazado</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filtro por inspector -->
+            <div class="pos_filter">
+                <label for="filter_ins_inspector">Inspector</label>
+
+                <div class="pos_dropdown">
+                    <i class="bi bi-person"></i>
+                    <select id="filter_ins_inspector">
+                        <option value="">Todos</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!---------------------- Botones de inspección ---------------------->
+        <div class="pos_assign">
+
+            <!-- Registrar resultado -->
+            <button type="button" id="btn_register_result" class="pos_assign_btn pos_type_inspection">
+                <i class="bi bi-clipboard-data"></i>
+                Registrar resultado
+            </button>
+        </div>
+    </div>
+
+
+    <!--------------------------------------------------- BLOQUE: Tabla de inspecciones  ------------------------------------------------>
+    <section class="pos_table_section">
+
+        <!-- Desplazamiento horizontal -->
+        <div class="pos_table_scroll">
+
+            <table class="pos_table_css inspections_table">
+
+                <!-- Encabezados -->
+                <thead>
+                    <tr>
+                        <th>
+                            <span class="visually_hidden">Seleccionar</span>
+                        </th>
+                        <th>ID</th>
+                        <th>PO</th>
+                        <th>División</th>
+                        <th>Tipo de inspección</th>
+                        <th>Nivel de Inspección</th>
+                        <th>Inspector</th>
+                        <th>Estado</th>
+                        <th>Fechas</th>
+                    </tr>
+                </thead>
+
+                <!-- Una fila por PO con su inspección más reciente -->
+                <tbody id="inspections_table_body">
+                    <tr>
+                        <td colspan="9">No hay inspecciones registradas.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!---------------------------------- BLOQUE: Pie de tabla  ------------------------------------------------>
+        <!-- Label Total -->
+        <div class="pos_table_footer">
+            <span>Total de registros: <strong id="inspections_total_records">0</strong></span>
+        </div>
+    </section>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal FECHAS DE INSPECCIONES   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="ins_dates_js" class="pos_modal_overlay" hidden>
+
+        <div class="po_dates_modal ins_dates_modal" role="dialog" aria-modal="true" aria-labelledby="ins_dates_title">
+
+            <!-- Encabezado -->
+            <div class="po_dates_header">
+                <h2 id="ins_dates_title"><i class="bi bi-clipboard-check-fill" aria-hidden="true"></i> Inspecciones de la PO <span id="ins_dates_po">—</span></h2>
+
+                <!-- Botón X -->
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Contador -->
+            <p class="ins_dates_count">
+                <strong id="ins_dates_count">0 inspecciones</strong>
+            </p>
+
+            <!-- Inspecciones de la PO -->
+            <div class="pos_table_scroll">
+                <table class="pos_table_css ins_dates_table">
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Inspector</th>
+                            <th>Estado</th>
+                            <th>Fecha y hora</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="ins_dates_body"></tbody>
+                </table>
+            </div>
+
+            <!-- Botón cerrar -->
+            <div class="btns_po">
+                <button type="button" class="btn_cancel_po">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal REGISTRAR RESULTADO   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="register_result_js" class="pos_modal_overlay" hidden>
+
+        <div class="pos_modal_css" role="dialog" aria-modal="true" aria-labelledby="register_result_title">
+
+            <!-- Encabezado -->
+            <div class="pos_modal_header">
+                <h2 id="register_result_title">Registrar resultado</h2>
+
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="form_register_result" novalidate>
+
+                <!-- PO y cantidad en una sola fila -->
+                <div class="row_po_info">
+
+                    <!-- PO -->
+                    <div class="pos_form_group inspection_po_group">
+                        <label for="result_po">PO</label>
+                        <input type="text" id="result_po" readonly>
+                    </div>
+
+                    <!-- Cantidad -->
+                    <div class="pos_form_group inspection_quantity_group">
+                        <label>Cantidad</label>
+                        <span id="result_quantity">0</span>
+                    </div>
+                </div>
+
+                <!-- Tipo de inspección asignado -->
+                <div class="pos_form_group">
+                    <label for="result_type">Tipo de inspección</label>
+                    <input type="text" id="result_type" readonly>
+                </div>
+
+                <!-- Inspector -->
+                <div class="pos_form_group">
+                    <label for="result_inspector">Inspector</label>
+                    <input type="text" id="result_inspector" readonly>
+                </div>
+
+                <!-- Defecto -->
+                <div class="pos_form_group">
+                    <label for="inspection_defect">
+                        Defecto <span class="pos_required">*</span>
+                    </label>
+                    <input type="text" id="inspection_defect" name="defect" autocomplete="off">
+                </div>
+
+                <!-- Resultado de la inspección -->
+                <div id="inspection_result" class="inspection_result" hidden></div>
+
+                <!-- Botones -->
+                <div class="btns_po">
+                    <button type="button" class="btn_cancel_po">Cancelar</button>
+                    <button type="submit" id="btn_save_result">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</section>

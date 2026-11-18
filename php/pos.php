@@ -119,6 +119,145 @@ if (
 }
 
 // -------------------------------------------------------------------------------------------------------
+// Método GET para tomar los CTQ activos (select del modal Registrar defectos)
+// Verificar si JavaScript solicita los CTQ
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'ctqs'
+) {
+
+    try {
+
+        // Consultar solo los CTQ activos, ordenados por su número
+        $sql = "SELECT id_ctq, num_ctq, name_ctq
+                FROM ctqs
+                WHERE status_ctq = 1
+                ORDER BY num_ctq ASC";
+
+        // Ejecutar la consulta
+        $res = $connection->query($sql);
+
+        // Crear un arreglo para almacenar los CTQ
+        $ctqs = [];
+
+        // Recorrer los registros obtenidos
+        while ($row = $res->fetch_assoc()) {
+            $ctqs[] = $row;
+        }
+
+        // Enviar los CTQ a JavaScript
+        echo json_encode([
+            'success' => true,
+            'ctqs' => $ctqs
+        ]);
+
+    } catch (mysqli_sql_exception $error) {
+
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudieron consultar los CTQ.'
+        ]);
+    }
+
+    exit;
+}
+
+// -------------------------------------------------------------------------------------------------------
+// Método GET para tomar los Codes activos (select del modal Registrar defectos)
+// Verificar si JavaScript solicita los Codes
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'code_ctqs'
+) {
+
+    try {
+
+        // Consultar solo los Codes activos, ordenados por su número
+        $sql = "SELECT id_code_ctq, code_ctq, name_code
+                FROM code_ctqs
+                WHERE status_code = 1
+                ORDER BY code_ctq ASC";
+
+        // Ejecutar la consulta
+        $res = $connection->query($sql);
+
+        // Crear un arreglo para almacenar los Codes
+        $codes = [];
+
+        // Recorrer los registros obtenidos
+        while ($row = $res->fetch_assoc()) {
+            $codes[] = $row;
+        }
+
+        // Enviar los Codes a JavaScript
+        echo json_encode([
+            'success' => true,
+            'codes' => $codes
+        ]);
+
+    } catch (mysqli_sql_exception $error) {
+
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudieron consultar los Codes.'
+        ]);
+    }
+
+    exit;
+}
+
+// -------------------------------------------------------------------------------------------------------
+// Método GET para tomar las clasificaciones de defecto activas (tabla defects)
+// Verificar si JavaScript solicita las clasificaciones
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'defect_classes'
+) {
+
+    try {
+
+        // Consultar solo las activas, ordenadas por número (11.2, 51.2, 51.10...)
+        $sql = "SELECT id_def, id_ctq, id_code_ctq, num, def_class
+                FROM defects
+                WHERE status_def = 1
+                ORDER BY CAST(SUBSTRING_INDEX(num, '.', 1) AS UNSIGNED),
+                         CAST(SUBSTRING_INDEX(num, '.', -1) AS UNSIGNED)";
+
+        // Ejecutar la consulta
+        $res = $connection->query($sql);
+
+        // Crear un arreglo para almacenar las clasificaciones
+        $defect_classes = [];
+
+        // Recorrer los registros obtenidos
+        while ($row = $res->fetch_assoc()) {
+            $defect_classes[] = $row;
+        }
+
+        // Enviar las clasificaciones a JavaScript
+        echo json_encode([
+            'success' => true,
+            'defect_classes' => $defect_classes
+        ]);
+
+    } catch (mysqli_sql_exception $error) {
+
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudieron consultar las clasificaciones.'
+        ]);
+    }
+
+    exit;
+}
+
+// -------------------------------------------------------------------------------------------------------
 // Método GET para identificar el LOAD SIZE que corresponde a una cantidad
 // Verificar si JavaScript solicita el rango AQL
 if (
@@ -264,6 +403,11 @@ if (
         // Iniciar la transacción: se guarda todo o nada
         $connection->begin_transaction();
 
+        // Verificar que el usuario asignado exista y esté activo
+        $find_user = $connection->prepare(
+            "SELECT id_user FROM myr_users WHERE id_user = ? AND status_user = 1 LIMIT 1"
+        );
+
         // Buscar una PO por su número
         $find_po = $connection->prepare(
             "SELECT id_po FROM pos WHERE number_po = ? LIMIT 1"
@@ -331,15 +475,25 @@ if (
                 "options" => ["min_range" => 0]
             ]);
 
-            // Usuario asignado (vacío si no tiene)
+            // Usuario asignado (obligatorio)
             $id_user = filter_var($po['id_user'] ?? null, FILTER_VALIDATE_INT, [
                 "options" => ["min_range" => 1]
             ]);
 
-            $id_user = $id_user === false ? null : $id_user;
-
             // Nombre de la PO para los mensajes de error
             $po_label = $number_po !== '' ? $number_po : 'número ' . ($index + 1);
+
+            if ($id_user === false) {
+                throw new InvalidArgumentException("La PO $po_label no tiene usuario asignado.");
+            }
+
+            // Verificar que el usuario exista y esté activo
+            $find_user->bind_param("i", $id_user);
+            $find_user->execute();
+
+            if (!$find_user->get_result()->fetch_assoc()) {
+                throw new InvalidArgumentException("El usuario asignado a la PO $po_label no existe o está inactivo.");
+            }
 
             // Validar los datos obligatorios
             if (
@@ -492,6 +646,115 @@ if (
         echo json_encode([
             'success' => false,
             'message' => 'No se pudieron guardar las PO.'
+        ]);
+    }
+
+    exit;
+}
+
+// -------------------------------------------------------------------------------------------------------
+// Método POST para guardar el resultado de una inspección en ins_aqls
+// Verificar si JavaScript envía el resultado
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['action'] ?? '') === 'save_inspection_result'
+) {
+
+    // Recibir los datos enviados desde JavaScript
+    $data_js = json_decode(file_get_contents("php://input"), true);
+
+    $number_po = trim((string) ($data_js['number_po'] ?? ''));
+
+    $id_ins_type = filter_var($data_js['id_ins_type'] ?? null, FILTER_VALIDATE_INT, [
+        "options" => ["min_range" => 1]
+    ]);
+
+    $id_aql = filter_var($data_js['id_aql'] ?? null, FILTER_VALIDATE_INT, [
+        "options" => ["min_range" => 1]
+    ]);
+
+    if ($number_po === '' || $id_ins_type === false || $id_aql === false) {
+        http_response_code(400);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Datos de la inspección incompletos o no válidos.'
+        ]);
+        exit;
+    }
+
+    // Obtener el ID del usuario que realiza el registro
+    $id_admin = (int) ($_SESSION['id_user'] ?? 0);
+
+    if ($id_admin <= 0) {
+        http_response_code(401);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Sesión no válida. Inicia sesión nuevamente.'
+        ]);
+        exit;
+    }
+
+    try {
+
+        // Buscar la PO en la base de datos por su número
+        $find_po = $connection->prepare(
+            "SELECT id_po FROM pos WHERE number_po = ? AND status_po = 1 LIMIT 1"
+        );
+        $find_po->bind_param("s", $number_po);
+        $find_po->execute();
+
+        $po = $find_po->get_result()->fetch_assoc();
+        $find_po->close();
+
+        // La PO debe estar guardada antes de registrar su inspección
+        if (!$po) {
+            http_response_code(400);
+
+            echo json_encode([
+                'success' => false,
+                'message' => "La PO $number_po todavía no está en la base de datos. Guárdala primero en Po's."
+            ]);
+            exit;
+        }
+
+        $id_po = (int) $po['id_po'];
+
+        // Registrar la inspección
+        $insert_inspection = $connection->prepare(
+            "INSERT INTO ins_aqls
+                (id_po, id_ins_type, id_aql, status_aql, created_by, updated_by)
+             VALUES (?, ?, ?, 1, ?, ?)"
+        );
+
+        $insert_inspection->bind_param(
+            "iiiii",
+            $id_po,
+            $id_ins_type,
+            $id_aql,
+            $id_admin,
+            $id_admin
+        );
+        $insert_inspection->execute();
+
+        $id_ins_aql = $connection->insert_id;
+
+        $insert_inspection->close();
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Resultado guardado en la base de datos.',
+            'id_ins_aql' => $id_ins_aql
+        ]);
+
+    } catch (mysqli_sql_exception $error) {
+
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudo guardar el resultado de la inspección.'
         ]);
     }
 

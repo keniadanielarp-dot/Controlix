@@ -35,6 +35,21 @@
     color: #142b49;
 }
 
+/* Título con descripción debajo (Defectos) */
+.pos_header_text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+/* Descripción */
+.pos_header_text p {
+    margin: 0;
+    font-size: 14px;
+    color: #34476c;
+}
+
 /* ----- Botones de encabezado ----- */
 
 /* Distribucion en pantalla */
@@ -416,9 +431,23 @@
     color: #166534;
 }
 
+/* Inspección aceptada */
+.pos_status.inspection_result_accepted {
+    background-color: #c6f6d5;
+    color: #166534;
+}
+
+/* Inspección rechazada */
+.pos_status.inspection_result_rejected {
+    background-color: #fed7d7;
+    color: #9b1c1c;
+}
+
 
 /* ------------------------- BLOQUE: Botón Fecha Detalle de PO --------------------------- */
-.btn_po_dates {
+.btn_po_dates,
+.btn_ins_dates,
+.btn_defect_view {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -434,17 +463,23 @@
 }
 
 /* Ícono blanco */
-.btn_po_dates i {
+.btn_po_dates i,
+.btn_ins_dates i,
+.btn_defect_view i {
     color: #ffffff;
 }
 
 /* Efecto al pasar el cursor */
-.btn_po_dates:hover {
+.btn_po_dates:hover,
+.btn_ins_dates:hover,
+.btn_defect_view:hover {
     background-color: #2454a6;
 }
 
 /* Accesibilidad */
-.btn_po_dates:focus-visible {
+.btn_po_dates:focus-visible,
+.btn_ins_dates:focus-visible,
+.btn_defect_view:focus-visible {
     outline: 2px solid #2454a6;
     outline-offset: 3px;
 }
@@ -552,79 +587,6 @@
 .po_date_item strong {
     color: #142b49;
     font-size: 17px;
-}
-
-
-/* Hiatorial de inspecciones */
-
-.po_inspections_section {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 1px solid #d8def0;
-}
-
-.po_inspections_header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
-}
-
-.po_inspections_header h3 {
-    margin: 0;
-    color: #142b49;
-    font-size: 19px;
-    font-weight: 600;
-}
-
-/* Contador */
-#po_inspections_count {
-    background: #eee5ff;
-    color: #2323c6;
-    border-radius: 20px;
-    padding: 7px 15px;
-    font-size: 13px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-/* Contenedor con desplazamiento vertical */
-.po_inspections_scroll {
-    max-height: 240px;
-    overflow-y: auto;
-    overflow-x: auto;
-    border: 1px solid #d8def0;
-    border-radius: 10px;
-}
-
-/* Tabla */
-.po_inspections_table {
-    width: 100%;
-    min-width: 600px;
-    border-collapse: collapse;
-    font-size: 14px;
-}
-
-.po_inspections_table th {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    background: #142b49;
-    color: #ffffff;
-    padding: 12px;
-    text-align: center;
-}
-
-.po_inspections_table td {
-    padding: 12px;
-    text-align: center;
-    color: #142b49;
-    border-bottom: 1px solid #e2e8f0;
-}
-
-.po_inspections_table tbody tr:nth-child(even) {
-    background: #eaf2ff;
 }
 
 
@@ -1110,7 +1072,8 @@
 
 /* ------------------------------- BLOQUE: MODAL ASIGNAR INSPECCION  --------------------------- */
 /* Contenedor principal */
-#assign_ins_js .pos_modal_css {
+#assign_ins_js .pos_modal_css,
+#register_result_js .pos_modal_css {
     background-color: #ffffff;
     width: 100%;
     max-width: 480px;
@@ -1122,14 +1085,16 @@
 }
 
 /* Encabezado */
-#assign_ins_js .pos_modal_header {
+#assign_ins_js .pos_modal_header,
+#register_result_js .pos_modal_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 22px;
 }
 
-#assign_ins_js .pos_modal_header h2 {
+#assign_ins_js .pos_modal_header h2,
+#register_result_js .pos_modal_header h2 {
     font-size: 20px;
     font-weight: 600;
     color: #142b49;
@@ -1138,19 +1103,22 @@
 
 
 /* Campos del formulario */
-#form_assign_ins {
+#form_assign_ins,
+#form_register_result {
     display: flex;
     flex-direction: column;
     gap: 18px;
 }
 
-#form_assign_ins .pos_form_group {
+#form_assign_ins .pos_form_group,
+#form_register_result .pos_form_group {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-#form_assign_ins .pos_form_group label {
+#form_assign_ins .pos_form_group label,
+#form_register_result .pos_form_group label {
     color: #142b49;
     font-size: 14px;
     font-weight: 600;
@@ -1158,7 +1126,9 @@
 
 /* Inputs y select */
 #form_assign_ins input,
-#form_assign_ins select {
+#form_assign_ins select,
+#form_register_result input,
+#form_register_result select {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #cbd5e1;
@@ -1171,20 +1141,24 @@
 
 /* Campos seleccionados */
 #form_assign_ins input:focus,
-#form_assign_ins select:focus {
+#form_assign_ins select:focus,
+#form_register_result input:focus,
+#form_register_result select:focus {
     border-color: #2454a6;
     box-shadow: 0 0 0 2px rgba(36, 84, 166, 0.12);
 }
 
-/* PO de solo lectura */
-#inspection_po[readonly] {
+/* PO de solo lectura (Registrar resultado) */
+#result_po[readonly],
+#result_type[readonly],
+#result_inspector[readonly] {
     background-color: #f1f5f9;
     color: #64748b;
     cursor: default;
 }
 
 /* Cantidad informativa */
-#inspection_quantity {
+#result_quantity {
     color: #334155;
     font-size: 15px;
     font-weight: 600;
@@ -1192,7 +1166,8 @@
 
 /* Botones del formulario */
 
-#form_assign_ins .btns_po {
+#form_assign_ins .btns_po,
+#form_register_result .btns_po {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
@@ -1201,7 +1176,8 @@
 
 
 /* Botón Guardar */
-#btn_save_inspection {
+#btn_save_inspection,
+#btn_save_result {
     background-color: #142b49;
     color: #ffffff;
     border: none;
@@ -1212,7 +1188,8 @@
     cursor: pointer;
 }
 
-#btn_save_inspection:hover {
+#btn_save_inspection:hover,
+#btn_save_result:hover {
     background-color: #2454a6;
 }
 
@@ -1220,7 +1197,7 @@
 /* PO y cantidad en una fila */
 
 /* Contenedor horizontal */
-#form_assign_ins .row_po_info {
+#form_register_result .row_po_info {
     display: grid;
     grid-template-columns: 7fr 3fr;
     gap: 15px;
@@ -1228,13 +1205,13 @@
 }
 
 /* Evitar desbordamiento de los campos */
-#form_assign_ins .inspection_po_group,
-#form_assign_ins .inspection_quantity_group {
+#form_register_result .inspection_po_group,
+#form_register_result .inspection_quantity_group {
     min-width: 0;
 }
 
 /* Cantidad con apariencia de campo informativo */
-#form_assign_ins #inspection_quantity {
+#form_register_result #result_quantity {
     display: flex;
     align-items: center;
     width: 100%;
@@ -1246,39 +1223,83 @@
     color: #334155;
 }
 
-/* Resultado de la inspección */
-.inspection_result {
-    padding: 12px 15px;
-    border-radius: 6px;
+
+
+/* ----- PO seleccionadas (Asignar inspección) ----- */
+
+/* Título con el número de PO */
+.inspection_po_label {
+    color: #142b49;
     font-size: 14px;
     font-weight: 600;
 }
 
-.inspection_result[hidden] {
+/* Contenedor de etiquetas */
+.inspection_po_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 120px;
+    overflow-y: auto;
+    margin: 0;
+    padding: 10px 12px;
+    list-style: none;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+}
+
+/* Etiqueta de cada PO */
+.inspection_po_list li {
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: #cfe2ff;
+    color: #084298;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+
+/* Resultado de la evaluación AQL */
+#inspection_result {
+    padding: 12px 15px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Mantener oculto sin resultado */
+#inspection_result[hidden] {
     display: none;
 }
 
-/* Información del rango */
-.inspection_result_info {
+/* Rango de la tabla AQL (todavía sin defectos) */
+#inspection_result.inspection_result_info {
     background-color: #e8f2ff;
-    color: #142b49;
+    border-color: #cbdff8;
+    color: #084298;
 }
 
 /* Aceptado */
-.inspection_result_accepted {
+#inspection_result.inspection_result_accepted {
     background-color: #d1e7dd;
+    border-color: #a3cfbb;
     color: #146c43;
 }
 
 /* Rechazado */
-.inspection_result_rejected {
+#inspection_result.inspection_result_rejected {
     background-color: #f8d7da;
+    border-color: #f5a5ad;
     color: #842029;
 }
 
-/* Dato inválido o fuera de tabla */
-.inspection_result_invalid {
+/* Dato no válido o error al consultar */
+#inspection_result.inspection_result_invalid {
     background-color: #fff3cd;
+    border-color: #ffe69c;
     color: #856404;
 }
 
@@ -1411,6 +1432,399 @@
 
 
 
+/* ------------------------------ BLOQUE: Opción Inspecciones ------------------------------ */
+
+/* Tabla con menos columnas que la de PO's */
+.pos_table_css.inspections_table {
+    min-width: 1100px;
+}
+
+/* ----- Modal Fechas de inspecciones ----- */
+
+/* Ventana más angosta que la de Detalle de PO */
+.po_dates_modal.ins_dates_modal {
+    max-width: 600px;
+}
+
+/* Ícono del título */
+.ins_dates_modal .po_dates_header h2 i {
+    margin-right: 8px;
+    color: #0056b3;
+}
+
+/* Contador de inspecciones */
+.ins_dates_count {
+    margin: 0 0 15px;
+}
+
+.ins_dates_count strong {
+    display: inline-block;
+    padding: 7px 15px;
+    border-radius: 20px;
+    background: #eee5ff;
+    color: #2323c6;
+    font-size: 13px;
+}
+
+/* Tabla dentro del modal: ocupa solo el ancho de la ventana */
+.pos_table_css.ins_dates_table {
+    min-width: 0;
+}
+
+
+
+/* Texto solo para lectores de pantalla */
+.visually_hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+}
+
+
+
+/* ------------------------------ BLOQUE: Opción Defectos ------------------------------ */
+
+/* ----- Resumen (3 cuadros) ----- */
+
+/* Distribución en tres columnas */
+.defects_summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 15px;
+}
+
+/* Cuadro con su contenido centrado */
+.defects_card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    padding: 18px 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+/* Texto del cuadro */
+.defects_card span {
+    font-size: 13px;
+    color: #34476c;
+}
+
+/* Número del cuadro */
+.defects_card strong {
+    font-size: 28px;
+    font-weight: 700;
+    color: #142b49;
+}
+
+/* Número de pendientes en rojo */
+.defects_card strong.defects_card_alert {
+    color: #c62828;
+}
+
+/* ----- Buscador y filtros ----- */
+
+/* Buscador, filtro de mes y botón en una sola fila */
+.pos_tools_filters.defects_filters {
+    grid-template-columns:
+        minmax(0, 1.7fr) minmax(0, 1fr) auto;
+}
+
+/* Botón Registrar defectos más largo */
+#btn_register_defects {
+    min-width: 240px;
+}
+
+/* ----- Tabla de defectos ----- */
+
+/* Ojo del encabezado más grande */
+.defects_table th .bi-eye-fill {
+    font-size: 20px;
+}
+
+/* Tabla con menos columnas que la de PO's */
+.pos_table_css.defects_table {
+    min-width: 700px;
+}
+
+
+
+/* ----- Modal Registrar defectos ----- */
+
+/* Ventana más ancha que la de Detalle de PO */
+.po_dates_modal.register_defects_modal {
+    max-width: 1000px;
+}
+
+/* Ícono del título */
+.register_defects_modal .po_dates_header h2 i {
+    margin-right: 8px;
+    color: #0056b3;
+}
+
+/* Formulario */
+#form_register_defects {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* Título "Detalle de defectos" y contador en una fila */
+.register_defects_subtitle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.register_defects_subtitle .po_dates_subtitle,
+.register_defects_subtitle .ins_dates_count {
+    margin: 0;
+}
+
+/* Contador completo en verde */
+.ins_dates_count strong.def_count_complete {
+    background: #d1e7dd;
+    color: #146c43;
+}
+
+/* Tabla de renglones */
+.pos_table_css.def_rows_table {
+    min-width: 700px;
+}
+
+.def_rows_table td {
+    padding: 8px 10px;
+}
+
+/* Ancho de las columnas ID, cámara y bote */
+.def_rows_table th:nth-child(1) {
+    width: 50px;
+}
+
+.def_rows_table th:nth-child(5),
+.def_rows_table th:nth-child(6) {
+    width: 70px;
+}
+
+/* Selects dentro de la tabla */
+.def_rows_table select {
+    width: 100%;
+    height: 42px;
+    padding: 0 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #142b49;
+    font-family: inherit;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+/* Select desactivado (Code sin CTQ elegido) */
+.def_rows_table select:disabled {
+    background-color: #f1f5f9;
+    color: #8999ad;
+    cursor: not-allowed;
+}
+
+.def_rows_table select:focus {
+    outline: none;
+    border-color: #2454a6;
+    box-shadow: 0 0 0 2px rgba(36, 84, 166, 0.12);
+}
+
+/* Campo con error */
+.def_rows_table .border_error {
+    border-color: #dc3545;
+}
+
+/* Botón cámara (foto del defecto) */
+.btn_defect_photo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #e8f2ff;
+    color: #0056b3;
+    border: 1px solid #cbdff8;
+    border-radius: 8px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.btn_defect_photo:hover {
+    background-color: #0056b3;
+    color: #ffffff;
+}
+
+/* Cámara en verde cuando el renglón ya tiene foto */
+.btn_defect_photo.has_photo {
+    background-color: #d1e7dd;
+    border-color: #a3cfbb;
+    color: #146c43;
+}
+
+/* Submenú de la cámara: Tomar foto / Subir foto */
+.photo_menu {
+    position: fixed;
+    z-index: 2100;
+    display: flex;
+    flex-direction: column;
+    min-width: 170px;
+    padding: 6px;
+    background-color: #ffffff;
+    border: 1px solid #dce5f0;
+    border-radius: 10px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.photo_menu[hidden] {
+    display: none;
+}
+
+/* Opciones del submenú */
+.photo_menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #142b49;
+    font-family: inherit;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.photo_menu button i {
+    font-size: 16px;
+    color: #0056b3;
+}
+
+.photo_menu button:hover,
+.photo_menu button:focus-visible {
+    background-color: #e8f2ff;
+    outline: none;
+}
+
+/* Botón quitar renglón */
+.btn_defect_remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background-color: #fdecee;
+    color: #b42332;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.btn_defect_remove:hover {
+    background-color: #dc3545;
+    color: #ffffff;
+}
+
+/* Botón Agregar defecto */
+#btn_add_defect {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 0 18px;
+    border: 1px dashed #0064d8;
+    border-radius: 8px;
+    background: #f2f7ff;
+    color: #0064d8;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_add_defect:hover {
+    background: #e3eeff;
+}
+
+/* Mensaje de error del formulario */
+.def_error {
+    display: block;
+    padding: 12px 15px;
+    border: 1px solid #f5a5ad;
+    border-radius: 8px;
+    background-color: #f8d7da;
+    color: #842029;
+    font-size: 14px;
+}
+
+.def_error[hidden] {
+    display: none;
+}
+
+/* Botón Guardar defectos */
+#btn_save_defects {
+    border: none;
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+#btn_save_defects:hover {
+    background-color: #2454a6;
+}
+
+
+
+/* ----- Modal Ver defectos ----- */
+
+/* Columna Foto un poco más ancha */
+.view_defects_table th:nth-child(5) {
+    width: 110px;
+}
+
+/* Textos de la tabla sin recortar */
+.view_defects_table td {
+    white-space: normal;
+}
+
+/* Miniatura de la foto */
+.def_photo_thumb {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    border: 1px solid #dce5f0;
+    object-fit: cover;
+    vertical-align: middle;
+}
+
+.def_photo_link:focus-visible .def_photo_thumb {
+    outline: 2px solid #2454a6;
+    outline-offset: 2px;
+}
+
+/* Texto cuando el defecto no tiene foto */
+.def_no_photo {
+    color: #8999ad;
+    font-size: 13px;
+}
+
+
+
 /* ------------------------------------------------ BLOQUE: Navegación móvil --------------------------- */
 
 /* --------------- Navegación con teclado ------------  */
@@ -1452,12 +1866,24 @@
     .pos_search {
         grid-column: 1 / -1;
     }
+
+    /* Cuadros de Defectos uno debajo del otro */
+    .defects_summary {
+        grid-template-columns: 1fr;
+    }
+
+    /* Filtros de Defectos en dos columnas */
+    .pos_tools_filters.defects_filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
 }
 
 /* Celulares */
 @media (max-width: 480px) {
 
-    .pos_tools_filters {
+    .pos_tools_filters,
+    .pos_tools_filters.defects_filters {
         grid-template-columns: 1fr;
     }
 
@@ -1587,16 +2013,12 @@
         padding: 20px;
     }
 
-    .po_inspections_header {
-        flex-wrap: wrap;
-    }
-
 }
 
 /* Adaptación a pantallas pequeñas */
 @media (max-width: 400px) {
 
-    #form_assign_ins .row_po_info {
+    #form_register_result .row_po_info {
         grid-template-columns: 1fr;
     }
 

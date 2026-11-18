@@ -139,6 +139,73 @@ body.folded_panel .panel {
     /*Color del texto*/
 }
 
+/* Submenú de POS */
+.submenu {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: -4px;
+    padding-left: 22px;
+}
+
+/* Opciones del submenú */
+.option_submenu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 40px;
+    padding: 0 14px;
+    border-radius: 5px;
+    color: #c9d6ea;
+    font-size: 13px;
+    text-decoration: none;
+
+    transition:
+        background-color 0.25s ease,
+        color 0.25s ease;
+}
+
+.option_submenu i {
+    font-size: 17px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* Efecto al pasar el cursor */
+.option_submenu:hover {
+    background-color: rgba(45, 113, 220, 0.35);
+    color: #ffffff;
+}
+
+/* Opción del submenú seleccionada */
+.option_submenu.activo {
+    background-color: #ffffff;
+    color: #0b2c5a;
+    font-weight: 600;
+}
+
+/* Número rojo de Defectos */
+.submenu_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    margin-left: auto;
+    padding: 0 6px;
+    border-radius: 11px;
+    background-color: #dc3545;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Ocultar el número cuando no hay rechazadas */
+.submenu_badge[hidden] {
+    display: none;
+}
+
 .content {
     margin-left: 202px;
     min-height: 100vh;

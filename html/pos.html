@@ -246,37 +246,6 @@
                 </div>
             </div>
 
-            <!-- Historial de Inspecciones -->
-            <section class="po_inspections_section">
-
-                <div class="po_inspections_header">
-                    <h3>Historial de inspecciones</h3>
-                    <span id="po_inspections_count">0 inspecciones</span>
-                </div>
-
-                <div class="po_inspections_scroll">
-                    <table class="po_inspections_table">
-
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>División</th>
-                                <th>Tipo de inspección</th>
-                                <th>Nivel de Inspección</th>
-                                <th>Inspector</th>
-                                <th>Fecha y hora</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="po_inspections_body">
-                            <tr>
-                                <td colspan="4">No hay inspecciones registradas.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
             <!-- Botón cerrar -->
             <div class="btns_po">
                 <button type="button" class="btn_cancel_po">Cerrar</button>
@@ -766,20 +735,14 @@
             <!-- Formulario -->
             <form id="form_assign_ins" novalidate>
 
-                <!-- PO y cantidad en una sola fila -->
-                <div class="row_po_info">
+                <!-- PO seleccionadas -->
+                <div class="pos_form_group">
+                    <span class="inspection_po_label">
+                        PO seleccionadas (<span id="inspection_po_count">0</span>)
+                    </span>
 
-                    <!-- Po seleccionada -->
-                    <div class="pos_form_group inspection_po_group">
-                        <label for="inspection_po">PO</label>
-                        <input type="text" id="inspection_po" name="po" readonly>
-                    </div>
-
-                    <!-- Cantidad -->
-                    <div class="pos_form_group inspection_quantity_group">
-                        <label>Cantidad</label>
-                        <span id="inspection_quantity">0</span>
-                    </div>
+                    <!-- Una etiqueta por PO -->
+                    <ul id="inspection_po_list" class="inspection_po_list"></ul>
                 </div>
 
                 <!-- Tipo de inspección -->
@@ -794,15 +757,6 @@
 
                     <small id="error_inspection_type" class="field_error" hidden></small>
                 </div>
-
-                <!-- Defecto -->
-                <div class="pos_form_group">
-                    <label for="inspection_defect">Defecto</label>
-                    <input type="text" id="inspection_defect" name="defect">
-                </div>
-
-                <!-- Resultado de la inspección -->
-                <div id="inspection_result" class="inspection_result" hidden></div>
 
                 <!-- Botones -->
                 <div class="btns_po">
