@@ -41,7 +41,6 @@ body:before {
     align-items: center;
     gap: 25px;
 }
-
 /*Especificación del area del título */
 .program_info {
     width: 100%;
@@ -51,18 +50,8 @@ body:before {
 /* Acomodo del título y logo */
 .program_title {
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    transform: translateX(-25px);
-}
-
-/*Tamaño del logo*/
-.controlix_logo {
-    width: 100px;
-    height: 100px;
-    object-fit: contain;
 }
 
 /*Título "Controlix"*/

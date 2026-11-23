@@ -1290,3 +1290,45 @@
     }
 
 }
+
+
+/************************************ BLOQUE: CONTRASEÑA EN LA TABLA (OJO)  **************************************** */
+
+/* Asteriscos (o contraseña) y botón de ojo en una fila */
+.user_password_cell {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.user_password_text {
+    font-family: inherit;
+    word-break: break-all;
+}
+
+/* Botón de ojo */
+.btn_show_user_password {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #526789;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.btn_show_user_password:hover {
+    background-color: #eef4ff;
+    color: #0b2857;
+}
+
+.btn_show_user_password:focus-visible {
+    outline: 2px solid #2454a6;
+    outline-offset: 2px;
+}

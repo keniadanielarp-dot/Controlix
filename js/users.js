@@ -147,9 +147,16 @@ async function users_table() {
             user_db.rol
         ];
 
-        in_user.forEach(function (value) {
+        in_user.forEach(function (value, position) {
             const cell = document.createElement("td");
-            cell.textContent = value;
+
+            // Contraseña: asteriscos y botón de ojo para mostrarla.
+            if (position === 2) {
+                cell.appendChild(create_password_cell(user_db.id_user));
+            } else {
+                cell.textContent = value;
+            }
+
             row.appendChild(cell);
 
         });
@@ -159,6 +166,84 @@ async function users_table() {
 
     });
 }
+
+/************************************ BLOQUE: CONTRASEÑA EN LA TABLA (OJO)  **************************************** */
+
+// Crear el contenido de la celda Contraseña: asteriscos + botón de ojo.
+function create_password_cell(id_user) {
+
+    const box = document.createElement("div");
+    box.className = "user_password_cell";
+
+    const text = document.createElement("span");
+    text.className = "user_password_text";
+    text.textContent = "********";
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "btn_show_user_password";
+    button.dataset.idUser = id_user;
+    button.setAttribute("aria-label", "Mostrar contraseña");
+
+    const icon = document.createElement("i");
+    icon.className = "bi bi-eye";
+
+    button.appendChild(icon);
+    box.appendChild(text);
+    box.appendChild(button);
+
+    return box;
+}
+
+
+// Mostrar u ocultar la contraseña de un usuario en la tabla.
+async function toggle_user_password(button) {
+
+    const text = button.parentElement.querySelector(".user_password_text");
+    const icon = button.querySelector("i");
+
+    // Si ya se ve, volver a ocultarla.
+    if (button.dataset.visible === "true") {
+        text.textContent = "********";
+        icon.className = "bi bi-eye";
+        button.dataset.visible = "false";
+        button.setAttribute("aria-label", "Mostrar contraseña");
+        return;
+    }
+
+    try {
+
+        // Pedir la contraseña solo de este usuario.
+        const res = await fetch(`/sistema_calidad/php/users.php?action=password&id_user=${button.dataset.idUser}`);
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+            throw new Error(data.message || "No se pudo consultar la contraseña.");
+        }
+
+        text.textContent = data.password;
+        icon.className = "bi bi-eye-slash";
+        button.dataset.visible = "true";
+        button.setAttribute("aria-label", "Ocultar contraseña");
+
+    } catch (error) {
+
+        console.error("Error al mostrar la contraseña:", error);
+        alert(error.message);
+    }
+}
+
+
+// Clic en el ojo de la tabla.
+document.addEventListener("click", function (event) {
+
+    const button = event.target.closest(".btn_show_user_password");
+
+    if (button) {
+        toggle_user_password(button);
+    }
+});
+
 
 /************************************ BLOQUE: FUNCIÓN MOSTRAR U OCULTAR CONTRASEÑAS  **************************************** */
 

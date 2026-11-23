@@ -22,6 +22,10 @@ if (
 // Conexión a la base de datos
 require_once 'connection_bdd.php';
 
+// Hacer que los errores de MySQL lancen una excepción con su mensaje real
+// (en lugar de que prepare() regrese false sin decir por qué)
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 // -------------------------------------------------------------------------------------------------------
 // Método GET para tomar los usuarios activos de la tabla myr_users
 // Verificar si JavaScript solicita los usuarios
@@ -416,14 +420,15 @@ if (
         // Registrar una PO nueva
         $insert_po = $connection->prepare(
             "INSERT INTO pos
-                (id_user, number_po, model_po, art_po, color_po, unit_rqstd, unit_delvd, status_po, created_by, updated_by)
-             VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)"
+                (id_user, id_ins_type, number_po, model_po, art_po, color_po, unit_rqstd, unit_delvd, status_po, created_by, updated_by)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)"
         );
 
         // Actualizar una PO existente
         $update_po = $connection->prepare(
             "UPDATE pos
              SET id_user = ?,
+                 id_ins_type = COALESCE(?, id_ins_type),
                  model_po = ?,
                  art_po = ?,
                  color_po = ?,
@@ -480,8 +485,21 @@ if (
                 "options" => ["min_range" => 1]
             ]);
 
+            // Tipo de inspección actual (opcional: NULL si todavía no tiene)
+            $id_ins_type = null;
+
+            if (($po['id_ins_type'] ?? null) !== null && $po['id_ins_type'] !== '') {
+                $id_ins_type = filter_var($po['id_ins_type'], FILTER_VALIDATE_INT, [
+                    "options" => ["min_range" => 1]
+                ]);
+            }
+
             // Nombre de la PO para los mensajes de error
             $po_label = $number_po !== '' ? $number_po : 'número ' . ($index + 1);
+
+            if ($id_ins_type === false) {
+                throw new InvalidArgumentException("La PO $po_label tiene un tipo de inspección no válido.");
+            }
 
             if ($id_user === false) {
                 throw new InvalidArgumentException("La PO $po_label no tiene usuario asignado.");
@@ -528,8 +546,9 @@ if (
                 $id_po = (int) $existing['id_po'];
 
                 $update_po->bind_param(
-                    "isssiiii",
+                    "iisssiiii",
                     $id_user,
+                    $id_ins_type,
                     $model,
                     $article,
                     $color,
@@ -546,8 +565,9 @@ if (
 
                 // Registrar la PO
                 $insert_po->bind_param(
-                    "issssiiii",
+                    "iissssiiii",
                     $id_user,
+                    $id_ins_type,
                     $number_po,
                     $model,
                     $article,
@@ -755,6 +775,209 @@ if (
         echo json_encode([
             'success' => false,
             'message' => 'No se pudo guardar el resultado de la inspección.'
+        ]);
+    }
+
+    exit;
+}
+
+// -------------------------------------------------------------------------------------------------------
+// Método POST para guardar los defectos de una inspección en aql_def (con sus fotos)
+// Verificar si JavaScript envía los defectos
+if (
+    $_SERVER['REQUEST_METHOD'] === 'POST' && ($_GET['action'] ?? '') === 'save_defects'
+) {
+
+    // Los datos llegan como FormData (texto + archivos)
+    $id_ins_aql = filter_var($_POST['id_ins_aql'] ?? null, FILTER_VALIDATE_INT, [
+        "options" => ["min_range" => 1]
+    ]);
+
+    $defects = json_decode($_POST['defects'] ?? '', true);
+
+    if ($id_ins_aql === false || !is_array($defects) || empty($defects)) {
+        http_response_code(400);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Datos de los defectos incompletos o no válidos.'
+        ]);
+        exit;
+    }
+
+    // Obtener el ID del usuario que realiza el registro
+    $id_admin = (int) ($_SESSION['id_user'] ?? 0);
+
+    if ($id_admin <= 0) {
+        http_response_code(401);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Sesión no válida. Inicia sesión nuevamente.'
+        ]);
+        exit;
+    }
+
+    // Carpeta donde se guardan las fotos (sistema_calidad/img/defects/)
+    $upload_folder = __DIR__ . '/../img/defects/';
+    $upload_path = 'img/defects/';
+
+    // Tipos de imagen permitidos y tamaño máximo (5 MB)
+    $allowed_types = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp'
+    ];
+    $max_size = 5 * 1024 * 1024;
+
+    // Fotos nuevas que se guardaron (para borrarlas si algo falla)
+    $saved_files = [];
+
+    try {
+
+        // --------------------------------------------------
+        // Verificar que la inspección exista
+        $find_inspection = $connection->prepare(
+            "SELECT id_ins_aql FROM ins_aqls WHERE id_ins_aql = ? AND status_aql = 1 LIMIT 1"
+        );
+        $find_inspection->bind_param("i", $id_ins_aql);
+        $find_inspection->execute();
+
+        if (!$find_inspection->get_result()->fetch_assoc()) {
+            throw new InvalidArgumentException('La inspección no existe en la base de datos.');
+        }
+
+        $find_inspection->close();
+
+        // Crear la carpeta de fotos si todavía no existe
+        if (!is_dir($upload_folder) && !mkdir($upload_folder, 0755, true)) {
+            throw new RuntimeException('No se pudo crear la carpeta de fotos.');
+        }
+
+        // --------------------------------------------------
+        // Iniciar la transacción: se guarda todo o nada
+        $connection->begin_transaction();
+
+        // Quitar los defectos anteriores de la inspección (al volver a registrarlos)
+        $delete_defects = $connection->prepare(
+            "DELETE FROM aql_def WHERE id_ins_aql = ?"
+        );
+        $delete_defects->bind_param("i", $id_ins_aql);
+        $delete_defects->execute();
+        $delete_defects->close();
+
+        // Registrar un defecto
+        $insert_defect = $connection->prepare(
+            "INSERT INTO aql_def
+                (id_def, id_ins_aql, img, status_ad, created_by, updated_by)
+             VALUES (?, ?, ?, 1, ?, ?)"
+        );
+
+        // Ruta de la foto de cada defecto (para regresarla a JavaScript)
+        $photos = [];
+
+        foreach ($defects as $index => $defect) {
+
+            $number = $index + 1;
+
+            $id_def = filter_var($defect['id_def'] ?? null, FILTER_VALIDATE_INT, [
+                "options" => ["min_range" => 1]
+            ]);
+
+            if ($id_def === false) {
+                throw new InvalidArgumentException("El defecto $number no tiene clasificación válida.");
+            }
+
+            // Foto que ya estaba guardada (al editar), solo si está en la carpeta de fotos
+            $img = null;
+            $old_photo = (string) ($defect['photo_path'] ?? '');
+
+            if ($old_photo !== '' && strpos($old_photo, $upload_path) === 0 && strpos($old_photo, '..') === false) {
+                $img = $old_photo;
+            }
+
+            // Foto nueva enviada con el nombre photo_0, photo_1...
+            $file = $_FILES["photo_$index"] ?? null;
+
+            if ($file && $file['error'] !== UPLOAD_ERR_NO_FILE) {
+
+                if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > $max_size) {
+                    throw new InvalidArgumentException("La foto del defecto $number no es válida o pesa más de 5 MB.");
+                }
+
+                // Revisar que de verdad sea una imagen (no solo por su nombre)
+                $image_info = @getimagesize($file['tmp_name']);
+                $type = $image_info['mime'] ?? '';
+
+                if (!isset($allowed_types[$type])) {
+                    throw new InvalidArgumentException("La foto del defecto $number debe ser JPG, PNG o WEBP.");
+                }
+
+                // Nombre único: defect_<inspección>_<número>_<aleatorio>.jpg
+                $file_name = sprintf(
+                    'defect_%d_%d_%s.%s',
+                    $id_ins_aql,
+                    $number,
+                    bin2hex(random_bytes(6)),
+                    $allowed_types[$type]
+                );
+
+                if (!move_uploaded_file($file['tmp_name'], $upload_folder . $file_name)) {
+                    throw new RuntimeException("No se pudo guardar la foto del defecto $number.");
+                }
+
+                $saved_files[] = $upload_folder . $file_name;
+                $img = $upload_path . $file_name;
+            }
+
+            $insert_defect->bind_param(
+                "iisii",
+                $id_def,
+                $id_ins_aql,
+                $img,
+                $id_admin,
+                $id_admin
+            );
+            $insert_defect->execute();
+
+            $photos[] = $img;
+        }
+
+        $insert_defect->close();
+
+        // --------------------------------------------------
+        // Confirmar todos los cambios
+        $connection->commit();
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Defectos guardados en la base de datos.',
+            'photos' => $photos
+        ]);
+
+    } catch (InvalidArgumentException $error) {
+
+        // Datos no válidos: deshacer todo y borrar las fotos nuevas
+        $connection->rollback();
+        array_map('unlink', $saved_files);
+        http_response_code(400);
+
+        echo json_encode([
+            'success' => false,
+            'message' => $error->getMessage()
+        ]);
+
+    } catch (Throwable $error) {
+
+        // Error del servidor o de la base de datos: deshacer todo
+        $connection->rollback();
+        array_map('unlink', $saved_files);
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudieron guardar los defectos.'
         ]);
     }
 

@@ -36,6 +36,13 @@ fetch("../php/dashboard_admin.php")
         // Nombre del usuario en menu desplegable
         document.getElementById("name_profile").textContent = data.name_user;
 
+        // Solo el administrador (id_rol = 1) ve el módulo Usuarios
+        if (Number(data.id_rol) === 1) {
+            document.getElementById("option_users").hidden = false;
+        } else {
+            document.getElementById("option_users").remove();
+        }
+
     })
     .catch(error => {
         console.error("Error al cargar el perfil:", error);
@@ -199,4 +206,134 @@ option_defects.addEventListener("click", async function (ev) {
     } catch (error) {
         console.error("Error al cargar Defectos:", error);
     }
+});
+
+
+/* ---------------------------------------- OPCION GENERAL -------------------------------------------------------------- */
+
+const option_general = document.getElementById("option_general");
+
+option_general.addEventListener("click", async function (ev) {
+    ev.preventDefault();
+
+    // Avisar si hay PO sin guardar en la base de datos.
+    if (!confirm_leave_pos()) return;
+
+    try {
+        await load_module("general.html", "General", option_general);
+
+        // Llenar el select de inspecciones y las fotos.
+        init_general_module();
+    } catch (error) {
+        console.error("Error al cargar General:", error);
+    }
+});
+
+
+/* ---------------------------------------- OPCION RESUMEN -------------------------------------------------------------- */
+
+const option_summary = document.getElementById("option_summary");
+
+option_summary.addEventListener("click", async function (ev) {
+    ev.preventDefault();
+
+    // Avisar si hay PO sin guardar en la base de datos.
+    if (!confirm_leave_pos()) return;
+
+    try {
+        await load_module("summary.html", "Resumen", option_summary);
+
+        // Llenar el select de inspecciones.
+        init_summary_module();
+
+    } catch (error) {
+        console.error("Error al cargar Resumen:", error);
+    }
+});
+
+
+/* ---------------------------------------- OPCION MI PERFIL -------------------------------------------------------------- */
+
+const option_profile = document.getElementById("option_profile");
+
+option_profile.addEventListener("click", function (ev) {
+    ev.preventDefault();
+
+    // Avisar si hay PO sin guardar en la base de datos.
+    if (!confirm_leave_pos()) return;
+
+    // Copiar la plantilla de Mi Perfil (está en dashboard_admin.html) al contenedor.
+    const template = document.getElementById("profile_template");
+    const container = document.getElementById("module_content");
+
+    container.innerHTML = "";
+    container.appendChild(template.content.cloneNode(true));
+
+    // Nombre y rol del usuario con sesión (los mismos de la barra superior).
+    document.getElementById("profile_card_name").textContent =
+        document.getElementById("name_profile").textContent;
+
+    document.getElementById("profile_card_role").textContent =
+        document.getElementById("rol_dash").textContent;
+
+    // Actualizar el nombre del módulo en la ruta de navegación.
+    const module_name = document.getElementById("module_name");
+
+    if (module_name) {
+        module_name.textContent = "Mi Perfil";
+    }
+
+    // Quitar el resaltado de las opciones del panel.
+    document
+        .querySelectorAll(".option_menu, .option_submenu")
+        .forEach(item => item.classList.remove("activo"));
+});
+
+
+/* ------------------------------------------------ OPCION CERRAR SESION -------------------------------------------------------------- */
+
+const logout_modal = document.getElementById("logout_js");
+
+// Abrir el modal para confirmar.
+function open_logout_modal() {
+
+    // Mostrar el aviso solo si hay PO sin guardar.
+    const has_pending = typeof has_unsaved_pos === "function" &&
+        document.getElementById("pos_table_js") &&
+        has_unsaved_pos();
+
+    document.getElementById("logout_warning").hidden = !has_pending;
+
+    logout_modal.hidden = false;
+    document.getElementById("btn_confirm_logout").focus();
+}
+
+// Cerrar el modal sin salir.
+function close_logout_modal() {
+    logout_modal.hidden = true;
+}
+
+// Click en Cerrar Sesión del menú desplegable.
+document.getElementById("option_logout").addEventListener("click", function (ev) {
+    ev.preventDefault();
+    open_logout_modal();
+});
+
+// Botones Cancelar y X.
+document.querySelector(".btn_cancel_logout").addEventListener("click", close_logout_modal);
+document.querySelector(".btn_close_logout").addEventListener("click", close_logout_modal);
+
+// Click fuera del cuadro.
+logout_modal.addEventListener("click", function (ev) {
+    if (ev.target === logout_modal) close_logout_modal();
+});
+
+// Tecla Escape.
+document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && !logout_modal.hidden) close_logout_modal();
+});
+
+// Confirmar: el PHP cierra la sesión y manda al Login.
+document.getElementById("btn_confirm_logout").addEventListener("click", function () {
+    window.location.href = "../php/dashboard_admin.php?action=logout";
 });

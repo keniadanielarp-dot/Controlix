@@ -1770,6 +1770,10 @@ function build_pos_payload() {
             rqstd: to_number(quantity_row[13]),
             delvd: to_number(quantity_row[14]),
             id_user: pos_assignments[po_id]?.id_user ?? null,
+
+            // Tipo de la inspección más reciente (null si todavía no tiene).
+            id_ins_type: pos_inspections[po_id]?.at(-1)?.id_ins_type ?? null,
+
             sizes: sizes
         });
     }

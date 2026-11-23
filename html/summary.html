@@ -1,0 +1,79 @@
+<!-- Contenido principal de Resumen -->
+<section class="pos_content">
+
+    <!-------------------- BLOQUE: Encabezado ---------------------->
+    <div class="pos_header">
+
+        <!-- Icono y título -->
+        <div class="pos_header_title">
+            <i class="bi bi-file-earmark-text-fill"></i>
+            <h2>Resumen</h2>
+        </div>
+    </div>
+
+
+    <!--------------- BLOQUE: Inspección y descarga   ---------------------->
+    <div class="summary_tools">
+
+        <!-- Select de inspección -->
+        <div class="pos_filter">
+            <label for="summary_inspection">Inspección</label>
+
+            <div class="pos_dropdown">
+                <i class="bi bi-clipboard-check"></i>
+                <select id="summary_inspection">
+                    <option value="">Seleccione una inspección</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Descargar PDF -->
+        <button type="button" id="btn_download_summary" class="pos_assign_btn pos_type_inspection" disabled>
+            <i class="bi bi-download"></i>
+            Descargar PDF
+        </button>
+    </div>
+
+
+    <!--------------- BLOQUE: Qué incluye el reporte   ---------------------->
+    <div class="summary_content">
+
+        <h3 class="summary_title">¿Qué incluye el reporte?</h3>
+
+        <!-- Una tarjeta por sección (el JS pone Listo o Pendiente) -->
+        <div class="summary_checks">
+
+            <div class="summary_check" data-part="details">
+                <span>Detalles de PO y de inspección</span>
+                <strong class="summary_badge">—</strong>
+            </div>
+
+            <div class="summary_check" data-part="result">
+                <span>Resultado AQL</span>
+                <strong class="summary_badge">—</strong>
+            </div>
+
+            <div class="summary_check" data-part="validations">
+                <span>Validaciones</span>
+                <strong class="summary_badge">—</strong>
+            </div>
+
+            <div class="summary_check" data-part="defects">
+                <span>Defectos registrados</span>
+                <strong class="summary_badge">—</strong>
+            </div>
+
+            <div class="summary_check" data-part="evidence">
+                <span>Evidencias (fotos)</span>
+                <strong class="summary_badge">—</strong>
+            </div>
+        </div>
+
+        <p class="summary_note">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            Lo que esté pendiente sale en el reporte como "Sin registrar". Para guardar el PDF, en la ventana de
+            impresión elige "Guardar como PDF".
+        </p>
+    </div>
+
+</section>

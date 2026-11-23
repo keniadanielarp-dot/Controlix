@@ -1,0 +1,95 @@
+/* ------------------------------------------------ BLOQUE: Opción RESUMEN --------------------------- */
+
+/* Select de inspección y botón en una fila */
+.summary_tools {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 20px;
+    margin-top: 15px;
+    padding: 22px 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+}
+
+/* Botón desactivado mientras no hay inspección elegida */
+#btn_download_summary:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* Tarjeta con lo que incluye el reporte */
+.summary_content {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 15px;
+    padding: 22px 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    color: #142b49;
+}
+
+.summary_title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+/* Secciones del reporte en cuadrícula */
+.summary_checks {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 10px;
+}
+
+.summary_check {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid #e3eaf5;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+/* Etiqueta Listo / Pendiente */
+.summary_badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    background-color: #f1f5f9;
+    color: #526789;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.summary_badge.ready {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+.summary_badge.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Nota */
+.summary_note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+    font-size: 13px;
+    color: #526789;
+}
+
+
+/* ----- Pantallas pequeñas ----- */
+@media (max-width: 600px) {
+
+    .summary_tools {
+        grid-template-columns: 1fr;
+    }
+}

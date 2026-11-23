@@ -1,0 +1,326 @@
+<!-- Contenido principal de General -->
+<section class="pos_content">
+
+    <!-------------------- BLOQUE: Encabezado ---------------------->
+    <div class="pos_header">
+
+        <!-- Icono y título -->
+        <div class="pos_header_title">
+            <i class="bi bi-grid-fill"></i>
+            <h2>General</h2>
+        </div>
+    </div>
+
+
+    <!--------------- BLOQUE: Inspección seleccionada   ---------------------->
+    <div class="evidence_inspection">
+
+        <!-- Select de inspección -->
+        <div class="pos_filter evidence_inspection_select">
+            <label for="evidence_inspection">Inspección</label>
+
+            <div class="pos_dropdown">
+                <i class="bi bi-clipboard-check"></i>
+                <select id="evidence_inspection">
+                    <option value="">Seleccione una inspección</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Inspector -->
+        <div class="evidence_inspection_info">
+            <span>Inspector</span>
+            <strong id="evidence_inspector">—</strong>
+        </div>
+
+        <!-- Estado -->
+        <div class="evidence_inspection_info">
+            <span>Estado</span>
+            <strong id="evidence_status">—</strong>
+        </div>
+
+        <!-- Total de fotos -->
+        <div class="evidence_inspection_info">
+            <span>Evidencias</span>
+            <strong id="evidence_total">0 fotos</strong>
+        </div>
+    </div>
+
+
+    <!--------------- BLOQUE: Categorías de evidencias   ---------------------->
+    <div class="evidence_sections">
+
+        <!-- Categoría: Medidas -->
+        <details class="evidence_section" data-section="measures" open>
+
+            <summary class="evidence_summary">
+                <i class="bi bi-chevron-right evidence_chevron" aria-hidden="true"></i>
+                <span class="evidence_summary_title">Medidas</span>
+                <span class="evidence_summary_count">0 fotos</span>
+            </summary>
+
+            <div class="evidence_section_body">
+
+            <!-- Foto de medidas -->
+            <div class="evidence_row" data-item="measures_photo">
+
+                <div class="evidence_row_top">
+
+                    <!-- Nombre y número de fotos -->
+                    <div class="evidence_row_name">
+                        <strong>Foto de medidas</strong>
+                        <span class="evidence_count">Sin fotos</span>
+                    </div>
+
+                    <!-- Tomar foto, subir foto y agregar otra -->
+                    <div class="evidence_row_buttons">
+                        <button type="button" class="btn_evidence btn_evidence_take" aria-label="Tomar foto: Foto de medidas">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_upload" aria-label="Subir foto: Foto de medidas">
+                            <i class="bi bi-images"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_add" aria-label="Agregar otra foto: Foto de medidas">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campos ocultos: cámara y archivos -->
+                <input type="file" class="evidence_input_take" accept="image/*" capture="environment" hidden>
+                <input type="file" class="evidence_input_upload" accept="image/*" multiple hidden>
+
+                <!-- Miniaturas de las fotos -->
+                <div class="evidence_thumbs"></div>
+            </div>
+            </div>
+        </details>
+
+        <!-- Categoría: Empaque, embalaje y etiquetado -->
+        <details class="evidence_section" data-section="packing" open>
+
+            <summary class="evidence_summary">
+                <i class="bi bi-chevron-right evidence_chevron" aria-hidden="true"></i>
+                <span class="evidence_summary_title">Empaque, embalaje y etiquetado</span>
+                <span class="evidence_summary_count">0 fotos</span>
+            </summary>
+
+            <div class="evidence_section_body">
+
+            <!-- Etiqueta colgante China -->
+            <div class="evidence_row" data-item="china_hangtag">
+
+                <div class="evidence_row_top">
+
+                    <!-- Nombre y número de fotos -->
+                    <div class="evidence_row_name">
+                        <strong>Etiqueta colgante China</strong>
+                        <span class="evidence_count">Sin fotos</span>
+                    </div>
+
+                    <!-- Tomar foto, subir foto y agregar otra -->
+                    <div class="evidence_row_buttons">
+                        <button type="button" class="btn_evidence btn_evidence_take" aria-label="Tomar foto: Etiqueta colgante China">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_upload" aria-label="Subir foto: Etiqueta colgante China">
+                            <i class="bi bi-images"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_add" aria-label="Agregar otra foto: Etiqueta colgante China">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campos ocultos: cámara y archivos -->
+                <input type="file" class="evidence_input_take" accept="image/*" capture="environment" hidden>
+                <input type="file" class="evidence_input_upload" accept="image/*" multiple hidden>
+
+                <!-- Miniaturas de las fotos -->
+                <div class="evidence_thumbs"></div>
+            </div>
+            <!-- Foto de empaque especial -->
+            <div class="evidence_row" data-item="special_packaging">
+
+                <div class="evidence_row_top">
+
+                    <!-- Nombre y número de fotos -->
+                    <div class="evidence_row_name">
+                        <strong>Foto de empaque especial <span class="evidence_optional">(opcional)</span></strong>
+                        <span class="evidence_count">Sin fotos</span>
+                    </div>
+
+                    <!-- Tomar foto, subir foto y agregar otra -->
+                    <div class="evidence_row_buttons">
+                        <button type="button" class="btn_evidence btn_evidence_take" aria-label="Tomar foto: Foto de empaque especial">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_upload" aria-label="Subir foto: Foto de empaque especial">
+                            <i class="bi bi-images"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_add" aria-label="Agregar otra foto: Foto de empaque especial">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campos ocultos: cámara y archivos -->
+                <input type="file" class="evidence_input_take" accept="image/*" capture="environment" hidden>
+                <input type="file" class="evidence_input_upload" accept="image/*" multiple hidden>
+
+                <!-- Miniaturas de las fotos -->
+                <div class="evidence_thumbs"></div>
+            </div>
+            </div>
+        </details>
+
+        <!-- Categoría: Producto -->
+        <details class="evidence_section" data-section="product" open>
+
+            <summary class="evidence_summary">
+                <i class="bi bi-chevron-right evidence_chevron" aria-hidden="true"></i>
+                <span class="evidence_summary_title">Producto</span>
+                <span class="evidence_summary_count">0 fotos</span>
+            </summary>
+
+            <div class="evidence_section_body">
+
+            <!-- Comparar muestra vs. producto real -->
+            <div class="evidence_row" data-item="compare_sample">
+
+                <div class="evidence_row_top">
+
+                    <!-- Nombre y número de fotos -->
+                    <div class="evidence_row_name">
+                        <strong>Comparar muestra vs. producto real</strong>
+                        <span class="evidence_count">Sin fotos</span>
+                    </div>
+
+                    <!-- Tomar foto, subir foto y agregar otra -->
+                    <div class="evidence_row_buttons">
+                        <button type="button" class="btn_evidence btn_evidence_take" aria-label="Tomar foto: Comparar muestra vs. producto real">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_upload" aria-label="Subir foto: Comparar muestra vs. producto real">
+                            <i class="bi bi-images"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_add" aria-label="Agregar otra foto: Comparar muestra vs. producto real">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campos ocultos: cámara y archivos -->
+                <input type="file" class="evidence_input_take" accept="image/*" capture="environment" hidden>
+                <input type="file" class="evidence_input_upload" accept="image/*" multiple hidden>
+
+                <!-- Miniaturas de las fotos -->
+                <div class="evidence_thumbs"></div>
+            </div>
+            <!-- Foto del defecto -->
+            <div class="evidence_row" data-item="defect_photo">
+
+                <div class="evidence_row_top">
+
+                    <!-- Nombre y número de fotos -->
+                    <div class="evidence_row_name">
+                        <strong>Foto del defecto <span class="evidence_optional">(opcional)</span></strong>
+                        <span class="evidence_count">Sin fotos</span>
+                    </div>
+
+                    <!-- Tomar foto, subir foto y agregar otra -->
+                    <div class="evidence_row_buttons">
+                        <button type="button" class="btn_evidence btn_evidence_take" aria-label="Tomar foto: Foto del defecto">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_upload" aria-label="Subir foto: Foto del defecto">
+                            <i class="bi bi-images"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_add" aria-label="Agregar otra foto: Foto del defecto">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campos ocultos: cámara y archivos -->
+                <input type="file" class="evidence_input_take" accept="image/*" capture="environment" hidden>
+                <input type="file" class="evidence_input_upload" accept="image/*" multiple hidden>
+
+                <!-- Miniaturas de las fotos -->
+                <div class="evidence_thumbs"></div>
+            </div>
+            <!-- Aprobación de desarrollo excepcional vs. producto real -->
+            <div class="evidence_row" data-item="exceptional_approval">
+
+                <div class="evidence_row_top">
+
+                    <!-- Nombre y número de fotos -->
+                    <div class="evidence_row_name">
+                        <strong>Aprobación de desarrollo excepcional vs. producto real</strong>
+                        <span class="evidence_count">Sin fotos</span>
+                    </div>
+
+                    <!-- Tomar foto, subir foto y agregar otra -->
+                    <div class="evidence_row_buttons">
+                        <button type="button" class="btn_evidence btn_evidence_take" aria-label="Tomar foto: Aprobación de desarrollo excepcional vs. producto real">
+                            <i class="bi bi-camera"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_upload" aria-label="Subir foto: Aprobación de desarrollo excepcional vs. producto real">
+                            <i class="bi bi-images"></i>
+                        </button>
+                        <button type="button" class="btn_evidence btn_evidence_add" aria-label="Agregar otra foto: Aprobación de desarrollo excepcional vs. producto real">
+                            <i class="bi bi-plus-circle"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campos ocultos: cámara y archivos -->
+                <input type="file" class="evidence_input_take" accept="image/*" capture="environment" hidden>
+                <input type="file" class="evidence_input_upload" accept="image/*" multiple hidden>
+
+                <!-- Miniaturas de las fotos -->
+                <div class="evidence_thumbs"></div>
+            </div>
+            </div>
+        </details>
+
+        <!-- Categoría: Otros -->
+        <details class="evidence_section" data-section="others" open>
+
+            <summary class="evidence_summary">
+                <i class="bi bi-chevron-right evidence_chevron" aria-hidden="true"></i>
+                <span class="evidence_summary_title">Otros</span>
+                <span class="evidence_summary_count">0 fotos</span>
+            </summary>
+
+            <div class="evidence_section_body">
+
+                <!-- Cualquier foto extra -->
+                <div class="evidence_row evidence_others" data-item="others">
+
+                    <!-- Recuadro para arrastrar o elegir fotos -->
+                    <label class="evidence_dropzone" for="evidence_others_input">
+                        <i class="bi bi-cloud-arrow-up" aria-hidden="true"></i>
+                        Arrastra las fotos aquí o haz clic para subirlas
+                    </label>
+                    <input type="file" id="evidence_others_input" class="evidence_input_upload" accept="image/*"
+                        multiple hidden>
+
+                    <!-- Miniaturas de las fotos -->
+                    <div class="evidence_thumbs"></div>
+                </div>
+            </div>
+        </details>
+    </div>
+
+
+    <!--------------- BLOQUE: Botones   ---------------------->
+    <div class="btns_po evidence_buttons">
+        <button type="button" class="btn_cancel_po" id="btn_cancel_evidence">Cancelar</button>
+        <button type="button" id="btn_save_evidence">
+            <i class="bi bi-floppy-fill"></i>
+            Guardar evidencias
+        </button>
+    </div>
+
+</section>

@@ -1,0 +1,272 @@
+/* ------------------------------------------------ BLOQUE: Opción GENERAL (evidencias) --------------------------- */
+
+/* ----- Inspección seleccionada ----- */
+.evidence_inspection {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr));
+    align-items: end;
+    gap: 20px;
+    margin-top: 15px;
+    padding: 22px 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+}
+
+/* Datos de la inspección: texto arriba, valor abajo */
+.evidence_inspection_info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    padding-bottom: 8px;
+}
+
+.evidence_inspection_info span {
+    font-size: 13px;
+    color: #34476c;
+}
+
+.evidence_inspection_info strong {
+    font-size: 15px;
+    color: #142b49;
+}
+
+
+/* ----- Categorías (acordeón) ----- */
+.evidence_sections {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 15px;
+}
+
+.evidence_section {
+    background-color: #ffffff;
+    border: 1px solid #e3eaf5;
+    border-radius: 12px;
+}
+
+/* Barra para abrir y cerrar */
+.evidence_summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 56px;
+    padding: 0 20px;
+    color: #142b49;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+/* Quitar el triángulo que pone el navegador */
+.evidence_summary::-webkit-details-marker {
+    display: none;
+}
+
+.evidence_summary:focus-visible {
+    outline: 2px solid #2454a6;
+    outline-offset: -2px;
+    border-radius: 12px;
+}
+
+/* Flecha: apunta a la derecha cerrada y hacia abajo abierta */
+.evidence_chevron {
+    color: #0056b3;
+    font-size: 15px;
+    transition: transform 0.2s;
+}
+
+.evidence_section[open] .evidence_chevron {
+    transform: rotate(90deg);
+}
+
+.evidence_summary_title {
+    flex: 1;
+}
+
+/* Número de fotos de la categoría */
+.evidence_summary_count {
+    font-size: 13px;
+    font-weight: 600;
+    color: #526789;
+}
+
+/* Contenido de la categoría */
+.evidence_section_body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 0 20px 20px;
+}
+
+
+/* ----- Renglón de evidencia ----- */
+.evidence_row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid #dce5f0;
+    border-radius: 10px;
+}
+
+.evidence_row_top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* Nombre y etiqueta de fotos */
+.evidence_row_name {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.evidence_row_name strong {
+    font-size: 15px;
+    font-weight: 600;
+    color: #142b49;
+}
+
+.evidence_optional {
+    font-weight: 400;
+    color: #5b6b85;
+}
+
+/* Etiqueta "Sin fotos" */
+.evidence_count {
+    padding: 3px 10px;
+    border-radius: 20px;
+    background-color: #f1f5f9;
+    color: #526789;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Etiqueta en verde cuando ya tiene fotos (lo pone el JS) */
+.evidence_count.has_photos {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+/* Botones cámara, galería y + */
+.evidence_row_buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.btn_evidence {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid #cbdff8;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #0056b3;
+    font-size: 19px;
+    cursor: pointer;
+}
+
+.btn_evidence:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    color: #ffffff;
+}
+
+.btn_evidence:focus-visible {
+    outline: 2px solid #2454a6;
+    outline-offset: 2px;
+}
+
+/* Miniaturas */
+.evidence_thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.evidence_thumbs:empty {
+    display: none;
+}
+
+
+/* ----- Otros: recuadro para subir fotos ----- */
+.evidence_others {
+    border: none;
+    padding: 0;
+}
+
+.evidence_dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 110px;
+    border: 2px dashed #cbdff8;
+    border-radius: 10px;
+    background-color: #f9fbff;
+    color: #34476c;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.evidence_dropzone i {
+    font-size: 26px;
+    color: #0056b3;
+}
+
+.evidence_dropzone:hover {
+    border-color: #0056b3;
+}
+
+
+/* ----- Botones de abajo ----- */
+.evidence_buttons {
+    margin-top: 20px;
+}
+
+#btn_save_evidence {
+    border: none;
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+#btn_save_evidence:hover {
+    background-color: #2454a6;
+}
+
+
+/* ----- Pantallas medianas y pequeñas ----- */
+@media (max-width: 900px) {
+
+    .evidence_inspection {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .evidence_inspection_select {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .evidence_inspection {
+        grid-template-columns: 1fr;
+    }
+
+    .evidence_row_buttons {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}

@@ -27,6 +27,14 @@
     <!-- Estilos exclusivos del módulo POS -->
     <link rel="stylesheet" href="../css/pos.css">
 
+    <!-- -------------  Referencia a la opcion GENERAL  ---------------->
+    <!-- Estilos exclusivos del módulo General (evidencias) -->
+    <link rel="stylesheet" href="../css/general.css">
+
+    <!-- -------------  Referencia a la opcion RESUMEN  ---------------->
+    <!-- Estilos exclusivos del módulo Resumen -->
+    <link rel="stylesheet" href="../css/summary.css">
+
 </head>
 
 
@@ -50,8 +58,8 @@
                 <span>Dashboard</span>
             </a>
 
-            <!-- Opcion Usuario -->
-            <a href="#" class="option_menu" id="option_users">
+            <!-- Opcion Usuario (oculta hasta saber que es administrador) -->
+            <a href="#" class="option_menu" id="option_users" hidden>
                 <i class="bi bi-people-fill" aria-hidden="true"></i>
                 <span>Usuarios</span>
             </a>
@@ -80,6 +88,18 @@
                     <span class="submenu_badge" id="defects_badge" hidden>0</span>
                 </a>
             </div>
+
+            <!-- Opcion General -->
+            <a href="#" class="option_menu" id="option_general">
+                <i class="bi bi-grid-fill" aria-hidden="true"></i>
+                <span>General</span>
+            </a>
+
+            <!-- Opcion Resumen -->
+            <a href="#" class="option_menu" id="option_summary">
+                <i class="bi bi-file-earmark-text-fill" aria-hidden="true"></i>
+                <span>Resumen</span>
+            </a>
         </nav>
     </aside>
 
@@ -132,20 +152,15 @@
                     <hr class="dropdown-divider">
 
                     <!-- Opciones -->
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="#" id="option_profile">
                         <i class="bi bi-person"></i>
                         Mi Perfil
-                    </a>
-
-                    <a class="dropdown-item" href="#">
-                        <i class="bi bi-gear"></i>
-                        Configuración
                     </a>
 
                     <hr class="dropdown-divider">
 
                     <!-- Cerrar sesión -->
-                    <a class="dropdown-item" href="#">
+                    <a class="dropdown-item" href="#" id="option_logout">
                         <i class="bi bi-box-arrow-right"></i>
                         Cerrar Sesión
                     </a>
@@ -172,17 +187,206 @@
         </div>
     </main>
 
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal Cerrar sesión   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="logout_js" class="logout_modal_overlay" hidden>
+
+        <div class="logout_modal" role="alertdialog" aria-modal="true" aria-labelledby="logout_title"
+            aria-describedby="logout_msg">
+
+            <!-- Encabezado -->
+            <div class="logout_modal_header">
+                <button type="button" class="btn_close_logout" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Ícono -->
+            <div class="logout_icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </div>
+
+            <!-- Titulo -->
+            <h2 id="logout_title">¿Cerrar sesión?</h2>
+
+            <p id="logout_msg">
+                ¿Estás seguro de que quieres salir?
+            </p>
+
+            <!-- Aviso: solo aparece si hay PO sin guardar -->
+            <p id="logout_warning" class="logout_warning" hidden>
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Tienes PO sin guardar en la base de datos. Si sales, se perderán.
+            </p>
+
+            <!-- Botones -->
+            <div class="logout_buttons">
+                <button type="button" class="btn_cancel_logout">Cancelar</button>
+
+                <button type="button" id="btn_confirm_logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Cerrar sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Plantilla MI PERFIL   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!-- <template> no se muestra: el JS copia su contenido en #module_content al abrir Mi Perfil -->
+    <template id="profile_template">
+
+        <!-- Contenido principal de Mi Perfil -->
+        <section class="pos_content profile_page">
+
+            <!-------------------- BLOQUE: Encabezado ---------------------->
+            <div class="pos_header">
+
+                <!-- Icono y título -->
+                <div class="pos_header_title">
+                    <i class="bi bi-person-circle"></i>
+                    <h2>Mi Perfil</h2>
+                </div>
+            </div>
+
+
+            <!-------------------- BLOQUE: Tarjeta del usuario y contraseña ---------------------->
+            <div class="profile_layout">
+
+                <!-- Tarjeta del usuario (nombre y rol fijos) -->
+                <aside class="profile_card">
+
+                    <!-- Franja azul de arriba -->
+                    <div class="profile_card_banner"></div>
+
+                    <!-- Icono -->
+                    <div class="profile_avatar">
+                        <i class="bi bi-person-fill" aria-hidden="true"></i>
+                    </div>
+
+                    <!-- Nombre, rol y estado -->
+                    <strong class="profile_card_name" id="profile_card_name">Usuario</strong>
+                    <span class="profile_card_role" id="profile_card_role">Rol</span>
+
+                    <small class="profile_status">
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                        Cuenta activa
+                    </small>
+
+                    <!-- Consejo -->
+                    <p class="profile_tip">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Cambia tu contraseña de vez en cuando y no la compartas con nadie.
+                    </p>
+                </aside>
+
+
+                <!-- Cambiar contraseña -->
+                <form id="form_profile_security" class="profile_section" novalidate>
+
+                    <!-- Título -->
+                    <div class="profile_section_header">
+                        <span class="profile_section_icon">
+                            <i class="bi bi-shield-check" aria-hidden="true"></i>
+                        </span>
+
+                        <div>
+                            <h3 class="profile_section_title">Cambiar contraseña</h3>
+                            <p class="profile_section_subtitle">Por seguridad, primero escribe tu contraseña actual.</p>
+                        </div>
+                    </div>
+
+                        <!-- Contraseña actual -->
+                        <div class="profile_group">
+                            <label for="profile_pass_current">Contraseña actual <span class="pos_required">*</span></label>
+
+                            <div class="profile_password">
+                                <i class="bi bi-lock profile_input_icon" aria-hidden="true"></i>
+                                <input type="password" id="profile_pass_current" autocomplete="current-password" required>
+                                <button type="button" class="btn_toggle_password" aria-label="Mostrar contraseña">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                        <!-- Nueva contraseña -->
+                        <div class="profile_group">
+                            <label for="profile_pass_new">Nueva contraseña <span class="pos_required">*</span></label>
+
+                            <div class="profile_password">
+                                <i class="bi bi-lock profile_input_icon" aria-hidden="true"></i>
+                                <input type="password" id="profile_pass_new" autocomplete="new-password" required>
+                                <button type="button" class="btn_toggle_password" aria-label="Mostrar contraseña">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+
+                            <!-- Barra de seguridad de la nueva contraseña (la llena el JS) -->
+                            <div class="profile_strength" aria-hidden="true">
+                                <span id="profile_strength_bar"></span>
+                            </div>
+                            <small class="profile_strength_text" id="profile_strength_text">Escribe una contraseña nueva</small>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                        <!-- Confirmar nueva contraseña -->
+                        <div class="profile_group">
+                            <label for="profile_pass_confirm">Confirmar nueva contraseña <span class="pos_required">*</span></label>
+
+                            <div class="profile_password">
+                                <i class="bi bi-lock profile_input_icon" aria-hidden="true"></i>
+                                <input type="password" id="profile_pass_confirm" autocomplete="new-password" required>
+                                <button type="button" class="btn_toggle_password" aria-label="Mostrar contraseña">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                    <!-- Requisitos (el JS cambia el círculo por una palomita al cumplirse) -->
+                    <div class="profile_requirements">
+                        <strong>Tu nueva contraseña debe tener:</strong>
+                        <ul>
+                                <li id="req_length"><i class="bi bi-circle" aria-hidden="true"></i>Al menos 8 caracteres</li>
+                                <li id="req_case"><i class="bi bi-circle" aria-hidden="true"></i>Una letra mayúscula y una minúscula</li>
+                                <li id="req_number"><i class="bi bi-circle" aria-hidden="true"></i>Al menos un número</li>
+                                <li id="req_special"><i class="bi bi-circle" aria-hidden="true"></i>Un carácter especial (por ejemplo ! @ # $)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Botón -->
+                    <div class="profile_buttons">
+                        <button type="submit" class="btn_profile_save">
+                            <i class="bi bi-key-fill"></i>
+                            Cambiar contraseña
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+    </template>
+
+
     <!-- Referencia a js -->
-     <script src="../js/pos.js"></script>
-    <script src="../js/dashboard_admin.js"></script>
     <script src="../js/users.js"></script>
 
     <!-- Librería para leer archivos Excel -->
     <script src="../libs/xlsx.full.min.js"></script>
-    
-    <!-- Opción Inspecciones -->
+    <script src="../js/pos.js"></script>
+
+    <!-- Opciones Inspecciones, Defectos, General y Resumen (usan funciones de pos.js) -->
     <script src="../js/inspections.js"></script>
     <script src="../js/defects.js"></script>
+    <script src="../js/general.js"></script>
+    <script src="../js/summary.js"></script>
+
+    <!-- Va al final porque usa funciones de los archivos anteriores -->
+    <script src="../js/dashboard_admin.js"></script>
 </body>
 
 </html>

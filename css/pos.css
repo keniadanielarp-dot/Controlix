@@ -1485,6 +1485,222 @@
 
 
 
+/* ----- Modal Validaciones ----- */
+
+/* Ventana */
+.po_dates_modal.validations_modal {
+    max-width: 900px;
+}
+
+/* Ícono del título */
+.validations_modal .po_dates_header h2 i {
+    margin-right: 8px;
+    color: #146c43;
+}
+
+/* Contadores y botón Marcar todo */
+.validations_toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.validations_answered,
+.validations_nonconform {
+    padding: 7px 15px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.validations_answered {
+    background: #eee5ff;
+    color: #2323c6;
+}
+
+.validations_nonconform {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.validations_nonconform[hidden] {
+    display: none;
+}
+
+#btn_val_all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 40px;
+    margin-left: auto;
+    padding: 0 14px;
+    border: 1px dashed #198754;
+    border-radius: 7px;
+    background: #f3fbf6;
+    color: #146c43;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_val_all:hover {
+    background: #d1e7dd;
+}
+
+/* Secciones (acordeón) */
+.validations_sections {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.validations_section {
+    border: 1px solid #e3eaf5;
+    border-radius: 12px;
+}
+
+.validations_summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 0 18px;
+    color: #142b49;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    list-style: none;
+}
+
+/* Quitar el triángulo que pone el navegador */
+.validations_summary::-webkit-details-marker {
+    display: none;
+}
+
+.validations_summary:focus-visible {
+    outline: 2px solid #2454a6;
+    outline-offset: -2px;
+    border-radius: 12px;
+}
+
+/* Flecha: derecha cerrada, abajo abierta */
+.validations_chevron {
+    color: #0056b3;
+    font-size: 14px;
+    transition: transform 0.2s;
+}
+
+.validations_section[open] .validations_chevron {
+    transform: rotate(90deg);
+}
+
+.validations_summary_title {
+    flex: 1;
+}
+
+.validations_summary_count {
+    font-size: 13px;
+    font-weight: 600;
+    color: #526789;
+}
+
+.validations_section_body {
+    padding: 0 18px 12px;
+}
+
+/* Cada punto */
+.validations_item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 4px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.validations_item:last-child {
+    border-bottom: none;
+}
+
+.validations_item_text {
+    flex: 1 1 260px;
+    font-size: 14px;
+    color: #142b49;
+}
+
+/* Botones Conforme / No conforme / N/A */
+.validations_options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.btn_val_option {
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid #d4dce8;
+    border-radius: 7px;
+    background: #ffffff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn_val_option:focus-visible {
+    outline: 2px solid #2454a6;
+    outline-offset: 2px;
+}
+
+/* Color del texto sin elegir */
+.btn_val_option.val_conform {
+    color: #146c43;
+}
+
+.btn_val_option.val_nonconform {
+    color: #842029;
+}
+
+.btn_val_option.val_na {
+    color: #334155;
+}
+
+/* Botón elegido: se rellena con su color */
+.btn_val_option.val_conform[aria-pressed="true"] {
+    background: #198754;
+    border-color: #198754;
+    color: #ffffff;
+}
+
+.btn_val_option.val_nonconform[aria-pressed="true"] {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #ffffff;
+}
+
+.btn_val_option.val_na[aria-pressed="true"] {
+    background: #64748b;
+    border-color: #64748b;
+    color: #ffffff;
+}
+
+/* Botón Guardar validaciones */
+#btn_save_validations {
+    border: none;
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+#btn_save_validations:hover {
+    background-color: #2454a6;
+}
+
+
+
 /* ------------------------------ BLOQUE: Opción Defectos ------------------------------ */
 
 /* ----- Resumen (3 cuadros) ----- */

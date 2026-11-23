@@ -107,6 +107,11 @@ body.folded_panel .panel {
 }
 
 /* Opciones del menu */
+/* Opción oculta según el rol del usuario */
+.option_menu[hidden] {
+    display: none;
+}
+
 .option_menu {
     position: relative;
     display: flex;
@@ -449,5 +454,548 @@ body.folded_panel .content{
 
     .content {
         margin-left: 202px;
+    }
+}
+
+
+/* ------------------------------------------------ BLOQUE: Modal CERRAR SESIÓN --------------------------- */
+
+/* Fondo oscuro que cubre toda la pantalla */
+.logout_modal_overlay {
+    position: fixed;
+    inset: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+    box-sizing: border-box;
+}
+
+/* Mantener el modal oculto inicialmente */
+.logout_modal_overlay[hidden] {
+    display: none;
+}
+
+
+/* ------------------- Cuadro central ------------- */
+.logout_modal {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px 25px 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    color: #092b60;
+    box-sizing: border-box;
+}
+
+.logout_modal_header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn_close_logout {
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.btn_close_logout:hover {
+    color: #dc3545;
+}
+
+
+/* ------------------- Ícono  ------------- */
+.logout_icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #e8f2ff;
+    color: #0056b3;
+    font-size: 36px;
+}
+
+
+/* -----------------Título y mensaje  ------------- */
+.logout_modal h2 {
+    margin: 0 0 12px;
+    color: #092b60;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.logout_modal p {
+    margin: 0 0 25px;
+    color: #526789;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Aviso de PO sin guardar */
+.logout_modal .logout_warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: -10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background-color: #fff4e0;
+    color: #8a4b00;
+    font-size: 13px;
+    text-align: left;
+}
+
+.logout_modal .logout_warning[hidden] {
+    display: none;
+}
+
+
+/* ------------------- Botones  ------------- */
+.logout_buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.logout_buttons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Botón Cancelar */
+.btn_cancel_logout {
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #34476c;
+}
+
+.btn_cancel_logout:hover {
+    background-color: #f1f5f9;
+}
+
+/* Botón Cerrar sesión */
+#btn_confirm_logout {
+    border: 1px solid #142b49;
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+#btn_confirm_logout:hover {
+    background-color: #0b1d33;
+}
+
+
+/* ------------------------------------------------ BLOQUE: Opción MI PERFIL --------------------------- */
+
+/* Sangría de la página: separa el contenido del panel y de las orillas */
+.profile_page {
+    padding: 20px 30px 30px;
+}
+
+/* Tarjeta del usuario a la izquierda y contraseña a la derecha */
+.profile_layout {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+    margin-top: 15px;
+    color: #142b49;
+}
+
+
+/* ----- Tarjeta del usuario ----- */
+.profile_card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 24px 26px;
+    overflow: hidden;
+    background-color: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(11, 40, 87, 0.06);
+    text-align: center;
+}
+
+/* Franja azul de arriba (mismo azul del panel lateral) */
+.profile_card_banner {
+    width: calc(100% + 48px);
+    height: 90px;
+    margin: 0 -24px;
+    background: linear-gradient(145deg, #0b2c5a 0%, #103d7b 60%, #1a56a8 100%);
+}
+
+/* Círculo con el icono, encima de la franja */
+.profile_avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 96px;
+    margin-top: -48px;
+    border: 5px solid #ffffff;
+    border-radius: 50%;
+    background-color: #e8f2ff;
+    color: #0b2c5a;
+    font-size: 48px;
+    box-shadow: 0 4px 14px rgba(11, 40, 87, 0.15);
+}
+
+.profile_card_name {
+    margin-top: 14px;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+/* Rol en una etiqueta */
+.profile_card_role {
+    margin-top: 8px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    background-color: #e8f2ff;
+    color: #0056b3;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Cuenta activa en verde */
+.profile_status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+    color: #146c43;
+}
+
+/* Consejo de seguridad */
+.profile_tip {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 22px 0 0;
+    padding: 14px;
+    border-radius: 10px;
+    background-color: #f5f8fc;
+    color: #526789;
+    font-size: 13px;
+    line-height: 1.45;
+    text-align: left;
+}
+
+.profile_tip i {
+    color: #0056b3;
+    font-size: 17px;
+}
+
+
+/* ----- Sección: cambiar contraseña ----- */
+.profile_section {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 26px 30px;
+    background-color: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(11, 40, 87, 0.06);
+    box-sizing: border-box;
+}
+
+/* Título con icono */
+.profile_section_header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid #e9edf3;
+}
+
+.profile_section_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background-color: #e8f2ff;
+    color: #0056b3;
+    font-size: 22px;
+}
+
+.profile_section_title {
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+    color: #142b49;
+}
+
+.profile_section_subtitle {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: #526789;
+}
+
+/* Etiqueta + campo */
+.profile_group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.profile_group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #34476c;
+}
+
+/* Campo con candado a la izquierda y ojo a la derecha */
+.profile_password {
+    position: relative;
+}
+
+.profile_input_icon {
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    color: #8999ad;
+    font-size: 16px;
+    pointer-events: none;
+}
+
+.profile_group input {
+    width: 100%;
+    height: 50px;
+    padding: 0 52px 0 42px;
+    border: 1px solid #d4e1f0;
+    border-radius: 10px;
+    background-color: #f9fbfe;
+    color: #142b49;
+    font-family: inherit;
+    font-size: 15px;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.profile_group input:focus {
+    border-color: #2454a6;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(36, 84, 166, 0.12);
+}
+
+/* El candado se pinta azul al escribir */
+.profile_password:focus-within .profile_input_icon {
+    color: #2454a6;
+}
+
+/* Campo con error */
+.profile_group input.border_error {
+    border-color: #dc3545;
+}
+
+/* Botón de ojo */
+.btn_toggle_password {
+    position: absolute;
+    top: 50%;
+    right: 6px;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #526789;
+    font-size: 17px;
+    cursor: pointer;
+}
+
+.btn_toggle_password:hover {
+    background-color: #eef4ff;
+    color: #0b2857;
+}
+
+.btn_toggle_password:focus-visible {
+    outline: 2px solid #2454a6;
+    outline-offset: 1px;
+}
+
+
+/* ----- Barra de seguridad de la contraseña ----- */
+.profile_strength {
+    height: 6px;
+    overflow: hidden;
+    border-radius: 6px;
+    background-color: #e9edf3;
+}
+
+/* El JS le cambia el ancho y la clase (weak, medium, strong) */
+#profile_strength_bar {
+    display: block;
+    width: 0;
+    height: 100%;
+    border-radius: 6px;
+    background-color: #dc3545;
+    transition: width 0.3s, background-color 0.3s;
+}
+
+#profile_strength_bar.weak {
+    background-color: #dc3545;
+}
+
+#profile_strength_bar.medium {
+    background-color: #f0ad4e;
+}
+
+#profile_strength_bar.strong {
+    background-color: #198754;
+}
+
+.profile_strength_text {
+    font-size: 12px;
+    color: #8999ad;
+}
+
+
+/* ----- Requisitos de contraseña ----- */
+.profile_requirements {
+    padding: 16px 18px;
+    border: 1px solid #e3eaf5;
+    border-radius: 12px;
+    background-color: #f5f8fc;
+}
+
+.profile_requirements strong {
+    font-size: 14px;
+}
+
+.profile_requirements ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px 16px;
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.profile_requirements li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #526789;
+    transition: color 0.2s;
+}
+
+.profile_requirements li i {
+    font-size: 15px;
+    color: #b8c4d4;
+}
+
+/* Requisito cumplido (lo pone el JS): verde y con palomita */
+.profile_requirements li.met {
+    color: #146c43;
+    font-weight: 600;
+}
+
+.profile_requirements li.met i {
+    color: #198754;
+}
+
+
+/* ----- Botón ----- */
+.profile_buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 18px;
+    border-top: 1px solid #e9edf3;
+}
+
+.btn_profile_save {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 26px;
+    border: none;
+    border-radius: 10px;
+    background-color: #142b49;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn_profile_save:hover {
+    background-color: #2454a6;
+}
+
+.btn_profile_save:active {
+    transform: translateY(1px);
+}
+
+.btn_profile_save:focus-visible {
+    outline: 3px solid #2454a6;
+    outline-offset: 3px;
+}
+
+
+/* ----- Pantallas medianas y pequeñas ----- */
+@media (max-width: 900px) {
+
+    .profile_layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .logout_buttons {
+        flex-direction: column-reverse;
+    }
+
+    .logout_buttons button {
+        width: 100%;
+    }
+
+    .profile_page {
+        padding: 15px;
+    }
+
+    .profile_section {
+        padding: 20px;
+    }
+
+    .profile_requirements ul {
+        grid-template-columns: 1fr;
+    }
+
+    .btn_profile_save {
+        width: 100%;
+        justify-content: center;
     }
 }

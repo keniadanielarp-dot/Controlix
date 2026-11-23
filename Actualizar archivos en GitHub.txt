@@ -5,3 +5,16 @@ git add .
 git commit -m ""
 git push origin main 
 git status
+
+Borrar datos basura de la base de datos 
+-- Primero las tablas "hijas" y al final la "padre"
+DELETE FROM aql_def;
+DELETE FROM ins_aqls;
+DELETE FROM sizes_pos;
+DELETE FROM pos;
+
+-- Reiniciar los contadores de ID para que vuelvan a empezar en 1
+ALTER TABLE aql_def AUTO_INCREMENT = 1;
+ALTER TABLE ins_aqls AUTO_INCREMENT = 1;
+ALTER TABLE sizes_pos AUTO_INCREMENT = 1;
+ALTER TABLE pos AUTO_INCREMENT = 1;

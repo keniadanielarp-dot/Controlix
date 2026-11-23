@@ -5,6 +5,36 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// CERRAR SESION (dashboard_admin.php?action=logout)
+if (($_GET['action'] ?? '') === 'logout') {
+
+    // Vaciar las variables de la sesión
+    $_SESSION = [];
+
+    // Borrar la cookie de la sesión
+    if (ini_get("session.use_cookies")) {
+
+        $params = session_get_cookie_params();
+
+        setcookie(
+            session_name(),
+            '',
+            time() - 42000,
+            $params["path"],
+            $params["domain"],
+            $params["secure"],
+            $params["httponly"]
+        );
+    }
+
+    // Destruir la sesión
+    session_destroy();
+
+    // Mandar al Login
+    header("Location: ../html/login.html");
+    exit;
+}
+
 // Respuesta json
 header("Content-Type: application/json; charset=utf-8");
 
@@ -30,6 +60,7 @@ $id_user = $_SESSION['id_user'];
 // 3. CONSULTAR NOMBRE Y ROL
 $sql = "SELECT
             u.name_user, 
+            u.id_rol,
             r.rol
           FROM myr_users AS u
           INNER JOIN rol_users AS r
@@ -71,10 +102,14 @@ try {
         exit;
     }
 
+    // Actualizar el rol en la sesión con el de la base de datos
+    $_SESSION['id_rol'] = (int) $user['id_rol'];
+
     // 14. DEVOLVER LOS DATOS EN JSON
     echo json_encode([
         'name_user' => $user['name_user'],
-        'rol' => $user['rol']
+        'rol' => $user['rol'],
+        'id_rol' => (int) $user['id_rol']
     ], JSON_UNESCAPED_UNICODE);
 
     // 15. CERRAR CONSULTA

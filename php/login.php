@@ -21,7 +21,7 @@ if ($user === "" || $pass === "") {
 }
 
 //Búsqueda del usuario en la BD 
-$sql = "SELECT id_user, user, passwd_user, name_user, status_user
+$sql = "SELECT id_user, user, passwd_user, name_user, id_rol, status_user
        FROM myr_users 
        WHERE user = ?
        LIMIT 1";
@@ -52,6 +52,9 @@ if ($res->num_rows === 1) {
 
             $_SESSION["auth"] = true;
             $_SESSION["id_user"] = (int)$row["id_user"];
+
+            // Guardar el rol para saber qué módulos puede ver (1 = Administrador)
+            $_SESSION["id_rol"] = (int)$row["id_rol"];
             header("Location: ../html/dashboard_admin.html");
             exit;
 

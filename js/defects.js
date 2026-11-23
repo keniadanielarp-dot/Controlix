@@ -595,10 +595,13 @@ function add_defect_row(detail = {}) {
     upload_input.className = "def_photo def_photo_upload";
     upload_input.hidden = true;
 
-    // Conservar la foto que ya tenía el renglón.
+    // Conservar la foto que ya tenía el renglón (nueva o ya guardada en el servidor).
     if (detail.photo) {
         tr.photo_file = detail.photo;
-        mark_photo(photo_button, detail.photo);
+        mark_photo(photo_button, detail.photo.name);
+    } else if (detail.photo_path) {
+        tr.photo_path = detail.photo_path;
+        mark_photo(photo_button, detail.photo_path.split("/").pop());
     }
 
     add_td(photo_button, take_input, upload_input);
@@ -659,11 +662,11 @@ function close_photo_menu() {
 
 
 // Pintar el botón de cámara cuando el renglón ya tiene foto.
-function mark_photo(button, file) {
+function mark_photo(button, file_name) {
 
     button.classList.add("has_photo");
-    button.title = file.name;
-    button.setAttribute("aria-label", `Foto: ${file.name}`);
+    button.title = file_name;
+    button.setAttribute("aria-label", `Foto: ${file_name}`);
 }
 
 
@@ -734,8 +737,8 @@ function hide_defect_error() {
 }
 
 
-// Validar los renglones y guardar los defectos en la inspección.
-function save_defects(form) {
+// Validar los renglones y guardar los defectos en la inspección y en la base de datos.
+async function save_defects(form) {
 
     const inspection = pos_inspections[form.dataset.idPo]?.[form.dataset.index];
     if (!inspection) return;
@@ -784,7 +787,8 @@ function save_defects(form) {
             code_text: code.options[code.selectedIndex].text,
             classification: classification.value,
             classification_text: classification.options[classification.selectedIndex].text,
-            photo: row.photo_file ?? null
+            photo: row.photo_file ?? null,
+            photo_path: row.photo_path ?? null
         });
     });
 
@@ -802,6 +806,80 @@ function save_defects(form) {
             `Registra ${found} ${found === 1 ? "defecto" : "defectos"}: llevas ${details.length}.`
         );
         return;
+    }
+
+
+    // La inspección debe estar guardada en ins_aqls (al registrar su resultado).
+    if (!inspection.id_ins_aql) {
+        show_defect_error("Esta inspección no está guardada en la base de datos. Registra su resultado de nuevo en Inspecciones.");
+        return;
+    }
+
+
+    /* ==========================================
+       GUARDAR EN LA BASE DE DATOS (aql_def)
+    ========================================== */
+
+    // FormData permite enviar texto y archivos juntos.
+    const data = new FormData();
+    data.append("id_ins_aql", inspection.id_ins_aql);
+
+    data.append("defects", JSON.stringify(
+        details.map(detail => ({
+            id_def: Number(detail.classification),
+            photo_path: detail.photo ? null : detail.photo_path
+        }))
+    ));
+
+    // Fotos nuevas: photo_0, photo_1... (según su renglón).
+    details.forEach(function (detail, position) {
+        if (detail.photo) data.append(`photo_${position}`, detail.photo);
+    });
+
+    const button = document.getElementById("btn_save_defects");
+
+    // Evitar que se presione dos veces mientras guarda.
+    if (button) button.disabled = true;
+
+    try {
+
+        const response = await fetch("/sistema_calidad/php/pos.php?action=save_defects", {
+            method: "POST",
+            body: data
+        });
+
+        // Leer la respuesta como texto para poder mostrarla si no es JSON.
+        const text = await response.text();
+        let result = null;
+
+        try {
+            result = JSON.parse(text);
+        } catch {
+            // PHP mostró un error o un aviso en lugar de JSON.
+            console.error("Respuesta de PHP (no es JSON):", text);
+            throw new Error("PHP respondió algo que no es JSON. Revisa la consola (F12) para ver el mensaje.");
+        }
+
+        if (!response.ok || !result?.success) {
+            throw new Error(result?.message || `El servidor respondió ${response.status} (${response.statusText})`);
+        }
+
+        // Guardar la ruta de cada foto en el servidor.
+        details.forEach(function (detail, position) {
+            detail.photo_path = result.photos?.[position] ?? null;
+            detail.photo = null;
+        });
+
+    } catch (error) {
+
+        console.error("Error al guardar los defectos:", error);
+        show_defect_error(error.message);
+        return;
+
+    } finally {
+
+        // Volver a habilitar el botón.
+        if (button) button.disabled = false;
     }
 
 
@@ -870,10 +948,15 @@ function open_view_defects(po_id, index) {
         // Foto: miniatura que se abre en otra pestaña, o "Sin foto".
         const td_photo = document.createElement("td");
 
-        if (detail.photo) {
+        if (detail.photo || detail.photo_path) {
 
-            const url = URL.createObjectURL(detail.photo);
-            view_photo_urls.push(url);
+            // Foto guardada en el servidor, o recién elegida (todavía en el navegador).
+            let url = `/sistema_calidad/${detail.photo_path}`;
+
+            if (detail.photo) {
+                url = URL.createObjectURL(detail.photo);
+                view_photo_urls.push(url);
+            }
 
             const link = document.createElement("a");
             link.href = url;
@@ -978,7 +1061,7 @@ document.addEventListener("change", function (event) {
         const row = target.closest("tr");
         row.photo_file = target.files[0];
 
-        mark_photo(row.querySelector(".btn_defect_photo"), row.photo_file);
+        mark_photo(row.querySelector(".btn_defect_photo"), row.photo_file.name);
     }
 });
 

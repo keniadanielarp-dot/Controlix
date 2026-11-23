@@ -18,6 +18,17 @@ if (
     exit;
 }
 
+// Solo el administrador (id_rol = 1) puede usar el módulo Usuarios
+if ((int) ($_SESSION['id_rol'] ?? 0) !== 1) {
+    http_response_code(403);
+
+    echo json_encode([
+        'error' => 'No tienes permiso para acceder a Usuarios'
+    ]);
+
+    exit;
+}
+
 // Conexión a la base de datos
 require_once 'connection_bdd.php';
 
@@ -270,6 +281,69 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $query->close();
     exit;
 }
+// -------------------------------------------------------------------------------------------------------
+// Método GET para ver la contraseña de un usuario (botón del ojo en la tabla)
+// Se pide solo cuando se da clic en el ojo, para no enviar todas las contraseñas al cargar la tabla
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'password'
+) {
+
+    // Validar el ID del usuario
+    $id_user = filter_var($_GET['id_user'] ?? null, FILTER_VALIDATE_INT, [
+        "options" => ["min_range" => 1]
+    ]);
+
+    if ($id_user === false) {
+        http_response_code(400);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'Usuario no válido.'
+        ]);
+        exit;
+    }
+
+    try {
+
+        // Consultar la contraseña del usuario activo
+        $query = $connection->prepare(
+            "SELECT passwd_user FROM myr_users WHERE id_user = ? AND status_user = 1 LIMIT 1"
+        );
+        $query->bind_param("i", $id_user);
+        $query->execute();
+
+        $row = $query->get_result()->fetch_assoc();
+        $query->close();
+
+        if (!$row) {
+            http_response_code(404);
+
+            echo json_encode([
+                'success' => false,
+                'message' => 'No se encontró el usuario.'
+            ]);
+            exit;
+        }
+
+        echo json_encode([
+            'success' => true,
+            'password' => $row['passwd_user']
+        ]);
+
+    } catch (mysqli_sql_exception $error) {
+
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudo consultar la contraseña.'
+        ]);
+    }
+
+    exit;
+}
+
 // --------------------------------------------------
 // Metodo GET para los datos de la tabla 
 

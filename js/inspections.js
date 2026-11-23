@@ -103,7 +103,7 @@ function render_inspections_table() {
         const tr = document.createElement("tr");
         const td = create_cell(message);
 
-        td.colSpan = 9;
+        td.colSpan = 10;
         tr.appendChild(td);
         body.appendChild(tr);
 
@@ -141,6 +141,9 @@ function render_inspections_table() {
 
         // Estado de la inspección más reciente con su color.
         tr.appendChild(create_status_cell(last.result));
+
+        // Validaciones de la inspección más reciente: Completa o Pendiente.
+        tr.appendChild(create_validations_cell(last));
 
         // Botón calendario con todas sus inspecciones.
         const td_dates = document.createElement("td");
@@ -488,6 +491,271 @@ async function save_result(form) {
 
 
 
+/* -------------------------------------  BLOQUE:  Validaciones ------------------------------------- */
+
+// Lista de verificación de cada inspección: secciones con sus puntos.
+const VALIDATION_SECTIONS = [
+    {
+        title: "General",
+        items: [
+            { key: "fabric_approval", text: "Aprobación de tela" },
+            { key: "sealing_sample", text: "Muestra sellada" },
+            { key: "metal_detection", text: "Detección de metales" },
+            { key: "finished_goods_testing", text: "Pruebas de producto terminado" },
+            { key: "moisture_carton", text: "Control de humedad (caja)" },
+            { key: "moisture_garment", text: "Control de humedad (prenda)" }
+        ]
+    },
+    {
+        title: "Tela y arte",
+        items: [
+            { key: "color_shade", text: "Tono de color" },
+            { key: "handfeel", text: "Tacto de la tela" },
+            { key: "appearance", text: "Apariencia" },
+            { key: "print_decorations", text: "Estampado, bordado y decoraciones" }
+        ]
+    },
+    {
+        title: "Etiquetas",
+        items: [
+            { key: "fiber_content", text: "Contenido de fibra" },
+            { key: "care_instructions", text: "Instrucciones de cuidado" },
+            { key: "decorative_label", text: "Etiqueta decorativa" },
+            { key: "adicom_label", text: "Etiqueta Adicom" },
+            { key: "country_origin", text: "País de origen" },
+            { key: "size_key", text: "Etiqueta de talla" },
+            { key: "eight_flag_label", text: "Etiqueta de 8 banderas" },
+            { key: "additional_label", text: "Etiqueta adicional" }
+        ]
+    },
+    {
+        title: "Empacado",
+        items: [
+            { key: "shipping_mark", text: "Marca de envío" },
+            { key: "plastic_bag", text: "Bolsa de plástico" },
+            { key: "color_size_qty", text: "Color, talla y cantidad" },
+            { key: "hangtag", text: "Etiqueta colgante" }
+        ]
+    },
+    {
+        title: "Medidas",
+        items: [
+            { key: "measurements", text: "Medir mínimo 2 piezas por talla, según el procedimiento de inspección de adidas" }
+        ]
+    }
+];
+
+// Opciones de cada punto y su clase de color.
+const VALIDATION_OPTIONS = [
+    { value: "Conforme", class_name: "val_conform" },
+    { value: "No conforme", class_name: "val_nonconform" },
+    { value: "N/A", class_name: "val_na" }
+];
+
+// Total de puntos de la lista.
+const VALIDATION_TOTAL = VALIDATION_SECTIONS.reduce((sum, section) => sum + section.items.length, 0);
+
+// Respuestas mientras el modal está abierto: { fabric_approval: "Conforme", ... }
+let validation_answers = {};
+
+// Inspección que se está validando.
+let validation_inspection = null;
+
+
+// Saber si una inspección tiene todos sus puntos respondidos.
+function has_complete_validations(inspection) {
+    return Object.keys(inspection?.validations ?? {}).length === VALIDATION_TOTAL;
+}
+
+
+// Celda de la tabla con el estado de las validaciones.
+function create_validations_cell(inspection) {
+
+    const td = document.createElement("td");
+    const span = document.createElement("span");
+    const complete = has_complete_validations(inspection);
+
+    span.className = `pos_status ${complete ? "pos_status_process" : "pos_status_pending"}`;
+    span.textContent = complete ? "Completa" : "Pendiente";
+
+    td.appendChild(span);
+    return td;
+}
+
+
+// Abrir el modal Validaciones con la PO seleccionada.
+function open_validations() {
+
+    const selected = [...document.querySelectorAll("#inspections_table_body .select_ins_check:checked")]
+        .map(checkbox => checkbox.value);
+
+    // Debe haber exactamente una PO seleccionada.
+    if (selected.length !== 1) {
+        alert(
+            selected.length === 0
+                ? "Selecciona una PO para llenar sus validaciones."
+                : "Solo puedes llenar las validaciones de una PO a la vez."
+        );
+        return;
+    }
+
+    // Las validaciones son de la inspección más reciente de la PO.
+    const inspections = pos_inspections[selected[0]] ?? [];
+    validation_inspection = inspections[inspections.length - 1];
+
+    if (!validation_inspection) return;
+
+    // Copiar las respuestas guardadas (para poder cancelar sin perderlas).
+    validation_answers = { ...(validation_inspection.validations ?? {}) };
+
+    document.getElementById("val_po").textContent = validation_inspection.po_number;
+
+    render_validation_sections();
+    update_validation_counts();
+
+    open_form("validations_js");
+}
+
+
+// Armar las secciones (acordeón) con sus puntos y botones.
+function render_validation_sections() {
+
+    const container = document.getElementById("val_sections");
+    container.innerHTML = "";
+
+    VALIDATION_SECTIONS.forEach(function (section, position) {
+
+        // Sección que se abre y se cierra.
+        const details = document.createElement("details");
+        details.className = "validations_section";
+        details.open = position === 0;
+
+        const summary = document.createElement("summary");
+        summary.className = "validations_summary";
+        summary.innerHTML = `
+            <i class="bi bi-chevron-right validations_chevron" aria-hidden="true"></i>
+            <span class="validations_summary_title"></span>
+            <span class="validations_summary_count"></span>`;
+        summary.querySelector(".validations_summary_title").textContent = section.title;
+
+        details.appendChild(summary);
+
+        // Un renglón por punto.
+        const body = document.createElement("div");
+        body.className = "validations_section_body";
+
+        section.items.forEach(function (item) {
+
+            const row = document.createElement("div");
+            row.className = "validations_item";
+
+            const text = document.createElement("span");
+            text.className = "validations_item_text";
+            text.textContent = item.text;
+
+            const options = document.createElement("div");
+            options.className = "validations_options";
+            options.setAttribute("role", "group");
+            options.setAttribute("aria-label", item.text);
+
+            // Botones Conforme, No conforme y N/A.
+            VALIDATION_OPTIONS.forEach(function (option) {
+
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = `btn_val_option ${option.class_name}`;
+                button.dataset.item = item.key;
+                button.dataset.value = option.value;
+                button.textContent = option.value;
+                button.setAttribute("aria-pressed", String(validation_answers[item.key] === option.value));
+
+                options.appendChild(button);
+            });
+
+            row.appendChild(text);
+            row.appendChild(options);
+            body.appendChild(row);
+        });
+
+        details.appendChild(body);
+        container.appendChild(details);
+    });
+}
+
+
+// Elegir una opción de un punto.
+function select_validation_option(button) {
+
+    validation_answers[button.dataset.item] = button.dataset.value;
+
+    // Marcar solo el botón elegido de ese punto.
+    button.closest(".validations_options")
+        .querySelectorAll(".btn_val_option")
+        .forEach(option => option.setAttribute("aria-pressed", String(option === button)));
+
+    update_validation_counts();
+}
+
+
+// Marcar todos los puntos sin respuesta como Conforme.
+function mark_all_conform() {
+
+    VALIDATION_SECTIONS.forEach(function (section) {
+        section.items.forEach(function (item) {
+            if (!validation_answers[item.key]) validation_answers[item.key] = "Conforme";
+        });
+    });
+
+    // Pintar el botón elegido de cada punto (sin cerrar las secciones abiertas).
+    document.querySelectorAll("#val_sections .btn_val_option").forEach(function (button) {
+        button.setAttribute("aria-pressed", String(validation_answers[button.dataset.item] === button.dataset.value));
+    });
+
+    update_validation_counts();
+}
+
+
+// Actualizar "Respondidas", "No conforme" y el avance de cada sección.
+function update_validation_counts() {
+
+    const answers = Object.values(validation_answers);
+    const nonconform = answers.filter(value => value === "No conforme").length;
+
+    document.getElementById("val_answered").textContent =
+        `Respondidas: ${answers.length} de ${VALIDATION_TOTAL}`;
+
+    const nonconform_badge = document.getElementById("val_nonconform");
+    nonconform_badge.textContent = `${nonconform} No conforme`;
+    nonconform_badge.hidden = nonconform === 0;
+
+    // Avance de cada sección ("4 de 6").
+    document.querySelectorAll("#val_sections .validations_section").forEach(function (details, position) {
+
+        const items = VALIDATION_SECTIONS[position].items;
+        const done = items.filter(item => validation_answers[item.key]).length;
+
+        details.querySelector(".validations_summary_count").textContent = `${done} de ${items.length}`;
+    });
+}
+
+
+// Guardar las respuestas en la inspección.
+function save_validations() {
+
+    if (!validation_inspection) return;
+
+    validation_inspection.validations = { ...validation_answers };
+    validation_inspection.validations_at = get_date_time();
+
+    render_inspections_table();
+    close_form("validations_js");
+
+    console.log("Validaciones de la PO:", validation_inspection.po_number);
+    console.table(validation_inspection.validations);
+}
+
+
+
 /* -------------------------------------  BLOQUE:  Eventos de Inspecciones ------------------------------------- */
 
 /* ==========================================
@@ -544,6 +812,38 @@ document.addEventListener("click", function (event) {
     // Cerrar Registrar resultado con X o Cancelar.
     if (event.target.closest("#register_result_js .btn_x_modal, #register_result_js .btn_cancel_po")) {
         close_form("register_result_js");
+        return;
+    }
+
+    // Abrir Validaciones con la PO seleccionada.
+    if (event.target.closest("#btn_validations")) {
+        open_validations();
+        return;
+    }
+
+    // Elegir Conforme, No conforme o N/A.
+    const option_button = event.target.closest(".btn_val_option");
+
+    if (option_button) {
+        select_validation_option(option_button);
+        return;
+    }
+
+    // Marcar todo como Conforme.
+    if (event.target.closest("#btn_val_all")) {
+        mark_all_conform();
+        return;
+    }
+
+    // Guardar las validaciones.
+    if (event.target.closest("#btn_save_validations")) {
+        save_validations();
+        return;
+    }
+
+    // Cerrar Validaciones con X o Cancelar (sin guardar).
+    if (event.target.closest("#validations_js .btn_x_modal, #validations_js .btn_cancel_po")) {
+        close_form("validations_js");
         return;
     }
 
