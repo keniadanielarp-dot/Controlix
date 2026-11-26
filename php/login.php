@@ -55,6 +55,13 @@ if ($res->num_rows === 1) {
 
             // Guardar el rol para saber qué módulos puede ver (1 = Administrador)
             $_SESSION["id_rol"] = (int)$row["id_rol"];
+
+            // El inspector (id_rol = 3) tiene su propia interfaz
+            if ($_SESSION["id_rol"] === 3) {
+                header("Location: ../html/Dashboard_users.html");
+                exit;
+            }
+
             header("Location: ../html/dashboard_admin.html");
             exit;
 

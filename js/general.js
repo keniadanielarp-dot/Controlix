@@ -1,80 +1,95 @@
 /* -------------------------------------  BLOQUE:  Opción General (evidencias) ------------------------------------- */
 
 // Este archivo usa variables y funciones de pos.js
-// (pos_inspections y get_date_time), por eso se carga DESPUÉS de pos.js en dashboard_admin.html.
+// (pos_inspections, get_pos_by_id y get_date_time), por eso se carga DESPUÉS de pos.js en dashboard_admin.html.
 
 
-// Fotos de la inspección elegida mientras se editan: { china_hangtag: [File, File], others: [File] ... }
+// Evidencias guardadas por PO: { po_id: { evidence: { china_hangtag: [File] ... }, evidence_at: "..." } }
+let pos_evidence = {};
+
+// Fotos de la PO elegida mientras se editan: { china_hangtag: [File, File], others: [File] ... }
 let evidence_photos = {};
 
-// Inspección elegida en el select.
-let evidence_inspection = null;
+// PO elegida en el select.
+let evidence_po_id = null;
 
-// Direcciones temporales de las miniaturas (para liberarlas al cambiar de inspección).
+// Direcciones temporales de las miniaturas (para liberarlas al cambiar de PO).
 let evidence_urls = [];
 
 
 // Preparar la opción General al abrirla.
-function init_general_module() {
+async function init_general_module() {
 
-    fill_evidence_inspections();
-    load_evidence_inspection(null);
+    // Traer las inspecciones guardadas (después de F5 o de iniciar sesión).
+    await load_inspections_from_db();
+
+    fill_evidence_pos();
+    load_evidence_po(null);
+}
+
+
+// Evidencias guardadas de una PO (también las usa Resumen).
+function get_po_evidence(po_id) {
+    return pos_evidence[po_id]?.evidence ?? {};
 }
 
 
 /* ==========================================
-   SELECT DE INSPECCIONES
+   SELECT DE PO ASIGNADAS
 ========================================== */
 
-// Llenar el select con todas las inspecciones (la más reciente primero).
-function fill_evidence_inspections() {
+// Número de la PO (columna "POs Adidas").
+function get_evidence_po_number(po_id) {
+    return get_pos_by_id(po_id)?.quantities[1] ?? pos_inspections[po_id]?.at(-1)?.po_number ?? po_id;
+}
 
-    const select = document.getElementById("evidence_inspection");
+
+// Llenar el select con las PO que ya tienen un tipo de inspección asignado.
+function fill_evidence_pos() {
+
+    const select = document.getElementById("evidence_po");
     if (!select) return;
 
-    select.innerHTML = '<option value="">Seleccione una inspección</option>';
+    select.innerHTML = '<option value="">Seleccione una PO</option>';
 
     Object.entries(pos_inspections)
-        .flatMap(([po_id, inspections]) =>
-            inspections.map((inspection, index) => ({ po_id, index, inspection }))
-        )
-        .sort((a, b) => b.inspection.id - a.inspection.id)
-        .forEach(function ({ po_id, index, inspection }) {
+        .filter(([po_id, inspections]) => inspections.length > 0)
+        .forEach(function ([po_id, inspections]) {
+
+            const last = inspections.at(-1);
 
             const option = document.createElement("option");
-            option.value = `${po_id}|${index}`;
-            option.textContent = `PO ${inspection.po_number} · ${inspection.type_name} · ${inspection.date_time}`;
+            option.value = po_id;
+            option.textContent = `PO ${get_evidence_po_number(po_id)} · ${last.type_name}`;
             select.appendChild(option);
         });
 }
 
 
-// Mostrar los datos y las fotos de la inspección elegida.
-function load_evidence_inspection(value) {
+// Mostrar los datos y las fotos de la PO elegida.
+function load_evidence_po(po_id) {
 
-    if (value) {
-        const [po_id, index] = value.split("|");
-        evidence_inspection = pos_inspections[po_id]?.[index] ?? null;
-    } else {
-        evidence_inspection = null;
-    }
+    evidence_po_id = po_id || null;
 
     // Copiar las fotos guardadas (para poder cancelar sin perderlas).
     evidence_photos = {};
 
-    Object.entries(evidence_inspection?.evidence ?? {}).forEach(function ([item, files]) {
+    Object.entries(evidence_po_id ? get_po_evidence(evidence_po_id) : {}).forEach(function ([item, files]) {
         evidence_photos[item] = [...files];
     });
 
-    // Datos de la inspección.
-    document.getElementById("evidence_inspector").textContent = evidence_inspection?.inspector ?? "—";
-    document.getElementById("evidence_status").textContent = evidence_inspection?.result ?? "—";
+    // Inspector y estado de su inspección más reciente.
+    const last = evidence_po_id ? (pos_inspections[evidence_po_id] ?? []).at(-1) : null;
 
-    // Sin inspección no se pueden subir fotos.
+    document.getElementById("evidence_inspector").textContent = last?.inspector ?? "—";
+    document.getElementById("evidence_status").textContent =
+        !evidence_po_id ? "—" : (last?.result ?? "Sin inspección");
+
+    // Sin PO no se pueden subir fotos.
     document.querySelectorAll(".btn_evidence, .evidence_input_take, .evidence_input_upload, #btn_save_evidence")
-        .forEach(element => element.disabled = !evidence_inspection);
+        .forEach(element => element.disabled = !evidence_po_id);
 
-    document.querySelector(".evidence_dropzone")?.classList.toggle("disabled", !evidence_inspection);
+    document.querySelector(".evidence_dropzone")?.classList.toggle("disabled", !evidence_po_id);
 
     render_all_evidence();
 }
@@ -184,27 +199,30 @@ function photo_text(total) {
 }
 
 
-// Guardar las fotos en la inspección.
+// Guardar las fotos en la PO.
 function save_evidence() {
 
-    if (!evidence_inspection) {
-        alert("Selecciona una inspección.");
+    if (!evidence_po_id) {
+        alert("Selecciona una PO.");
         return;
     }
 
-    evidence_inspection.evidence = {};
+    const evidence = {};
 
     Object.entries(evidence_photos).forEach(function ([item, files]) {
-        if (files.length > 0) evidence_inspection.evidence[item] = [...files];
+        if (files.length > 0) evidence[item] = [...files];
     });
 
-    evidence_inspection.evidence_at = get_date_time();
+    pos_evidence[evidence_po_id] = {
+        evidence: evidence,
+        evidence_at: get_date_time()
+    };
 
     alert("Evidencias guardadas.");
 
-    console.log("Evidencias de la PO:", evidence_inspection.po_number);
+    console.log("Evidencias de la PO:", get_evidence_po_number(evidence_po_id));
     console.table(Object.fromEntries(
-        Object.entries(evidence_inspection.evidence).map(([item, files]) => [item, files.length])
+        Object.entries(evidence).map(([item, files]) => [item, files.length])
     ));
 }
 
@@ -220,9 +238,9 @@ document.addEventListener("change", function (event) {
 
     const target = event.target;
 
-    // Elegir otra inspección.
-    if (target.matches("#evidence_inspection")) {
-        load_evidence_inspection(target.value);
+    // Elegir otra PO.
+    if (target.matches("#evidence_po")) {
+        load_evidence_po(target.value);
     }
 
     // Fotos tomadas o elegidas en un renglón.
@@ -244,16 +262,22 @@ document.addEventListener("click", function (event) {
 
     const target = event.target;
 
-    // Cámara: abrir la cámara del renglón.
+    // Cámara: abrir la cámara de la computadora o del teléfono.
     const take = target.closest(".btn_evidence_take");
 
     if (take) {
-        take.closest(".evidence_row").querySelector(".evidence_input_take").click();
+
+        const row = take.closest(".evidence_row");
+
+        open_camera(
+            file => add_evidence_photos(row.dataset.item, [file]),
+            row.querySelector(".evidence_input_take")
+        );
         return;
     }
 
-    // Galería o +: abrir los archivos del renglón.
-    const upload = target.closest(".btn_evidence_upload, .btn_evidence_add");
+    // Galería: abrir los archivos del renglón.
+    const upload = target.closest(".btn_evidence_upload");
 
     if (upload) {
         upload.closest(".evidence_row").querySelector(".evidence_input_upload").click();
@@ -268,7 +292,7 @@ document.addEventListener("click", function (event) {
         return;
     }
 
-    // Otros sin inspección: no abrir los archivos.
+    // Otros sin PO: no abrir los archivos.
     if (target.closest(".evidence_dropzone.disabled")) {
         event.preventDefault();
         return;
@@ -282,7 +306,7 @@ document.addEventListener("click", function (event) {
 
     // Cancelar: regresar a las fotos guardadas.
     if (target.closest("#btn_cancel_evidence")) {
-        load_evidence_inspection(document.getElementById("evidence_inspection")?.value);
+        load_evidence_po(document.getElementById("evidence_po")?.value);
     }
 });
 
@@ -295,7 +319,7 @@ document.addEventListener("dragover", function (event) {
 
     const zone = event.target.closest(".evidence_dropzone");
 
-    if (zone && evidence_inspection) {
+    if (zone && evidence_po_id) {
         event.preventDefault();
         zone.classList.add("dragging");
     }
@@ -313,7 +337,7 @@ document.addEventListener("drop", function (event) {
     event.preventDefault();
     zone.classList.remove("dragging");
 
-    if (evidence_inspection) {
+    if (evidence_po_id) {
         add_evidence_photos("others", event.dataTransfer.files);
     }
 });

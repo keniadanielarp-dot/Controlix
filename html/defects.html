@@ -50,13 +50,19 @@
                     autocomplete="off" aria-label="Buscar defecto">
             </div>
 
-            <!-- Filtro de mes y año -->
+            <!-- Filtro de fecha: un día o todo el mes -->
             <div class="pos_filter">
-                <label for="filter_def_month">Mes</label>
+                <label for="filter_def_month_btn">Fecha</label>
 
-                <div class="pos_dropdown">
+                <div class="pos_dropdown calendar_field">
                     <i class="bi bi-calendar3"></i>
-                    <input type="month" id="filter_def_month">
+                    <input type="hidden" id="filter_def_month">
+
+                    <button type="button" id="filter_def_month_btn" class="calendar_toggle" data-target="filter_def_month"
+                        aria-haspopup="dialog" aria-expanded="false">
+                        <span class="calendar_label">Todas las fechas</span>
+                        <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
 
@@ -64,6 +70,12 @@
             <button type="button" id="btn_register_defects" class="pos_assign_btn pos_type_inspection">
                 <i class="bi bi-clipboard-plus"></i>
                 Registrar defectos
+            </button>
+
+            <!-- Reinspección (solo con la última inspección Rechazado de una PO seleccionada) -->
+            <button type="button" id="btn_reinspection" class="pos_assign_btn pos_reinspection" disabled>
+                <i class="bi bi-arrow-repeat"></i>
+                Reinspección
             </button>
         </div>
     </div>
@@ -88,6 +100,7 @@
                         <th>PO</th>
                         <th>Tipo de inspección</th>
                         <th>Defectos</th>
+                        <th>Reinspección</th>
                         <th>Ver defectos</th>
                     </tr>
                 </thead>
@@ -95,7 +108,7 @@
                 <!-- Inspecciones rechazadas -->
                 <tbody id="defects_table_body">
                     <tr>
-                        <td colspan="6">No hay inspecciones rechazadas.</td>
+                        <td colspan="7">No hay inspecciones rechazadas.</td>
                     </tr>
 
                     <!-- Ejemplo de cómo quedará cada fila (la armará el JS):
@@ -280,6 +293,105 @@
             <div class="btns_po">
                 <button type="button" class="btn_cancel_po">Cerrar</button>
             </div>
+        </div>
+    </div>
+
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal REINSPECCIÓN   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="reinspection_js" class="pos_modal_overlay" hidden>
+
+        <div class="pos_modal_css" role="dialog" aria-modal="true" aria-labelledby="reinspection_title">
+
+            <!-- Encabezado -->
+            <div class="pos_modal_header">
+                <div class="reinspection_title">
+                    <span class="reinspection_icon">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </span>
+                    <h2 id="reinspection_title">Reinspección</h2>
+                </div>
+
+                <button type="button" class="btn_x_modal" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Formulario -->
+            <form id="form_reinspection" novalidate>
+
+                <!-- Inspección anterior (rechazada) -->
+                <div class="reinspection_previous">
+                    <div class="reinspection_previous_head">
+                        <strong>Inspección anterior · PO <span id="reins_po"></span></strong>
+                        <span class="pos_status inspection_result_rejected">Rechazado</span>
+                    </div>
+
+                    <dl class="reinspection_previous_data">
+                        <div>
+                            <dt>Tipo</dt>
+                            <dd id="reins_prev_type"></dd>
+                        </div>
+                        <div>
+                            <dt>Defectos</dt>
+                            <dd id="reins_prev_defects"></dd>
+                        </div>
+                        <div>
+                            <dt>Intento</dt>
+                            <dd id="reins_prev_attempt"></dd>
+                        </div>
+                    </dl>
+
+                    <!-- Defectos registrados de la inspección rechazada (los arma el JS) -->
+                    <div id="reins_prev_defect_list" class="reinspection_defects"></div>
+                </div>
+
+                <!-- Tipo de reinspección -->
+                <div class="pos_form_group">
+                    <label for="reinspection_type">
+                        Tipo de reinspección <span class="pos_required">*</span>
+                    </label>
+
+                    <select id="reinspection_type" name="reinspection_type" required>
+                        <option value="">Seleccione una reinspección</option>
+                    </select>
+
+                    <small id="error_reinspection_type" class="field_error" hidden></small>
+                </div>
+
+                <!-- Inspector -->
+                <div class="pos_form_group">
+                    <label for="reinspection_inspector">
+                        Inspector <span class="pos_required">*</span>
+                    </label>
+
+                    <select id="reinspection_inspector" name="reinspection_inspector" required>
+                        <option value="">Seleccione un inspector</option>
+                    </select>
+
+                    <small id="error_reinspection_inspector" class="field_error" hidden></small>
+                </div>
+
+                <!-- Nota -->
+                <p class="reinspection_note">
+                    <i class="bi bi-info-circle"></i>
+                    <span>
+                        Se creará el intento <strong id="reins_next_attempt"></strong> de esta PO como Pendiente.
+                        La inspección rechazada se queda en el historial.
+                    </span>
+                </p>
+
+                <!-- Botones -->
+                <div class="btns_po">
+                    <button type="button" class="btn_cancel_po">Cancelar</button>
+                    <button type="submit" id="btn_save_reinspection">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Asignar reinspección
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

@@ -328,6 +328,24 @@
     border-color: #137c43;
 }
 
+/* Botón Reinspección */
+.pos_reinspection {
+    background-color: #c2410c;
+    border: 1px solid #c2410c;
+    color: white;
+}
+
+.pos_reinspection:hover:not(:disabled) {
+    background-color: #9a3412;
+    border-color: #9a3412;
+}
+
+/* Desactivado hasta seleccionar una inspección Rechazado */
+.pos_reinspection:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 
 /* ------------------------------ BLOQUE: Tabla de PO'S ------------------------------ */
 
@@ -1507,6 +1525,79 @@
     margin-bottom: 16px;
 }
 
+/* Cajas inspeccionadas */
+.validations_boxes,
+.insp_boxes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+    padding: 14px 16px;
+    border: 1px solid #dce5f0;
+    border-radius: 10px;
+    background-color: #f8fafc;
+}
+
+.validations_boxes label,
+.insp_boxes label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #142b49;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.validations_boxes label i,
+.insp_boxes label i {
+    color: #0056b3;
+}
+
+.validations_boxes input,
+.insp_boxes input {
+    height: 44px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    font-size: 15px;
+    outline: none;
+}
+
+.validations_boxes input:focus,
+.insp_boxes input:focus {
+    border-color: #2454a6;
+    box-shadow: 0 0 0 2px rgba(36, 84, 166, 0.12);
+}
+
+.validations_boxes input.invalid,
+.insp_boxes input.invalid {
+    border-color: #dc3545;
+}
+
+/* Texto "(opcional)" junto a la etiqueta */
+.optional_text {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+/* Ayuda: rango de la PO, cajas leídas o error */
+.validations_boxes_help {
+    color: #526789;
+    font-size: 12px;
+}
+
+.validations_boxes_help.ok {
+    color: #146c43;
+    font-weight: 600;
+}
+
+.validations_boxes_help.error {
+    color: #b42318;
+    font-weight: 600;
+}
+
 .validations_answered,
 .validations_nonconform {
     padding: 7px 15px;
@@ -1700,6 +1791,255 @@
 }
 
 
+/* ----------- Modal Reinspección ----------- */
+
+/* Contenedor principal */
+#reinspection_js .pos_modal_css {
+    width: 100%;
+    max-width: 540px;
+    max-height: 90vh;
+    padding: 25px;
+    overflow-y: auto;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+}
+
+/* Encabezado con ícono */
+#reinspection_js .pos_modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.reinspection_title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reinspection_title h2 {
+    margin: 0;
+    color: #142b49;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.reinspection_icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background-color: #ffedd5;
+    color: #c2410c;
+    font-size: 22px;
+}
+
+/* Formulario */
+#form_reinspection {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+#form_reinspection .pos_form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#form_reinspection .pos_form_group label {
+    color: #142b49;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#form_reinspection select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #334155;
+    font-size: 14px;
+    outline: none;
+}
+
+/* Inspector fijo (el mismo de la inspección rechazada) */
+#form_reinspection select:disabled {
+    background-color: #f1f5f9;
+    color: #334155;
+    opacity: 1;
+    cursor: not-allowed;
+}
+
+#form_reinspection select:focus {
+    border-color: #2454a6;
+    box-shadow: 0 0 0 2px rgba(36, 84, 166, 0.12);
+}
+
+/* Recuadro de la inspección anterior */
+.reinspection_previous {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    background-color: #fef2f2;
+}
+
+.reinspection_previous_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    color: #142b49;
+    font-size: 14px;
+}
+
+.reinspection_previous_data {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin: 0;
+    font-size: 13px;
+}
+
+.reinspection_previous_data dt {
+    color: #64748b;
+    font-weight: 400;
+}
+
+.reinspection_previous_data dd {
+    margin: 2px 0 0;
+    color: #142b49;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Defectos registrados de la inspección anterior */
+.reinspection_defects {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-top: 10px;
+    border-top: 1px solid #fecaca;
+}
+
+.reinspection_defects_title {
+    margin: 0;
+    color: #142b49;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.reinspection_defects table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    font-size: 12px;
+}
+
+.reinspection_defects th,
+.reinspection_defects td {
+    padding: 6px 8px;
+    border: 1px solid #f1d5d5;
+    text-align: left;
+    vertical-align: middle;
+    color: #334155;
+}
+
+.reinspection_defects th {
+    background-color: #fdeaea;
+    color: #142b49;
+    font-weight: 600;
+}
+
+.reinspection_defects img {
+    width: 40px;
+    height: 40px;
+    display: block;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Aviso: la rechazada todavía no tiene sus defectos */
+.reinspection_defects_empty {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    color: #8a4b00;
+    font-size: 13px;
+}
+
+/* Nota informativa */
+.reinspection_note {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background-color: #f1f5f9;
+    color: #475569;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Botones */
+#form_reinspection .btns_po {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+#btn_save_reinspection {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 22px;
+    border: none;
+    border-radius: 6px;
+    background-color: #c2410c;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#btn_save_reinspection:hover {
+    background-color: #9a3412;
+}
+
+/* Etiqueta "Reinspección · intento N" en la tabla */
+.ins_type_cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.reinspection_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background-color: #ffedd5;
+    color: #9a3412;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+
 
 /* ------------------------------ BLOQUE: Opción Defectos ------------------------------ */
 
@@ -1749,7 +2089,7 @@
 /* Buscador, filtro de mes y botón en una sola fila */
 .pos_tools_filters.defects_filters {
     grid-template-columns:
-        minmax(0, 1.7fr) minmax(0, 1fr) auto;
+        minmax(0, 1.5fr) minmax(0, 1fr) auto auto;
 }
 
 /* Botón Registrar defectos más largo */
@@ -1766,7 +2106,37 @@
 
 /* Tabla con menos columnas que la de PO's */
 .pos_table_css.defects_table {
-    min-width: 700px;
+    min-width: 820px;
+}
+
+/* Columna Reinspección */
+.reins_status {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.reins_process {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.reins_pending {
+    background-color: #fff3cd;
+    color: #8a6100;
+}
+
+.reins_done {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+.reins_rejected {
+    background-color: #f8d7da;
+    color: #842029;
 }
 
 
@@ -2055,6 +2425,18 @@
 
 /* ---------------------- Display pequeño ------------  */
 
+@media (max-width: 600px) {
+
+    .reinspection_previous_data {
+        grid-template-columns: 1fr;
+    }
+
+    #form_reinspection .btns_po {
+        flex-direction: column-reverse;
+    }
+}
+
+
 
 /* ---------- Buscador y Filtros -----*/
 
@@ -2238,4 +2620,241 @@
         grid-template-columns: 1fr;
     }
 
+}
+
+
+/* ------------------------------------------------ BLOQUE: CALENDARIO de los filtros --------------------------- */
+
+/* Botón del filtro (en lugar del campo de mes) */
+.calendar_toggle {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.calendar_toggle.has_value {
+    color: #142b49;
+    font-weight: 600;
+}
+
+.calendar_label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar_toggle .bi-chevron-down {
+    color: #142b49;
+    font-size: 13px;
+}
+
+/* Cuadro del calendario (parecido al de Windows) */
+.calendar_popup {
+    position: fixed;
+    z-index: 2500;
+    width: 340px;
+    padding: 16px;
+    border: 1px solid #dce5f0;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 12px 30px rgba(11, 40, 87, 0.18);
+    color: #142b49;
+    box-sizing: border-box;
+}
+
+.calendar_popup[hidden] {
+    display: none;
+}
+
+/* Encabezado: título (mes y año) y flechas */
+.calendar_head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.calendar_title {
+    padding: 6px 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #142b49;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.calendar_title:hover {
+    background-color: #eef4ff;
+}
+
+/* En la vista de años el título no hace nada */
+.calendar_popup[data-view="years"] .calendar_title {
+    color: #64748b;
+    cursor: default;
+}
+
+.calendar_popup[data-view="years"] .calendar_title:hover {
+    background: transparent;
+}
+
+.calendar_arrows {
+    display: flex;
+    gap: 2px;
+}
+
+.calendar_nav {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #526789;
+    cursor: pointer;
+}
+
+.calendar_nav:hover {
+    background-color: #eef4ff;
+    color: #142b49;
+}
+
+/* Días de la semana (solo en la vista de días) */
+.calendar_weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.calendar_weekdays span {
+    padding: 4px 0;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.calendar_popup:not([data-view="days"]) .calendar_weekdays {
+    display: none;
+}
+
+/* Cuadrícula: 7 columnas para días, 4 para meses y años */
+.calendar_grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    justify-items: center;
+}
+
+.calendar_popup:not([data-view="days"]) .calendar_grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px 4px;
+}
+
+/* Celda redonda */
+.calendar_cell {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: #142b49;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.calendar_month_cell,
+.calendar_year_cell {
+    width: 62px;
+    height: 62px;
+}
+
+.calendar_cell:hover {
+    background-color: #eef4ff;
+}
+
+/* Días de otro mes, meses del año siguiente, años fuera de la década */
+.calendar_cell.outside {
+    color: #a3afc2;
+}
+
+/* Hoy: aro azul */
+.calendar_cell.today {
+    box-shadow: inset 0 0 0 2px #0067c0;
+    font-weight: 700;
+}
+
+/* Elegido: círculo azul */
+.calendar_cell.selected {
+    background-color: #0067c0;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.calendar_cell.selected.today {
+    box-shadow: inset 0 0 0 2px #ffffff, 0 0 0 2px #0067c0;
+}
+
+/* Botones de abajo (solo en la vista de días) */
+.calendar_footer {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.calendar_popup:not([data-view="days"]) .calendar_footer {
+    display: none;
+}
+
+.calendar_footer button {
+    flex: 1;
+    padding: 8px 6px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #34476c;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.calendar_footer button:hover {
+    background-color: #f1f5f9;
+}
+
+.calendar_footer .calendar_month_btn.selected {
+    border-color: #0067c0;
+    background-color: #e8f2fc;
+    color: #0067c0;
+}
+
+.calendar_footer .calendar_today_btn {
+    border-color: #0067c0;
+    background-color: #0067c0;
+    color: #ffffff;
+}
+
+.calendar_footer .calendar_today_btn:hover {
+    background-color: #00529b;
 }

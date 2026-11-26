@@ -6,7 +6,153 @@
 
 
 // Preparar la opción Inspecciones al abrirla.
+/* -------------------------------------  BLOQUE:  Inspecciones de la base de datos ------------------------------------- */
+
+// El resultado y los defectos se guardan en ins_aqls (columnas result y defects).
+// Los registros viejos que no los tienen se leen del navegador (localStorage), donde se guardaban antes.
+const INSPECTION_STATES_KEY = "controlix_inspection_states";
+
+// Ya se trajeron las inspecciones de la base de datos en esta sesión.
+let inspections_loaded = false;
+
+
+// Leer los estados guardados antes en el navegador (solo para registros viejos).
+function read_inspection_states() {
+
+    try {
+        return JSON.parse(localStorage.getItem(INSPECTION_STATES_KEY)) ?? {};
+    } catch (error) {
+        return {};
+    }
+}
+
+
+// Fecha de MySQL ("2026-11-26 10:05:00") a "26/11/2026 10:05".
+function format_db_date_time(value) {
+
+    const [date = "", time = ""] = String(value ?? "").split(" ");
+    const [year, month, day] = date.split("-");
+
+    return year ? `${day}/${month}/${year} ${time.slice(0, 5)}`.trim() : "—";
+}
+
+
+// Traer las inspecciones de la base de datos (una vez por sesión, si no hay en memoria).
+async function load_inspections_from_db() {
+
+    if (inspections_loaded || Object.keys(pos_inspections).length > 0) return;
+
+    // Las PO también se necesitan (cantidades, cajas): traerlas si todavía no están.
+    if (pos_records.length <= 1) await load_pos_from_db();
+
+    try {
+
+        const response = await fetch("/sistema_calidad/php/pos.php?action=list_inspections", { cache: "no-store" });
+
+        if (!response.ok) {
+            throw new Error(`El servidor respondió ${response.status} (${response.statusText})`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "No se pudieron cargar las inspecciones.");
+        }
+
+        const states = read_inspection_states();
+        const loaded = {};
+
+        // Inspecciones con resultado (ins_aqls).
+        result.inspections.forEach(function (row) {
+
+            const po_id = String(row.id_po);
+            const history = loaded[po_id] ??= [];
+            const state = states[row.id_ins_aql] ?? {};
+            const details = row.defect_details ?? [];
+
+            history.push({
+                id: Number(row.id_ins_aql),
+                po_id: po_id,
+                po_number: row.number_po,
+                created_at: String(row.created_at ?? "").slice(0, 10),
+                id_ins_type: String(row.id_ins_type),
+                division: row.division ?? "—",
+                type_name: row.name_ins,
+                level: row.level ?? "—",
+                id_inspector: row.id_user ? String(row.id_user) : null,
+                inspector: row.name_user ?? "—",
+                date_time: format_db_date_time(row.created_at),
+
+                // Reinspección: la segunda en adelante de la misma PO.
+                is_reinspection: history.length > 0,
+                attempt: history.length + 1,
+                id_previous: history.at(-1)?.id ?? null,
+
+                // Resultado y defectos de ins_aqls; en registros viejos, del navegador o de los defectos registrados.
+                result: row.result ?? state.result ?? (details.length > 0 ? "Rechazado" : "Aceptado"),
+                defects: row.defects !== null && row.defects !== undefined
+                    ? Number(row.defects)
+                    : (state.defects ?? (details.length > 0 ? details.length : null)),
+                result_date_time: state.result_date_time ?? format_db_date_time(row.created_at),
+
+                load_size: row.load_size,
+                sample_size: row.sample_size !== null ? Number(row.sample_size) : null,
+                id_aql: row.id_aql ? Number(row.id_aql) : null,
+                id_ins_aql: Number(row.id_ins_aql),
+                defect_details: details
+            });
+        });
+
+        // PO con tipo asignado que todavía no tienen resultado.
+        result.pending.forEach(function (row) {
+
+            const po_id = String(row.id_po);
+            const history = loaded[po_id] ??= [];
+
+            history.push({
+                id: 100000 + Number(row.id_po),
+                po_id: po_id,
+                po_number: row.number_po,
+                created_at: String(row.created_at ?? "").slice(0, 10),
+                id_ins_type: String(row.id_ins_type),
+                division: row.division ?? "—",
+                type_name: row.name_ins,
+                level: row.level ?? "—",
+                id_inspector: row.id_user ? String(row.id_user) : null,
+                inspector: row.name_user ?? "—",
+                date_time: format_db_date_time(row.created_at),
+                defects: null,
+                load_size: null,
+                sample_size: null,
+                result: "Pendiente",
+                result_date_time: null,
+                id_aql: null
+            });
+        });
+
+        // No reemplazar si mientras tanto se asignaron inspecciones en esta sesión.
+        if (Object.keys(pos_inspections).length === 0) {
+            Object.assign(pos_inspections, loaded);
+        }
+
+        // Los ID nuevos deben ser mayores a los que ya existen.
+        const ids = Object.values(pos_inspections).flat().map(inspection => Number(inspection.id) || 0);
+        next_inspection_id = Math.max(next_inspection_id, ...ids, 0) + 1;
+
+        inspections_loaded = true;
+        update_defects_badge();
+
+    } catch (error) {
+
+        console.error("Error al cargar las inspecciones de la base de datos:", error);
+    }
+}
+
+
 async function init_inspections_module() {
+
+    // Traer las inspecciones guardadas (después de F5 o de iniciar sesión).
+    await load_inspections_from_db();
 
     // Si los usuarios todavía no llegan de PHP, esperarlos.
     if (pos_users.length === 0) {
@@ -21,6 +167,10 @@ async function init_inspections_module() {
 
 
 // Mostrar una fila por PO con su inspección más reciente.
+// Filas de la tabla que se ven con los filtros (para exportar a Excel).
+let inspections_export_groups = [];
+
+
 function render_inspections_table() {
 
     const body = document.getElementById("inspections_table_body");
@@ -54,19 +204,29 @@ function render_inspections_table() {
             };
         })
 
+        // Orden de registro de las inspecciones.
+        .sort((a, b) => a.inspections[0].id - b.inspections[0].id)
+        // ID = el mismo de la tabla de POs (no cambia al filtrar).
+        .map((group, position, list) => ({
+            ...group,
+            number: group.po_id,
+            total: Math.max(...list.map(item => Number(item.po_id) || 0))
+        }))
+
         .filter(function (group) {
 
             const last = group.last;
 
-            const matches_search =
-                String(last.po_number ?? "").toLowerCase().includes(search_text) ||
-                String(last.type_name ?? "").toLowerCase().includes(search_text);
+            // Buscador: número corto = ID; más números = PO; o parte del tipo de inspección.
+            const matches_search = matches_id_or_po(
+                search_text, group.number, last.po_number, [last.type_name], group.total
+            );
 
             // Mes: alguna de sus inspecciones fue en ese mes.
             const matches_month =
                 selected_month === "" ||
                 group.inspections.some(
-                    inspection => String(inspection.created_at ?? "").slice(0, 7) === selected_month
+                    inspection => String(inspection.created_at ?? "").startsWith(selected_month)
                 );
 
             const matches_status =
@@ -80,8 +240,8 @@ function render_inspections_table() {
             return matches_search && matches_month && matches_status && matches_inspector;
         })
 
-        // La inspección más reciente primero.
-        .sort((a, b) => b.last.id - a.last.id);
+        // De arriba hacia abajo según el ID de la PO.
+        .sort((a, b) => Number(a.number) - Number(b.number));
 
     // Limpiar filas anteriores.
     body.innerHTML = "";
@@ -115,7 +275,10 @@ function render_inspections_table() {
        AGREGAR UNA FILA POR PO
     ========================================== */
 
-    groups.forEach(function (group, index) {
+    // Guardar las filas que se ven (con filtros) para exportarlas a Excel.
+    inspections_export_groups = groups;
+
+    groups.forEach(function (group) {
 
         const last = group.last;
         const tr = document.createElement("tr");
@@ -132,10 +295,13 @@ function render_inspections_table() {
         td_check.appendChild(checkbox);
         tr.appendChild(td_check);
 
-        tr.appendChild(create_cell(index + 1));
+        tr.appendChild(create_cell(group.number));
         tr.appendChild(create_cell(last.po_number));
         tr.appendChild(create_cell(last.division));
-        tr.appendChild(create_cell(last.type_name));
+
+        // Tipo de inspección (con etiqueta si es reinspección).
+        tr.appendChild(create_type_cell(last));
+
         tr.appendChild(create_cell(last.level));
         tr.appendChild(create_cell(last.inspector));
 
@@ -317,11 +483,13 @@ function evaluate_result() {
     }
 
     const accept = Number(result_aql.accept);
-    const sample_size = Number(result_aql.sample_size);
+    const sample_size = get_reviewed_pieces(quantity);
 
-    const range_text =
-        `LOAD SIZE ${result_aql.load_size}: revisar ${sample_size} piezas, ` +
-        `acepta ${accept}, rechaza ${result_aql.reject}.`;
+    // Inspección 100%: revisión de todas las piezas.
+    const range_text = is_full_inspection(document.getElementById("result_type")?.value)
+        ? `Revisión en la totalidad de piezas (${sample_size} piezas): acepta ${accept}, rechaza ${result_aql.reject}.`
+        : `LOAD SIZE ${result_aql.load_size}: revisar ${sample_size} piezas, ` +
+          `acepta ${accept}, rechaza ${result_aql.reject}.`;
 
 
     /* ==========================================
@@ -361,6 +529,21 @@ function evaluate_result() {
     } else {
         show_inspection_result(`❌ Rechazado. ${range_text}`, "rejected");
     }
+}
+
+
+// Inspección 100%: se revisa la totalidad de las piezas.
+function is_full_inspection(type_name) {
+    return String(type_name ?? "").includes("100%");
+}
+
+
+// Piezas a revisar: todas en la inspección 100%; si no, la muestra de la tabla AQL.
+function get_reviewed_pieces(quantity) {
+
+    const type_name = document.getElementById("result_type")?.value;
+
+    return is_full_inspection(type_name) ? quantity : Number(result_aql.sample_size);
 }
 
 
@@ -415,7 +598,9 @@ async function save_result(form) {
     const defects = Number(defect_text);
 
     // Los defectos no pueden superar las piezas revisadas.
-    if (defects > Number(result_aql.sample_size)) {
+    const reviewed = get_reviewed_pieces(Number(document.getElementById("result_quantity")?.textContent ?? 0));
+
+    if (defects > reviewed) {
         evaluate_result();
         defect_field.focus();
         return;
@@ -439,7 +624,11 @@ async function save_result(form) {
             body: JSON.stringify({
                 number_po: inspection.po_number,
                 id_ins_type: Number(inspection.id_ins_type),
-                id_aql: Number(result_aql.id_aql)
+                id_aql: Number(result_aql.id_aql),
+
+                // Resultado y defectos encontrados (se guardan en ins_aqls).
+                result: defects <= Number(result_aql.accept) ? "Aceptado" : "Rechazado",
+                defects: defects
             })
         });
 
@@ -472,10 +661,11 @@ async function save_result(form) {
 
     inspection.defects = defects;
     inspection.load_size = result_aql.load_size;
-    inspection.sample_size = Number(result_aql.sample_size);
+    inspection.sample_size = reviewed;
     inspection.result = defects <= Number(result_aql.accept) ? "Aceptado" : "Rechazado";
     inspection.result_date_time = get_date_time();
     inspection.id_aql = result_aql.id_aql ?? null;
+
 
     // Actualizar el número de Defectos.
     update_defects_badge();
@@ -583,6 +773,109 @@ function create_validations_cell(inspection) {
 }
 
 
+// Leer las cajas escritas ("1, 5, 12-14").
+// Regresa { boxes: [1, 5, 12, 13, 14], text: "1, 5, 12-14" } o { error: "mensaje" }.
+function parse_boxes(text, min_box = null, max_box = null) {
+
+    const parts = String(text ?? "").split(/[,\s]+/).filter(part => part !== "");
+
+    if (parts.length === 0) return { error: "Escribe la caja o cajas que inspeccionaste." };
+
+    const boxes = new Set();
+
+    for (const part of parts) {
+
+        const match = part.match(/^(\d+)(?:-(\d+))?$/);
+
+        if (!match) return { error: `"${part}" no es válido. Usa números separados por coma o un rango con guion (12-14).` };
+
+        const start = Number(match[1]);
+        const end = Number(match[2] ?? match[1]);
+
+        if (start < 1 || end < start) return { error: `El rango "${part}" no es válido.` };
+
+        if ((min_box !== null && start < min_box) || (max_box !== null && end > max_box)) {
+            return { error: `La caja ${part} no pertenece a esta PO (cajas ${min_box} a ${max_box}).` };
+        }
+
+        if (end - start > 5000) return { error: `El rango "${part}" es demasiado grande.` };
+
+        for (let box = start; box <= end; box++) boxes.add(box);
+    }
+
+    // Volver a escribirlas ordenadas y juntando rangos: 1, 5, 12-14.
+    const sorted = [...boxes].sort((a, b) => a - b);
+    const ranges = [];
+
+    sorted.forEach(function (box) {
+
+        const last = ranges[ranges.length - 1];
+
+        if (last && box === last[1] + 1) last[1] = box;
+        else ranges.push([box, box]);
+    });
+
+    return {
+        boxes: sorted,
+        text: ranges.map(([start, end]) => start === end ? `${start}` : `${start}-${end}`).join(", ")
+    };
+}
+
+
+// Primera y última caja de una PO (según los rangos de sus tallas).
+function get_po_box_range(po_id) {
+
+    const record = get_pos_by_id(po_id);
+    if (!record) return { min_box: null, max_box: null };
+
+    const ranges = record.boxes.slice(5, 13)
+        .map(value => parse_box_range(value))
+        .filter(range => range.min_box !== null);
+
+    if (ranges.length === 0) return { min_box: null, max_box: null };
+
+    return {
+        min_box: Math.min(...ranges.map(range => range.min_box)),
+        max_box: Math.max(...ranges.map(range => range.max_box))
+    };
+}
+
+
+// Revisar las cajas escritas y mostrar la ayuda debajo del campo. Regresa el resultado de parse_boxes.
+function check_validation_boxes(show_empty_error = false) {
+
+    const input = document.getElementById("val_boxes");
+    const help = document.getElementById("val_boxes_help");
+    if (!input || !help || !validation_inspection) return null;
+
+    const { min_box, max_box } = get_po_box_range(validation_inspection.po_id);
+    const range_text = min_box !== null ? `Cajas de la PO: ${min_box} a ${max_box}.` : "";
+
+    // Vacío: solo mostrar el rango (o el error al guardar).
+    if (input.value.trim() === "" && !show_empty_error) {
+        help.textContent = `${range_text} Escribe los números separados por coma o un rango con guion.`.trim();
+        help.className = "validations_boxes_help";
+        input.classList.remove("invalid");
+        return null;
+    }
+
+    const result = parse_boxes(input.value, min_box, max_box);
+
+    if (result.error) {
+        help.textContent = result.error;
+        help.className = "validations_boxes_help error";
+        input.classList.add("invalid");
+        return result;
+    }
+
+    help.textContent = `${result.boxes.length} ${result.boxes.length === 1 ? "caja" : "cajas"}: ${result.text}`;
+    help.className = "validations_boxes_help ok";
+    input.classList.remove("invalid");
+
+    return result;
+}
+
+
 // Abrir el modal Validaciones con la PO seleccionada.
 function open_validations() {
 
@@ -609,6 +902,10 @@ function open_validations() {
     validation_answers = { ...(validation_inspection.validations ?? {}) };
 
     document.getElementById("val_po").textContent = validation_inspection.po_number;
+
+    // Cajas guardadas.
+    document.getElementById("val_boxes").value = validation_inspection.boxes ?? "";
+    check_validation_boxes();
 
     render_validation_sections();
     update_validation_counts();
@@ -744,6 +1041,16 @@ function save_validations() {
 
     if (!validation_inspection) return;
 
+    // Cajas inspeccionadas (opcional): si se escriben, deben ser válidas.
+    const boxes = check_validation_boxes();
+
+    if (boxes?.error) {
+        document.getElementById("val_boxes").focus();
+        return;
+    }
+
+    validation_inspection.boxes = boxes?.text ?? null;
+    validation_inspection.boxes_count = boxes?.boxes.length ?? 0;
     validation_inspection.validations = { ...validation_answers };
     validation_inspection.validations_at = get_date_time();
 
@@ -756,11 +1063,243 @@ function save_validations() {
 
 
 
+/* -------------------------------------  BLOQUE:  Exportar a Excel ------------------------------------- */
+
+// Colores del reporte (los mismos del sistema).
+const EXCEL_COLORS = {
+    navy: "FF142B49",
+    blue: "FF2454A6",
+    light: "FFE8F2FF",
+    zebra: "FFF5F9FF",
+    border: "FFDCE5F0",
+    white: "FFFFFFFF",
+    text: "FF142B49",
+    muted: "FF526789"
+};
+
+// Colores de cada estado: fondo y letra.
+const EXCEL_STATUS_COLORS = {
+    "Aceptado": { fill: "FFD1E7DD", font: "FF146C43" },
+    "Rechazado": { fill: "FFF8D7DA", font: "FF842029" },
+    "Pendiente": { fill: "FFFFF3CD", font: "FF8A6100" },
+    "Completa": { fill: "FFDBEAFE", font: "FF1E40AF" }
+};
+
+
+// Datos de una fila del Excel.
+function get_inspection_excel_row(group) {
+
+    const last = group.last;
+    const po_number = String(last.po_number ?? "");
+
+    return [
+        Number(group.number) || group.number,
+        /^\d+$/.test(po_number) ? Number(po_number) : po_number,
+        last.division ?? "",
+        last.type_name ?? "",
+        last.is_reinspection ? `Intento ${last.attempt}` : "—",
+        last.level ?? "",
+        last.inspector ?? "",
+        last.result ?? "",
+        has_complete_validations(last) ? "Completa" : "Pendiente",
+        last.boxes ?? "—",
+        last.defects ?? "—",
+        last.date_time ?? "—",
+        last.result_date_time ?? "—"
+    ];
+}
+
+
+// Descargar la tabla de Inspecciones (con los filtros activos) como Excel con diseño.
+async function export_inspections_excel() {
+
+    if (inspections_export_groups.length === 0) {
+        alert("No hay inspecciones para exportar.");
+        return;
+    }
+
+    // Se necesita la librería ExcelJS (permite colores y bordes).
+    if (typeof ExcelJS === "undefined") {
+        alert("Falta cargar la librería ExcelJS (../libs/exceljs.min.js) en dashboard_admin.html.");
+        return;
+    }
+
+    const headers = [
+        "ID", "PO", "División", "Tipo de inspección", "Reinspección", "Nivel de inspección",
+        "Inspector", "Estado", "Validaciones", "Cajas inspeccionadas", "Defectos",
+        "Fecha de asignación", "Fecha de resultado"
+    ];
+
+    const widths = [7, 13, 11, 44, 14, 32, 22, 13, 14, 20, 10, 19, 19];
+    const last_column = String.fromCharCode(64 + headers.length);   // "M"
+
+    const book = new ExcelJS.Workbook();
+    book.creator = "Controlix";
+    book.created = new Date();
+
+    const sheet = book.addWorksheet("Inspecciones", {
+        views: [{ state: "frozen", ySplit: 3 }],
+        pageSetup: { orientation: "landscape", fitToPage: true, fitToWidth: 1, fitToHeight: 0 }
+    });
+
+    sheet.columns = widths.map(width => ({ width: width }));
+
+    const thin_border = {
+        top: { style: "thin", color: { argb: EXCEL_COLORS.border } },
+        left: { style: "thin", color: { argb: EXCEL_COLORS.border } },
+        bottom: { style: "thin", color: { argb: EXCEL_COLORS.border } },
+        right: { style: "thin", color: { argb: EXCEL_COLORS.border } }
+    };
+
+
+    /* ==========================================
+       TÍTULO DEL REPORTE
+    ========================================== */
+
+    sheet.mergeCells(`A1:${last_column}1`);
+    const title = sheet.getCell("A1");
+    title.value = "Controlix · Reporte de Inspecciones";
+    title.font = { name: "Calibri", size: 18, bold: true, color: { argb: EXCEL_COLORS.white } };
+    title.fill = { type: "pattern", pattern: "solid", fgColor: { argb: EXCEL_COLORS.navy } };
+    title.alignment = { vertical: "middle", horizontal: "left", indent: 1 };
+    sheet.getRow(1).height = 36;
+
+    sheet.getRow(2).height = 8;
+
+
+    /* ==========================================
+       ENCABEZADOS DE LA TABLA
+    ========================================== */
+
+    const header_row = sheet.getRow(3);
+    header_row.values = headers;
+    header_row.height = 30;
+
+    header_row.eachCell(function (cell) {
+        cell.font = { name: "Calibri", size: 11, bold: true, color: { argb: EXCEL_COLORS.white } };
+        cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: EXCEL_COLORS.blue } };
+        cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+        cell.border = thin_border;
+    });
+
+
+    /* ==========================================
+       FILAS
+    ========================================== */
+
+    inspections_export_groups.forEach(function (group, position) {
+
+        const row = sheet.addRow(get_inspection_excel_row(group));
+        row.height = 22;
+
+        row.eachCell({ includeEmpty: true }, function (cell, column) {
+
+            cell.font = { name: "Calibri", size: 11, color: { argb: EXCEL_COLORS.text } };
+            cell.border = thin_border;
+            cell.alignment = { vertical: "middle", horizontal: column === 4 || column === 6 ? "left" : "center" };
+
+            // Filas intercaladas.
+            if (position % 2 === 1) {
+                cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: EXCEL_COLORS.zebra } };
+            }
+        });
+
+        // PO como número entero (sin decimales ni notación científica).
+        row.getCell(2).numFmt = "0";
+        row.getCell(2).font = { name: "Calibri", size: 11, bold: true, color: { argb: EXCEL_COLORS.text } };
+
+        // Estado y Validaciones con su color.
+        [8, 9].forEach(function (column) {
+
+            const cell = row.getCell(column);
+            const colors = EXCEL_STATUS_COLORS[cell.value];
+
+            if (!colors) return;
+
+            cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: colors.fill } };
+            cell.font = { name: "Calibri", size: 11, bold: true, color: { argb: colors.font } };
+        });
+
+        // Reinspección resaltada en naranja.
+        if (group.last.is_reinspection) {
+            const cell = row.getCell(5);
+            cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFFFEDD5" } };
+            cell.font = { name: "Calibri", size: 11, bold: true, color: { argb: "FF9A3412" } };
+        }
+    });
+
+    // Filtros de Excel en los encabezados.
+    sheet.autoFilter = { from: "A3", to: `${last_column}3` };
+
+
+    /* ==========================================
+       DESCARGAR
+    ========================================== */
+
+    const buffer = await book.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = `Inspecciones_${get_pos_date()}.xlsx`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+
+
+/* -------------------------------------  BLOQUE:  Etiqueta de Reinspección ------------------------------------- */
+
+// Celda del tipo de inspección; si es reinspección agrega la etiqueta.
+function create_type_cell(inspection) {
+
+    const td = document.createElement("td");
+
+    if (!inspection.is_reinspection) {
+        td.textContent = inspection.type_name ?? "—";
+        return td;
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "ins_type_cell";
+
+    const name = document.createElement("span");
+    name.textContent = inspection.type_name ?? "—";
+
+    const badge = document.createElement("span");
+    badge.className = "reinspection_badge";
+
+    const icon = document.createElement("i");
+    icon.className = "bi bi-arrow-repeat";
+    icon.setAttribute("aria-hidden", "true");
+
+    badge.append(icon, ` Reinspección · intento ${inspection.attempt}`);
+    wrapper.append(name, badge);
+    td.appendChild(wrapper);
+
+    return td;
+}
+
+
+
 /* -------------------------------------  BLOQUE:  Eventos de Inspecciones ------------------------------------- */
 
 /* ==========================================
    INPUT
 ========================================== */
+
+// Revisar las cajas mientras se escriben.
+document.addEventListener("input", function (event) {
+    if (event.target.matches("#val_boxes")) check_validation_boxes();
+});
+
 
 document.addEventListener("input", function (event) {
 
@@ -794,6 +1333,13 @@ document.addEventListener("change", function (event) {
 ========================================== */
 
 document.addEventListener("click", function (event) {
+
+    // Exportar la tabla a Excel.
+    if (event.target.closest("#btn_export_inspections")) {
+        export_inspections_excel();
+        return;
+    }
+
 
     // Abrir las inspecciones de una PO.
     const dates_button = event.target.closest(".btn_ins_dates");

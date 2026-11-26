@@ -62,6 +62,13 @@ let pos_assignments = {};
 // Copia de las PO tal como se guardaron por última vez en la base de datos.
 let last_saved_pos = "[]";
 
+// Tipo de inspección guardado en la base de datos para cada PO: { po_id: { id_ins_type, name_ins } }.
+// Se usa mientras la PO no tenga inspecciones en esta sesión (por ejemplo, después de F5).
+let pos_db_types = {};
+
+// Fecha elegida en el filtro de POs (null = todavía no se elige: usar la fecha en que se subió el Excel).
+let pos_date_filter = null;
+
 
 
 /* -------------------------------------  BLOQUE:  Utilidades ------------------------------------- */
@@ -233,6 +240,10 @@ async function load_excel(file) {
         // Guardar los registros del Excel.
         pos_records = records;
 
+        // Excel nuevo: el filtro vuelve a la fecha en que se subió.
+        pos_date_filter = null;
+        pos_db_types = {};
+
         // Registrar la fecha de carga de cada PO (filas de dos en dos).
         pos_dates = {};
 
@@ -294,8 +305,33 @@ function load_pos_table(records) {
         table.appendChild(tr_boxes);
     }
 
+    // Poner la fecha del filtro (la elegida o la del Excel).
+    apply_pos_date_filter();
+
     // Aplicar los filtros activos una sola vez, al terminar.
     filter_pos();
+}
+
+
+// Fecha en que se subió el Excel por primera vez (la fecha de registro más antigua).
+function get_first_upload_date() {
+
+    const dates = Object.values(pos_dates).filter(Boolean).sort();
+    return dates[0] ?? "";
+}
+
+
+// Poner en el filtro de fecha la que eligió el usuario, o la del Excel si todavía no elige.
+function apply_pos_date_filter() {
+
+    const input = document.getElementById("dpdn_pos_mounth");
+    if (!input) return;
+
+    input.value = pos_date_filter ?? get_first_upload_date();
+
+    // Actualizar el texto del botón del calendario.
+    const toggle = document.querySelector(".calendar_toggle[data-target='dpdn_pos_mounth']");
+    if (toggle && typeof update_calendar_toggle === "function") update_calendar_toggle(toggle);
 }
 
 
@@ -357,7 +393,9 @@ function create_po_rows(quantity_row, box_row) {
     const inspections = pos_inspections[po_id] ?? [];
     const last_inspection = inspections[inspections.length - 1];
 
-    tr_quantities.appendChild(create_cell(last_inspection?.type_name ?? "—", 2));
+    tr_quantities.appendChild(create_cell(
+        last_inspection?.type_name ?? pos_db_types[po_id]?.name_ins ?? "—", 2
+    ));
 
 
     /* ==========================================
@@ -396,16 +434,18 @@ function reset_select_all() {
 }
 
 
-// Obtener los checkbox de las PO visibles en la página actual.
+// Checkbox de todas las PO que cumplen los filtros (de todas las páginas).
+let matching_pos_checks = [];
+
+
+// Obtener los checkbox de las PO que cumplen los filtros, aunque estén en otra página.
 function get_visible_pos_checks() {
 
-    return Array.from(
-        document.querySelectorAll("#pos_table_excel .select_pos_check")
-    ).filter(checkbox => !checkbox.closest("tr").hidden);
+    return matching_pos_checks.filter(checkbox => checkbox.isConnected);
 }
 
 
-// Marcar o desmarcar todas las PO de la página actual.
+// Marcar o desmarcar todas las PO que cumplen los filtros (todas las páginas).
 function toggle_all_pos(checked) {
 
     get_visible_pos_checks().forEach(checkbox => checkbox.checked = checked);
@@ -418,7 +458,7 @@ function update_select_all() {
     const select_all = document.getElementById("select_all_pos");
     if (!select_all) return;
 
-    // Considerar solo las PO de la página actual.
+    // Considerar todas las PO que cumplen los filtros (todas las páginas).
     const checkboxes = get_visible_pos_checks();
     const checked_boxes = checkboxes.filter(checkbox => checkbox.checked);
 
@@ -436,6 +476,25 @@ function update_select_all() {
 
 
 /* -------------------------------------  BLOQUE:  Filtros (búsqueda, estado, mes/año) ------------------------------------- */
+
+// Buscador (POs, Inspecciones, Defectos y Usuarios):
+// un número corto se toma como ID exacto; si escriben más números, se busca la PO que empiece así.
+// texts: otros datos donde buscar por coincidencia (tipo de inspección, modelo, nombre...).
+function matches_id_or_po(search_text, id, po, texts = [], total_rows = 0) {
+
+    if (search_text === "") return true;
+
+    // Cantidad de dígitos que puede tener un ID (ej. 9 registros = 1 dígito, 25 registros = 2).
+    const id_digits = Math.max(String(total_rows).length, 1);
+
+    if (/^\d+$/.test(search_text) && search_text.length <= id_digits) {
+        return String(id).trim() === search_text;
+    }
+
+    return String(po ?? "").trim().toLowerCase().startsWith(search_text) ||
+        texts.some(text => String(text ?? "").toLowerCase().includes(search_text));
+}
+
 
 function filter_pos() {
 
@@ -480,26 +539,23 @@ function filter_pos() {
         const po = cells[2]?.textContent.toLowerCase() ?? "";
         const model = cells[3]?.textContent.toLowerCase() ?? "";
         const po_status = cells[STATUS_CELL_INDEX]?.textContent.trim().toLowerCase() ?? "";
-        const register_month = (quantity_row.dataset.createdAt ?? "").slice(0, 7);
 
         // Usuario asignado a la PO.
         const po_id = quantity_row.querySelector(".select_pos_check")?.value ?? "";
         const po_user = pos_assignments[po_id]?.id_user ?? "";
 
         // Comprobar los tres filtros.
-        const matches_search =
-            id.includes(search_text) ||
-            po.includes(search_text) ||
-            model.includes(search_text);
+        const matches_search = matches_id_or_po(search_text, id, po, [model], rows.length / 2);
 
         const matches_status =
             status === "todos" ||
             status === "" ||
             po_status === status;
 
+        // Fecha: un día ("2026-11-25") o todo el mes ("2026-11").
         const matches_month =
             selected_month === "" ||
-            register_month === selected_month;
+            (quantity_row.dataset.createdAt ?? "").startsWith(selected_month);
 
         const matches_user =
             selected_user === "" ||
@@ -535,11 +591,17 @@ function filter_pos() {
             box_row.hidden = false;
         });
 
-    // Desmarcar las PO que quedaron ocultas.
+    // Guardar los checkbox de las PO que cumplen los filtros (de todas las páginas).
+    matching_pos_checks = matching_pos
+        .map(([quantity_row]) => quantity_row.querySelector(".select_pos_check"))
+        .filter(Boolean);
+
+    // Desmarcar solo las PO que ya no cumplen los filtros
+    // (las de otras páginas se quedan marcadas).
     document
         .querySelectorAll("#pos_table_excel .select_pos_check")
         .forEach(function (checkbox) {
-            if (checkbox.closest("tr").hidden) checkbox.checked = false;
+            if (!matching_pos_checks.includes(checkbox)) checkbox.checked = false;
         });
 
     update_select_all();
@@ -1262,12 +1324,6 @@ function open_assign_ins() {
     // La inspección la realiza el usuario asignado a la PO.
     const without_user = selected.filter(po_id => !pos_assignments[po_id]);
 
-    // No asignar otra mientras haya una sin resultado.
-    const with_pending = selected.filter(function (po_id) {
-        return (pos_inspections[po_id] ?? [])
-            .some(inspection => inspection.result === "Pendiente");
-    });
-
     // Número de PO para los mensajes.
     const po_numbers = list => list
         .map(po_id => get_pos_by_id(po_id)?.quantities[1] ?? po_id)
@@ -1278,13 +1334,7 @@ function open_assign_ins() {
         return;
     }
 
-    if (with_pending.length > 0) {
-        alert(
-            `Estas PO ya tienen una inspección pendiente: ${po_numbers(with_pending)}. ` +
-            "Registra su resultado en Inspecciones antes de asignar otra."
-        );
-        return;
-    }
+    // Si alguna ya tiene una inspección Pendiente, al guardar se reemplaza (por si se equivocaron).
 
 
     /* ==========================================
@@ -1294,7 +1344,7 @@ function open_assign_ins() {
     // Abrir el modal con el formulario limpio.
     open_form("assign_ins_js", true);
 
-    // Llenar el select de tipos de inspección.
+    // Llenar el select con todos los tipos de inspección.
     fill_select(
         "inspection_type",
         "Seleccione una inspección",
@@ -1389,6 +1439,27 @@ function save_inspection(form) {
         // El inspector es el usuario asignado a la PO.
         const assignment = pos_assignments[po_id];
 
+        // Crear el historial de la PO si todavía no existe.
+        if (!pos_inspections[po_id]) {
+            pos_inspections[po_id] = [];
+        }
+
+        // Si la última sigue Pendiente, se corrige esa en lugar de agregar otra.
+        const pending = pos_inspections[po_id].at(-1);
+
+        if (pending?.result === "Pendiente") {
+
+            pending.id_ins_type = type_select.value;
+            pending.division = type_data?.division ?? "—";
+            pending.type_name = type_data?.name_ins ?? type_select.options[type_select.selectedIndex].text;
+            pending.level = type_data?.level ?? "—";
+            pending.id_inspector = assignment?.id_user ?? null;
+            pending.inspector = assignment?.name_user ?? "—";
+            pending.date_time = get_date_time();
+
+            return;
+        }
+
         const inspection = {
             id: next_inspection_id++,
             po_id: po_id,
@@ -1412,11 +1483,6 @@ function save_inspection(form) {
             // Renglón de la tabla AQL que se usó (para ins_aqls).
             id_aql: null
         };
-
-        // Crear el historial de la PO si todavía no existe.
-        if (!pos_inspections[po_id]) {
-            pos_inspections[po_id] = [];
-        }
 
         pos_inspections[po_id].push(inspection);
     });
@@ -1772,13 +1838,96 @@ function build_pos_payload() {
             id_user: pos_assignments[po_id]?.id_user ?? null,
 
             // Tipo de la inspección más reciente (null si todavía no tiene).
-            id_ins_type: pos_inspections[po_id]?.at(-1)?.id_ins_type ?? null,
+            id_ins_type: pos_inspections[po_id]?.at(-1)?.id_ins_type ?? pos_db_types[po_id]?.id_ins_type ?? null,
 
             sizes: sizes
         });
     }
 
     return pos;
+}
+
+
+// Traer de la base de datos las PO guardadas y dibujarlas en la tabla.
+async function load_pos_from_db() {
+
+    try {
+
+        const response = await fetch("/sistema_calidad/php/pos.php?action=list_pos", { cache: "no-store" });
+
+        if (!response.ok) {
+            throw new Error(`El servidor respondió ${response.status} (${response.statusText})`);
+        }
+
+        const result = await response.json();
+
+        if (!result.success) {
+            throw new Error(result.message || "No se pudieron cargar las PO.");
+        }
+
+        // Armar las filas igual que las del Excel: encabezado y dos filas por PO.
+        const records = [PO_HEADER];
+
+        pos_dates = {};
+        pos_assignments = {};
+        pos_db_types = {};
+
+        result.pos.forEach(function (po) {
+
+            const po_id = String(po.id_po);
+            const quantity_row = [po_id, po.number_po, po.model_po, po.art_po, po.color_po];
+            const box_row = ["", "", "", "", ""];
+
+            // Tallas: piezas en la primera fila y rango de cajas en la segunda.
+            PO_HEADER.slice(5, 13).forEach(function (size_name) {
+
+                const size = po.sizes?.[size_name];
+
+                quantity_row.push(size ? String(size.pieces) : "");
+
+                if (!size || size.min_box === null) {
+                    box_row.push("");
+                } else {
+                    box_row.push(size.min_box === size.max_box ? `${size.min_box}` : `${size.min_box}-${size.max_box}`);
+                }
+            });
+
+            quantity_row.push(String(po.unit_rqstd ?? ""), String(po.unit_delvd ?? ""));
+            box_row.push("", "");
+
+            records.push(quantity_row, box_row);
+
+            // Fecha de registro y usuario asignado.
+            pos_dates[po_id] = po.created_at ?? get_pos_date();
+
+            // Tipo de inspección guardado.
+            if (po.id_ins_type) {
+                pos_db_types[po_id] = { id_ins_type: String(po.id_ins_type), name_ins: po.name_ins ?? "—" };
+            }
+
+            if (po.id_user) {
+                pos_assignments[po_id] = {
+                    id_user: String(po.id_user),
+                    name_user: po.name_user ?? "",
+                    assigned_at: po.updated_at ?? pos_dates[po_id]
+                };
+            }
+        });
+
+        pos_records = records;
+        current_page = 1;
+        pos_date_filter = null;
+
+        // Dibujar solo si la tabla de POs está en pantalla.
+        if (document.getElementById("pos_table_excel")) load_pos_table(pos_records);
+
+        // Lo que viene de la base de datos ya está guardado: no avisar al salir.
+        last_saved_pos = JSON.stringify(build_pos_payload());
+
+    } catch (error) {
+
+        console.error("Error al cargar las PO de la base de datos:", error);
+    }
 }
 
 
@@ -1794,26 +1943,27 @@ async function save_pos_to_db() {
 
 
     /* ==========================================
-       VALIDAR USUARIO ASIGNADO
+       AVISAR DE LAS PO SIN USUARIO
     ========================================== */
 
-    // PO que todavía no tienen usuario.
+    // Se pueden guardar sin usuario y asignarlo otro día.
     const without_user = pos
         .filter(po => !po.id_user)
         .map(po => po.number_po);
 
     if (without_user.length > 0) {
 
-        // Mostrar máximo 10 PO para que la alerta no sea muy larga.
+        // Mostrar máximo 10 PO para que el aviso no sea muy largo.
         const list = without_user.slice(0, 10).join(", ");
         const extra = without_user.length > 10 ? ` y ${without_user.length - 10} más` : "";
 
-        alert(
-            `No se pueden guardar las PO sin usuario asignado.\n\n` +
-            `Pendientes (${without_user.length}): ${list}${extra}.`
+        const go_on = confirm(
+            `${without_user.length} de ${pos.length} PO todavía no tienen usuario asignado ` +
+            `(${list}${extra}).\n\n` +
+            `Se guardarán sin usuario y podrás asignarlas después. ¿Continuar?`
         );
 
-        return;
+        if (!go_on) return;
     }
 
     // Evitar que se presione dos veces mientras se guarda.
@@ -1947,6 +2097,10 @@ document.addEventListener("change", function (event) {
 
     // Filtros de estado y mes/año.
     if (target.matches("#options_pos_status, #dpdn_pos_mounth")) {
+
+        // Recordar la fecha elegida (también "Limpiar").
+        if (target.matches("#dpdn_pos_mounth")) pos_date_filter = target.value;
+
         current_page = 1;
         filter_pos();
     }

@@ -1,0 +1,714 @@
+/* ------------------------------------------------ BLOQUE: Interfaz del INSPECTOR --------------------------- */
+
+/* Sangría de la página */
+.inspector_page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 20px 30px 30px;
+    color: #142b49;
+}
+
+
+/* ----------- Banner ----------- */
+.inspector_banner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 26px 30px;
+    border-radius: 16px;
+    background: linear-gradient(120deg, #0b2857 0%, #1d5fbf 100%);
+    color: #ffffff;
+}
+
+.inspector_banner_text h1 {
+    margin: 0 0 6px;
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.inspector_banner_text p {
+    margin: 0;
+    color: #d6e6ff;
+    font-size: 15px;
+}
+
+.inspector_banner_text p strong {
+    color: #ffffff;
+}
+
+.inspector_counters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.inspector_counter {
+    min-width: 100px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.14);
+    text-align: center;
+}
+
+.inspector_counter strong {
+    display: block;
+    font-size: 24px;
+}
+
+.inspector_counter span {
+    color: #d6e6ff;
+    font-size: 12px;
+}
+
+.inspector_counter .counter_progress {
+    color: #fcd34d;
+}
+
+.inspector_counter .counter_finished {
+    color: #86efac;
+}
+
+
+/* ----------- Filtros rápidos ----------- */
+.inspector_filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn_inspector_filter {
+    padding: 9px 16px;
+    border: 1px solid #cbdff8;
+    border-radius: 20px;
+    background-color: #ffffff;
+    color: #142b49;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn_inspector_filter:hover {
+    background-color: #eef4ff;
+}
+
+.btn_inspector_filter[aria-pressed="true"] {
+    border-color: #142b49;
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+
+/* ----------- Tarjetas ----------- */
+.inspector_cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 18px;
+}
+
+.inspector_card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 16px;
+    background-color: #ffffff;
+    box-shadow: 0 6px 18px rgba(11, 40, 87, 0.08);
+}
+
+/* Franja de color según el estado */
+.inspector_card::before {
+    content: "";
+    height: 6px;
+    background-color: #94a3b8;
+}
+
+.inspector_card.in_progress {
+    box-shadow: 0 0 0 2px #f59e0b, 0 6px 18px rgba(11, 40, 87, 0.08);
+}
+
+.inspector_card.in_progress::before {
+    background-color: #f59e0b;
+}
+
+.inspector_card.finished::before {
+    background-color: #22c55e;
+}
+
+.inspector_card_body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 20px;
+}
+
+.inspector_card_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.inspector_card_head small {
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.inspector_card_head strong {
+    display: block;
+    font-size: 24px;
+    letter-spacing: 0.5px;
+}
+
+/* Estado de la tarjeta */
+.inspector_state {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: #e2e8f0;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.inspector_state.in_progress {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.inspector_state.in_progress::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #f59e0b;
+}
+
+.inspector_state.finished {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+/* Tipo de inspección resaltado */
+.inspector_type {
+    padding: 12px 14px;
+    border-radius: 10px;
+    background-color: #eef4ff;
+    color: #1e3a8a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* Datos de la PO */
+.inspector_data {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 6px 12px;
+    margin: 0;
+    font-size: 13px;
+}
+
+.inspector_data dt {
+    color: #64748b;
+    font-weight: 400;
+}
+
+.inspector_data dd {
+    margin: 0;
+}
+
+/* Hora de inicio y cronómetro */
+.inspector_timer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background-color: #fffbeb;
+    color: #92400e;
+    font-size: 13px;
+}
+
+.inspector_timer strong {
+    font-size: 18px;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Botones Resultado y Validaciones */
+.inspector_actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.inspector_actions button,
+.btn_start_po,
+.btn_finish_po {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.inspector_actions button {
+    height: 46px;
+    font-size: 14px;
+}
+
+.btn_insp_result {
+    background-color: #0b2857;
+}
+
+.btn_insp_result:hover {
+    background-color: #2454a6;
+}
+
+.btn_insp_validations {
+    background-color: #19723f;
+}
+
+.btn_insp_validations:hover {
+    background-color: #137c43;
+}
+
+/* Etiquetas de avance */
+.inspector_progress {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.inspector_progress span {
+    padding: 4px 10px;
+    border-radius: 12px;
+    background-color: #fff3cd;
+    color: #8a6100;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.inspector_progress span.done {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+/* Botones grandes */
+.btn_start_po,
+.btn_finish_po {
+    margin-top: auto;
+    height: 50px;
+    font-size: 16px;
+}
+
+.btn_start_po {
+    background-color: #1d5fbf;
+}
+
+.btn_start_po:hover {
+    background-color: #0b2857;
+}
+
+.btn_finish_po {
+    background-color: #c62828;
+}
+
+.btn_finish_po:hover:not(:disabled) {
+    background-color: #a51d1d;
+}
+
+.btn_finish_po:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.inspector_hint {
+    color: #64748b;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Tarjeta finalizada */
+.inspector_done {
+    margin-top: auto;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-radius: 10px;
+    background-color: #f0fdf4;
+    color: #146c43;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* Resultado dentro de la tarjeta */
+.inspector_result {
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+}
+
+.inspector_result.accepted {
+    background-color: #d1e7dd;
+    color: #146c43;
+}
+
+.inspector_result.rejected {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+/* Sin POs */
+.inspector_empty {
+    grid-column: 1 / -1;
+    padding: 40px 20px;
+    border-radius: 16px;
+    background-color: #ffffff;
+    color: #526789;
+    font-size: 15px;
+    text-align: center;
+}
+
+.inspector_empty i {
+    display: block;
+    margin-bottom: 10px;
+    color: #94a3b8;
+    font-size: 40px;
+}
+
+
+/* ----------- Modales del inspector ----------- */
+.insp_modal_overlay {
+    position: fixed;
+    inset: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.55);
+    z-index: 2000;
+    box-sizing: border-box;
+}
+
+.insp_modal_overlay[hidden] {
+    display: none;
+}
+
+.insp_modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    padding: 24px;
+    overflow-y: auto;
+    border-radius: 12px;
+    background-color: #ffffff;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.25);
+    color: #142b49;
+    box-sizing: border-box;
+}
+
+.insp_modal_wide {
+    max-width: 720px;
+}
+
+.insp_modal_small {
+    max-width: 420px;
+    text-align: center;
+}
+
+.insp_modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.insp_modal_header h2,
+.insp_modal_small h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.insp_modal_header h2 i {
+    margin-right: 8px;
+    color: #0056b3;
+}
+
+.btn_close_insp {
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.btn_close_insp:hover {
+    color: #dc3545;
+}
+
+#form_insp_result,
+#form_insp_validations {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Datos de la PO en el modal */
+.insp_info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0;
+    padding: 14px;
+    border-radius: 10px;
+    background-color: #f1f5f9;
+    font-size: 13px;
+}
+
+.insp_info dt {
+    color: #64748b;
+    font-weight: 400;
+}
+
+.insp_info dd {
+    margin: 2px 0 0;
+    font-weight: 600;
+}
+
+.insp_info_wide {
+    grid-column: 1 / -1;
+}
+
+.insp_form_group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.insp_form_group label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.insp_form_group input {
+    height: 46px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+    outline: none;
+}
+
+.insp_form_group input:focus {
+    border-color: #2454a6;
+    box-shadow: 0 0 0 2px rgba(36, 84, 166, 0.12);
+}
+
+/* Rango AQL y resultado */
+.insp_result_box {
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.insp_result_box.info {
+    background-color: #eef4ff;
+    color: #1e3a8a;
+}
+
+.insp_result_box.accepted {
+    background-color: #d1e7dd;
+    color: #146c43;
+    font-weight: 600;
+}
+
+.insp_result_box.rejected {
+    background-color: #f8d7da;
+    color: #842029;
+    font-weight: 600;
+}
+
+.insp_result_box.invalid {
+    background-color: #fff4e0;
+    color: #8a4b00;
+}
+
+/* Validaciones */
+.insp_val_top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.insp_val_progress {
+    font-size: 14px;
+}
+
+.insp_val_sections {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.insp_val_section h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.insp_val_item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 14px;
+}
+
+.insp_val_options {
+    display: flex;
+    gap: 6px;
+}
+
+/* Botones Conforme / No conforme / N/A (usan los colores de .btn_val_option de pos.css) */
+.insp_val_options .btn_val_option {
+    min-height: 40px;
+}
+
+/* Botones de los modales */
+.insp_buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+.insp_buttons_center {
+    justify-content: center;
+}
+
+.insp_buttons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn_insp_cancel,
+.btn_insp_secondary {
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #34476c;
+}
+
+.btn_insp_secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn_insp_cancel:hover,
+.btn_insp_secondary:hover {
+    background-color: #f1f5f9;
+}
+
+.btn_insp_primary {
+    border: 1px solid #142b49;
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+.btn_insp_primary:hover {
+    background-color: #2454a6;
+}
+
+.btn_insp_danger {
+    border: 1px solid #c62828;
+    background-color: #c62828;
+    color: #ffffff;
+}
+
+.btn_insp_danger:hover {
+    background-color: #a51d1d;
+}
+
+/* Ícono del modal Finalizar */
+.insp_finish_icon {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #fdecec;
+    color: #c62828;
+    font-size: 32px;
+}
+
+.insp_modal_small p {
+    margin: 10px 0 20px;
+    color: #526789;
+    font-size: 15px;
+}
+
+
+/* ----- Pantallas pequeñas ----- */
+@media (max-width: 600px) {
+
+    .inspector_page {
+        padding: 15px;
+    }
+
+    .inspector_banner {
+        padding: 20px;
+    }
+
+    .inspector_counters {
+        width: 100%;
+    }
+
+    .inspector_counter {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .insp_buttons {
+        flex-direction: column-reverse;
+    }
+
+    .insp_val_item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

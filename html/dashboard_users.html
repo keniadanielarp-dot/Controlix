@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Controlix | Mis POs</title>
+
+    <!-- Bootstrap 5 local -->
+    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
+
+    <!-- Cargar íconos de bootstrap locales  -->
+    <link rel="stylesheet" href="../css/bootstrap-icons.css">
+
+    <!-- Bootstrap Javascript -->
+    <script src="../bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Referencia a css -->
+    <link rel="stylesheet" href="../css/dashboard_admin.css">
+
+    <!-- Estilos de botones y estados que se comparten con POs -->
+    <link rel="stylesheet" href="../css/pos.css">
+
+    <!-- Estilos exclusivos de la interfaz del inspector -->
+    <link rel="stylesheet" href="../css/inspector.css">
+
+</head>
+
+
+<body>
+    <!-- Panel lateral azul  -->
+    <aside class="panel" id="side_panel">
+
+        <!-- Nombre del proyecto -->
+        <div class="project_title">
+
+            <h2>Control<span>ix</span></h2>
+        </div>
+
+        <!-- Menú de navegación -->
+        <nav class="menu" aria-label="Menu principal">
+
+            <!-- Opcion Mis POs -->
+            <a href="#" class="option_menu activo" id="option_my_pos" aria-current="page">
+                <i class="bi bi-file-text-fill" aria-hidden="true"></i>
+                <span>Mis POs</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Contenido -->
+    <main class="content">
+
+        <!-- barra superior -->
+        <header class="top_bar">
+
+            <!--Barra superior izquierda-->
+
+            <!--Boton plegar y desplegar el panel lateral -->
+            <button class="button_menu" id="button_line" type="button" aria-label="Ocultar menu"
+                aria-controls="side_panel" aria-expanded="true">
+                <!-- Icono tres lineas -->
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!--Barra superior derecha-->
+            <!--Perfil del usuario -->
+            <div class="dropdown user_profile">
+
+                <button class="btn button_profile dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">
+
+                    <!-- icono perfil -->
+                    <i class="bi bi-person-circle profile_ic"></i>
+
+                    <span class="profile_info">
+                        <strong id="user_welc">Hola, Usuario</strong>
+                        <small id="rol_dash">Rol</small>
+                    </span>
+                </button>
+
+                <!-- Menu desplegable -->
+                <div class="dropdown-menu dropdown-menu-end profile_menu">
+
+                    <!-- Informacion del usuario -->
+                    <div class="profile_header">
+
+                        <!-- Icono perfil -->
+                        <i class="bi bi-person-circle profile_icmenu"></i>
+
+                        <div>
+                            <strong id="name_profile">Usuario</strong>
+                        </div>
+
+                    </div>
+
+                    <hr class="dropdown-divider">
+
+                    <!-- Opciones -->
+                    <a class="dropdown-item" href="#" id="option_profile">
+                        <i class="bi bi-person"></i>
+                        Mi Perfil
+                    </a>
+
+                    <hr class="dropdown-divider">
+
+                    <!-- Cerrar sesión -->
+                    <a class="dropdown-item" href="#" id="option_logout">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Cerrar Sesión
+                    </a>
+
+                </div>
+            </div>
+        </header>
+
+        <nav class="route_nav" aria-label="Ruta de navegación">
+
+            <!--icono casa-->
+            <a href="dashboard_users.html" class="home_route" aria-label="Inicio">
+                <i class="bi bi-house-door"></i>
+            </a>
+
+            <!--icono linea-->
+            <span class="divider">/</span>
+
+            <!--Nombre pagina actual-->
+            <span id="module_name" class="current_route" aria-current="page">Mis POs</span>
+        </nav>
+
+        <div id="module_content">
+
+            <!-------------------------------------------------------------------------------------------------------- -->
+            <!------------------------------- BLOQUE: Mis POs   --------------------------------------- -->
+            <!-------------------------------------------------------------------------------------------------------- -->
+            <section class="inspector_page">
+
+                <!-- Banner con saludo y contadores -->
+                <div class="inspector_banner">
+                    <div class="inspector_banner_text">
+                        <h1>Mis POs</h1>
+                        <p id="inspector_banner_msg">Cargando tus POs...</p>
+                    </div>
+
+                    <div class="inspector_counters">
+                        <div class="inspector_counter">
+                            <strong id="count_to_start">0</strong>
+                            <span>Por iniciar</span>
+                        </div>
+                        <div class="inspector_counter">
+                            <strong id="count_in_progress" class="counter_progress">0</strong>
+                            <span>En proceso</span>
+                        </div>
+                        <div class="inspector_counter">
+                            <strong id="count_finished" class="counter_finished">0</strong>
+                            <span>Finalizadas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtros rápidos -->
+                <div class="inspector_filters" role="group" aria-label="Filtrar POs">
+                    <button type="button" class="btn_inspector_filter" data-filter="" aria-pressed="true">Todas</button>
+                    <button type="button" class="btn_inspector_filter" data-filter="to_start" aria-pressed="false">Por iniciar</button>
+                    <button type="button" class="btn_inspector_filter" data-filter="in_progress" aria-pressed="false">En proceso</button>
+                    <button type="button" class="btn_inspector_filter" data-filter="finished" aria-pressed="false">Finalizadas</button>
+                </div>
+
+                <!-- Tarjetas de las POs (las arma el JS) -->
+                <div class="inspector_cards" id="inspector_cards"></div>
+            </section>
+        </div>
+    </main>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal RESULTADO   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="insp_result_js" class="insp_modal_overlay" hidden>
+
+        <div class="insp_modal" role="dialog" aria-modal="true" aria-labelledby="insp_result_title">
+
+            <!-- Encabezado -->
+            <div class="insp_modal_header">
+                <h2 id="insp_result_title">
+                    <i class="bi bi-clipboard-data"></i>
+                    Registrar resultado
+                </h2>
+
+                <button type="button" class="btn_close_insp" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="form_insp_result" novalidate>
+
+                <!-- Datos de la PO -->
+                <dl class="insp_info">
+                    <div><dt>PO</dt><dd id="insp_result_po"></dd></div>
+                    <div><dt>Cantidad</dt><dd id="insp_result_quantity"></dd></div>
+                    <div class="insp_info_wide"><dt>Tipo de inspección</dt><dd id="insp_result_type"></dd></div>
+                </dl>
+
+                <!-- Defectos encontrados -->
+                <div class="insp_form_group">
+                    <label for="insp_defects">Defectos encontrados <span class="pos_required">*</span></label>
+                    <input type="text" id="insp_defects" inputmode="numeric" autocomplete="off" placeholder="0">
+                </div>
+
+                <!-- Rango AQL y resultado -->
+                <div id="insp_result_box" class="insp_result_box info">Consultando la tabla AQL...</div>
+
+                <!-- Botones -->
+                <div class="insp_buttons">
+                    <button type="button" class="btn_insp_cancel">Cancelar</button>
+                    <button type="submit" class="btn_insp_primary" id="btn_save_insp_result">
+                        <i class="bi bi-check-lg"></i>
+                        Guardar resultado
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal VALIDACIONES   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="insp_validations_js" class="insp_modal_overlay" hidden>
+
+        <div class="insp_modal insp_modal_wide" role="dialog" aria-modal="true" aria-labelledby="insp_val_title">
+
+            <!-- Encabezado -->
+            <div class="insp_modal_header">
+                <h2 id="insp_val_title">
+                    <i class="bi bi-list-check"></i>
+                    Validaciones · PO <span id="insp_val_po"></span>
+                </h2>
+
+                <button type="button" class="btn_close_insp" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <form id="form_insp_validations" novalidate>
+
+                <!-- Avance y marcar todo -->
+                <div class="insp_val_top">
+                    <span class="insp_val_progress">
+                        Respondidas <strong id="insp_val_answered">0</strong>
+                    </span>
+
+                    <button type="button" id="btn_insp_val_all" class="btn_insp_secondary">
+                        <i class="bi bi-check2-all"></i>
+                        Marcar todo Conforme
+                    </button>
+                </div>
+
+                <!-- Cajas inspeccionadas -->
+                <div class="insp_boxes">
+                    <label for="insp_boxes">
+                        <i class="bi bi-box-seam" aria-hidden="true"></i>
+                        Cajas inspeccionadas <span class="optional_text">(opcional)</span>
+                    </label>
+
+                    <input type="text" id="insp_boxes" placeholder="Ej. 1, 5, 12-14" autocomplete="off"
+                        aria-describedby="insp_boxes_help">
+
+                    <small id="insp_boxes_help" class="validations_boxes_help"></small>
+                </div>
+
+                <!-- Secciones (las arma el JS) -->
+                <div id="insp_val_sections" class="insp_val_sections"></div>
+
+                <!-- Botones -->
+                <div class="insp_buttons">
+                    <button type="button" class="btn_insp_cancel">Cancelar</button>
+                    <button type="submit" class="btn_insp_primary" id="btn_save_insp_validations">
+                        <i class="bi bi-check-lg"></i>
+                        Guardar validaciones
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal FINALIZAR PO   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="insp_finish_js" class="insp_modal_overlay" hidden>
+
+        <div class="insp_modal insp_modal_small" role="alertdialog" aria-modal="true" aria-labelledby="insp_finish_title"
+            aria-describedby="insp_finish_msg">
+
+            <div class="insp_finish_icon">
+                <i class="bi bi-flag-fill"></i>
+            </div>
+
+            <h2 id="insp_finish_title">¿Finalizar la PO <span id="insp_finish_po"></span>?</h2>
+
+            <p id="insp_finish_msg">
+                Se guardará la hora de fin y ya no podrás cambiar el resultado ni las validaciones.
+            </p>
+
+            <div class="insp_buttons insp_buttons_center">
+                <button type="button" class="btn_insp_cancel">Cancelar</button>
+                <button type="button" class="btn_insp_danger" id="btn_confirm_finish">
+                    <i class="bi bi-stop-fill"></i>
+                    Finalizar PO
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal Cerrar sesión   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="logout_js" class="logout_modal_overlay" hidden>
+
+        <div class="logout_modal" role="alertdialog" aria-modal="true" aria-labelledby="logout_title"
+            aria-describedby="logout_msg">
+
+            <!-- Encabezado -->
+            <div class="logout_modal_header">
+                <button type="button" class="btn_close_logout" aria-label="Cerrar ventana">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Ícono -->
+            <div class="logout_icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </div>
+
+            <!-- Titulo -->
+            <h2 id="logout_title">¿Cerrar sesión?</h2>
+
+            <p id="logout_msg">
+                ¿Estás seguro de que quieres salir?
+            </p>
+
+            <!-- Aviso: solo aparece si hay PO sin guardar -->
+            <p id="logout_warning" class="logout_warning" hidden>
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                Tienes PO sin guardar en la base de datos. Si sales, se perderán.
+            </p>
+
+            <!-- Botones -->
+            <div class="logout_buttons">
+                <button type="button" class="btn_cancel_logout">Cancelar</button>
+
+                <button type="button" id="btn_confirm_logout">
+                    <i class="bi bi-box-arrow-right"></i>
+                    Cerrar sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Plantilla MI PERFIL   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <!-- <template> no se muestra: el JS copia su contenido en #module_content al abrir Mi Perfil -->
+    <template id="profile_template">
+
+        <!-- Contenido principal de Mi Perfil -->
+        <section class="pos_content profile_page">
+
+            <!-------------------- BLOQUE: Encabezado ---------------------->
+            <div class="pos_header">
+
+                <!-- Icono y título -->
+                <div class="pos_header_title">
+                    <i class="bi bi-person-circle"></i>
+                    <h2>Mi Perfil</h2>
+                </div>
+            </div>
+
+
+            <!-------------------- BLOQUE: Tarjeta del usuario y contraseña ---------------------->
+            <div class="profile_layout">
+
+                <!-- Tarjeta del usuario (nombre y rol fijos) -->
+                <aside class="profile_card">
+
+                    <!-- Franja azul de arriba -->
+                    <div class="profile_card_banner"></div>
+
+                    <!-- Icono -->
+                    <div class="profile_avatar">
+                        <i class="bi bi-person-fill" aria-hidden="true"></i>
+                    </div>
+
+                    <!-- Nombre, rol y estado -->
+                    <strong class="profile_card_name" id="profile_card_name">Usuario</strong>
+                    <span class="profile_card_role" id="profile_card_role">Rol</span>
+
+                    <small class="profile_status">
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                        Cuenta activa
+                    </small>
+
+                    <!-- Consejo -->
+                    <p class="profile_tip">
+                        <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                        Cambia tu contraseña de vez en cuando y no la compartas con nadie.
+                    </p>
+                </aside>
+
+
+                <!-- Cambiar contraseña -->
+                <form id="form_profile_security" class="profile_section" novalidate>
+
+                    <!-- Título -->
+                    <div class="profile_section_header">
+                        <span class="profile_section_icon">
+                            <i class="bi bi-shield-check" aria-hidden="true"></i>
+                        </span>
+
+                        <div>
+                            <h3 class="profile_section_title">Cambiar contraseña</h3>
+                            <p class="profile_section_subtitle">Por seguridad, primero escribe tu contraseña actual.</p>
+                        </div>
+                    </div>
+
+                        <!-- Contraseña actual -->
+                        <div class="profile_group">
+                            <label for="profile_pass_current">Contraseña actual <span class="pos_required">*</span></label>
+
+                            <div class="profile_password">
+                                <i class="bi bi-lock profile_input_icon" aria-hidden="true"></i>
+                                <input type="password" id="profile_pass_current" autocomplete="current-password" required>
+                                <button type="button" class="btn_toggle_password" aria-label="Mostrar contraseña">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                        <!-- Nueva contraseña -->
+                        <div class="profile_group">
+                            <label for="profile_pass_new">Nueva contraseña <span class="pos_required">*</span></label>
+
+                            <div class="profile_password">
+                                <i class="bi bi-lock profile_input_icon" aria-hidden="true"></i>
+                                <input type="password" id="profile_pass_new" autocomplete="new-password" required>
+                                <button type="button" class="btn_toggle_password" aria-label="Mostrar contraseña">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+
+                            <!-- Barra de seguridad de la nueva contraseña (la llena el JS) -->
+                            <div class="profile_strength" aria-hidden="true">
+                                <span id="profile_strength_bar"></span>
+                            </div>
+                            <small class="profile_strength_text" id="profile_strength_text">Escribe una contraseña nueva</small>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                        <!-- Confirmar nueva contraseña -->
+                        <div class="profile_group">
+                            <label for="profile_pass_confirm">Confirmar nueva contraseña <span class="pos_required">*</span></label>
+
+                            <div class="profile_password">
+                                <i class="bi bi-lock profile_input_icon" aria-hidden="true"></i>
+                                <input type="password" id="profile_pass_confirm" autocomplete="new-password" required>
+                                <button type="button" class="btn_toggle_password" aria-label="Mostrar contraseña">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <small class="input_error" hidden></small>
+                        </div>
+
+                    <!-- Requisitos (el JS cambia el círculo por una palomita al cumplirse) -->
+                    <div class="profile_requirements">
+                        <strong>Tu nueva contraseña debe tener:</strong>
+                        <ul>
+                                <li id="req_length"><i class="bi bi-circle" aria-hidden="true"></i>Al menos 8 caracteres</li>
+                                <li id="req_case"><i class="bi bi-circle" aria-hidden="true"></i>Una letra mayúscula y una minúscula</li>
+                                <li id="req_number"><i class="bi bi-circle" aria-hidden="true"></i>Al menos un número</li>
+                                <li id="req_special"><i class="bi bi-circle" aria-hidden="true"></i>Un carácter especial (por ejemplo ! @ # $)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Botón -->
+                    <div class="profile_buttons">
+                        <button type="submit" class="btn_profile_save">
+                            <i class="bi bi-key-fill"></i>
+                            Cambiar contraseña
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </section>
+    </template>
+
+
+    <!-- Referencia a js -->
+    <script src="../js/dashboard_users.js"></script>
+</body>
+
+</html>

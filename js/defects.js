@@ -19,6 +19,9 @@ let defect_classes = [];
 // Preparar la opción Defectos al abrirla.
 async function init_defects_module() {
 
+    // Traer las inspecciones guardadas (después de F5 o de iniciar sesión).
+    await load_inspections_from_db();
+
     render_defects_table();
 
     // Traer los catálogos solo la primera vez.
@@ -138,6 +141,15 @@ function get_month_from_date_time(date_time) {
 }
 
 
+
+// Fecha "dd/mm/aaaa hh:mm" a "aaaa-mm-dd" (para el filtro de fecha).
+function get_iso_from_date_time(date_time) {
+
+    const [day, month, year] = String(date_time ?? "").split(" ")[0].split("/");
+
+    return year && month && day ? `${year}-${month}-${day}` : "";
+}
+
 // Mes actual en formato "2026-11".
 function get_current_month() {
     return get_pos_date().slice(0, 7);
@@ -204,18 +216,29 @@ function render_defects_table() {
         // Solo las rechazadas.
         .filter(row => row.inspection.result === "Rechazado")
 
+        // De la rechazada más antigua a la más reciente.
+        .sort((a, b) => a.inspection.id - b.inspection.id)
+        // ID = el mismo de la tabla de POs.
+        .map((row, position, list) => ({
+            ...row,
+            number: row.po_id,
+            total: Math.max(...list.map(item => Number(item.po_id) || 0))
+        }))
+
         // Buscador y filtro de mes.
         .filter(function (row) {
 
             const inspection = row.inspection;
 
-            const matches_search =
-                String(inspection.po_number ?? "").toLowerCase().includes(search_text) ||
-                String(inspection.type_name ?? "").toLowerCase().includes(search_text);
+            // Buscador: número corto = ID; más números = PO; o parte del tipo de inspección.
+            const matches_search = matches_id_or_po(
+                search_text, row.number, inspection.po_number, [inspection.type_name], row.total
+            );
 
+            // Fecha: un día ("2026-11-25") o todo el mes ("2026-11").
             const matches_month =
                 selected_month === "" ||
-                get_month_from_date_time(inspection.result_date_time) === selected_month;
+                get_iso_from_date_time(inspection.result_date_time).startsWith(selected_month);
 
             return matches_search && matches_month;
         })
@@ -225,6 +248,7 @@ function render_defects_table() {
 
     // Limpiar filas anteriores y desmarcar "Seleccionar todo".
     body.innerHTML = "";
+    update_reinspection_button();
 
     const select_all = document.getElementById("select_all_defects");
     if (select_all) select_all.checked = false;
@@ -249,7 +273,7 @@ function render_defects_table() {
         const tr = document.createElement("tr");
         const td = create_cell(message);
 
-        td.colSpan = 6;
+        td.colSpan = 7;
         tr.appendChild(td);
         body.appendChild(tr);
 
@@ -261,7 +285,7 @@ function render_defects_table() {
        AGREGAR UNA FILA POR INSPECCIÓN
     ========================================== */
 
-    rows.forEach(function (row, position) {
+    rows.forEach(function (row) {
 
         const inspection = row.inspection;
         const tr = document.createElement("tr");
@@ -278,12 +302,15 @@ function render_defects_table() {
         td_check.appendChild(checkbox);
         tr.appendChild(td_check);
 
-        tr.appendChild(create_cell(position + 1));
+        tr.appendChild(create_cell(row.number));
         tr.appendChild(create_cell(inspection.po_number));
         tr.appendChild(create_cell(inspection.type_name));
 
         // Defectos encontrados al registrar el resultado.
         tr.appendChild(create_cell(inspection.defects ?? "—"));
+
+        // Estado de su reinspección.
+        tr.appendChild(create_reinspection_cell(row.po_id, row.index));
 
         // Botón ojo para ver los defectos registrados.
         const td_view = document.createElement("td");
@@ -996,6 +1023,320 @@ function release_view_photos() {
 }
 
 
+/* -------------------------------------  BLOQUE:  Reinspección ------------------------------------- */
+
+// Estado de la reinspección de una inspección rechazada (según la inspección que sigue).
+function get_reinspection_status(po_id, index) {
+
+    const next = (pos_inspections[po_id] ?? [])[Number(index) + 1];
+
+    // Todavía no se manda a reinspeccionar.
+    if (!next) return { text: "Pendiente", class_name: "reins_pending" };
+
+    // Ya se asignó y falta su resultado.
+    if (next.result === "Pendiente") return { text: "En proceso", class_name: "reins_process" };
+
+    if (next.result === "Aceptado") return { text: "Finalizada", class_name: "reins_done" };
+
+    return { text: "Rechazada", class_name: "reins_rejected" };
+}
+
+
+// Celda de la columna Reinspección.
+function create_reinspection_cell(po_id, index) {
+
+    const status = get_reinspection_status(po_id, index);
+
+    const td = document.createElement("td");
+    const span = document.createElement("span");
+
+    span.className = `reins_status ${status.class_name}`;
+    span.textContent = status.text;
+
+    td.appendChild(span);
+    return td;
+}
+
+
+// Fila seleccionada solo si hay exactamente una: { po_id, index }.
+function get_single_selected_defect() {
+
+    const selected = [...document.querySelectorAll("#defects_table_body .select_def_check:checked")]
+        .map(checkbox => checkbox.value);
+
+    if (selected.length !== 1) return null;
+
+    const [po_id, index] = selected[0].split("|");
+    return { po_id: po_id, index: Number(index) };
+}
+
+
+// Se puede reinspeccionar si su reinspección está Pendiente (es la última inspección de la PO y salió Rechazado).
+function can_reinspect(selected) {
+
+    if (!selected) return false;
+
+    const inspections = pos_inspections[selected.po_id] ?? [];
+
+    const inspection = inspections[selected.index];
+
+    // Última de la PO, Rechazado y con sus defectos ya registrados.
+    return selected.index === inspections.length - 1 &&
+        inspection?.result === "Rechazado" &&
+        (inspection.defect_details ?? []).length > 0;
+}
+
+
+// Activar Reinspección solo con una fila seleccionada que se pueda reinspeccionar.
+function update_reinspection_button() {
+
+    const button = document.getElementById("btn_reinspection");
+    if (!button) return;
+
+    const selected = get_single_selected_defect();
+    const enabled = can_reinspect(selected);
+
+    button.disabled = !enabled;
+
+    // Explicar por qué está desactivado cuando falta registrar los defectos.
+    const inspection = selected ? (pos_inspections[selected.po_id] ?? [])[selected.index] : null;
+    const missing_defects = inspection?.result === "Rechazado" && (inspection.defect_details ?? []).length === 0;
+
+    button.title = !enabled && missing_defects
+        ? "Primero registra los defectos de esta inspección"
+        : "";
+}
+
+
+// Abrir el modal Reinspección con la inspección seleccionada.
+function open_reinspection() {
+
+    const selected = get_single_selected_defect();
+
+    if (!can_reinspect(selected)) {
+        alert("Selecciona una PO con la reinspección Pendiente y con sus defectos ya registrados.");
+        return;
+    }
+
+    const po_id = selected.po_id;
+    const inspections = pos_inspections[po_id];
+    const last = inspections.at(-1);
+
+    const form = document.getElementById("form_reinspection");
+    if (!form) return;
+
+    // Abrir el modal con el formulario limpio.
+    open_form("reinspection_js", true);
+
+    // Guardar qué PO se va a reinspeccionar.
+    form.dataset.idPo = po_id;
+
+    // Datos de la inspección rechazada.
+    document.getElementById("reins_po").textContent = last.po_number;
+    document.getElementById("reins_prev_type").textContent = last.type_name ?? "—";
+    document.getElementById("reins_prev_defects").textContent =
+        last.defects === null ? "—" : `${last.defects} encontrados`;
+    document.getElementById("reins_prev_attempt").textContent = inspections.length;
+    document.getElementById("reins_next_attempt").textContent = inspections.length + 1;
+
+    // Defectos registrados de la inspección rechazada.
+    render_reinspection_defects(last);
+
+    // Todos los tipos de inspección.
+    fill_select(
+        "reinspection_type",
+        "Seleccione una reinspección",
+        pos_inspection_types,
+        "id_ins_type",
+        "name_ins"
+    );
+
+    // Inspector fijo: el mismo de la inspección rechazada (no se puede cambiar).
+    const inspector_select = document.getElementById("reinspection_inspector");
+
+    inspector_select.innerHTML = "";
+
+    const option = document.createElement("option");
+    option.value = last.id_inspector ?? "";
+    option.textContent = last.inspector ?? "—";
+
+    inspector_select.appendChild(option);
+    inspector_select.disabled = true;
+}
+
+
+// Direcciones temporales de las fotos del modal (para liberarlas al volver a abrirlo).
+let reinspection_urls = [];
+
+
+// Mostrar en el modal los defectos registrados de la inspección rechazada.
+function render_reinspection_defects(inspection) {
+
+    const container = document.getElementById("reins_prev_defect_list");
+    if (!container) return;
+
+    reinspection_urls.forEach(url => URL.revokeObjectURL(url));
+    reinspection_urls = [];
+    container.innerHTML = "";
+
+    const details = inspection.defect_details ?? [];
+
+    // Todavía no se registran los defectos.
+    if (details.length === 0) {
+
+        const empty = document.createElement("p");
+        empty.className = "reinspection_defects_empty";
+        empty.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
+        empty.append(" Aún no se registran los defectos de esta inspección (opción Defectos).");
+
+        container.appendChild(empty);
+        return;
+    }
+
+    const title = document.createElement("p");
+    title.className = "reinspection_defects_title";
+    title.textContent = `Defectos registrados (${details.length})`;
+
+    const table = document.createElement("table");
+    table.innerHTML = "<thead><tr><th>#</th><th>CTQ</th><th>Code</th><th>Defect Classification</th><th>Foto</th></tr></thead>";
+
+    const body = document.createElement("tbody");
+
+    details.forEach(function (detail, position) {
+
+        const tr = document.createElement("tr");
+
+        [position + 1, detail.ctq_text, detail.code_text, detail.classification_text].forEach(function (value) {
+            const td = document.createElement("td");
+            td.textContent = value ?? "—";
+            tr.appendChild(td);
+        });
+
+        // Foto nueva (en el navegador) o guardada en el servidor.
+        const td_photo = document.createElement("td");
+        let url = "";
+
+        if (detail.photo) {
+            url = URL.createObjectURL(detail.photo);
+            reinspection_urls.push(url);
+        } else if (detail.photo_path) {
+            url = `/sistema_calidad/${detail.photo_path}`;
+        }
+
+        if (url) {
+            const link = document.createElement("a");
+            link.href = url;
+            link.target = "_blank";
+            link.rel = "noopener";
+            link.setAttribute("aria-label", `Ver foto del defecto ${position + 1}`);
+
+            const image = document.createElement("img");
+            image.src = url;
+            image.alt = `Foto del defecto ${position + 1}`;
+
+            link.appendChild(image);
+            td_photo.appendChild(link);
+        } else {
+            td_photo.textContent = "—";
+        }
+
+        tr.appendChild(td_photo);
+        body.appendChild(tr);
+    });
+
+    table.appendChild(body);
+    container.append(title, table);
+}
+
+
+// Mostrar u ocultar el error de un campo.
+function set_reinspection_error(id_error, message) {
+
+    const error = document.getElementById(id_error);
+    if (!error) return;
+
+    error.textContent = message;
+    error.hidden = message === "";
+}
+
+
+// Crear la nueva inspección (intento siguiente) como Pendiente.
+function save_reinspection(form) {
+
+    const po_id = form.dataset.idPo;
+    const inspections = pos_inspections[po_id] ?? [];
+    const last = inspections.at(-1);
+
+    const type_select = document.getElementById("reinspection_type");
+
+    // Limpiar errores anteriores.
+    set_reinspection_error("error_reinspection_type", "");
+    set_reinspection_error("error_reinspection_inspector", "");
+
+
+    /* ==========================================
+       VALIDAR ANTES DE GUARDAR
+    ========================================== */
+
+    if (!last || last.result !== "Rechazado") {
+        close_form("reinspection_js");
+        return;
+    }
+
+    if (type_select.value === "") {
+        set_reinspection_error("error_reinspection_type", "Seleccione un tipo de reinspección.");
+        type_select.focus();
+        return;
+    }
+
+
+    /* ==========================================
+       REGISTRAR LA REINSPECCIÓN
+    ========================================== */
+
+    const type_data = pos_inspection_types.find(
+        item => String(item.id_ins_type) === type_select.value
+    );
+
+    // El inspector es el mismo de la inspección rechazada.
+    const inspector = { id_user: last.id_inspector ?? null, name_user: last.inspector ?? "—" };
+
+    inspections.push({
+        id: next_inspection_id++,
+        po_id: po_id,
+        po_number: last.po_number,
+        created_at: get_pos_date(),
+        id_ins_type: type_select.value,
+        division: type_data?.division ?? last.division,
+        type_name: type_data?.name_ins ?? type_select.options[type_select.selectedIndex].text,
+        level: type_data?.level ?? "—",
+        id_inspector: inspector?.id_user ?? null,
+        inspector: inspector?.name_user ?? "—",
+        date_time: get_date_time(),
+
+        // Datos de la reinspección.
+        is_reinspection: true,
+        attempt: inspections.length + 1,
+        id_previous: last.id,
+
+        // Se llenan al registrar el resultado.
+        defects: null,
+        load_size: null,
+        sample_size: null,
+        result: "Pendiente",
+        result_date_time: null,
+        id_aql: null
+    });
+
+    // Actualizar el número de Defectos y la tabla.
+    update_defects_badge();
+    render_defects_table();
+
+    close_form("reinspection_js");
+}
+
+
+
 /* -------------------------------------  BLOQUE:  Eventos de Defectos ------------------------------------- */
 
 /* ==========================================
@@ -1030,11 +1371,14 @@ document.addEventListener("change", function (event) {
         document
             .querySelectorAll("#defects_table_body .select_def_check")
             .forEach(checkbox => checkbox.checked = target.checked);
+
+        update_reinspection_button();
     }
 
-    // Actualizar "Seleccionar todo" al marcar una fila.
+    // Actualizar "Seleccionar todo" y Reinspección al marcar una fila.
     if (target.matches("#defects_table_body .select_def_check")) {
         update_select_all_defects();
+        update_reinspection_button();
     }
 
     // Al cambiar el CTQ: mostrar solo sus Codes y vaciar la clasificación.
@@ -1095,6 +1439,18 @@ document.addEventListener("click", function (event) {
         return;
     }
 
+    // Abrir Reinspección con la inspección seleccionada.
+    if (target.closest("#btn_reinspection")) {
+        open_reinspection();
+        return;
+    }
+
+    // Cerrar Reinspección con X o Cancelar.
+    if (target.closest("#reinspection_js .btn_x_modal, #reinspection_js .btn_cancel_po")) {
+        close_form("reinspection_js");
+        return;
+    }
+
     // Agregar un renglón.
     if (target.closest("#btn_add_defect")) {
         add_defect_row();
@@ -1115,11 +1471,22 @@ document.addEventListener("click", function (event) {
 
     if (photo_option && photo_menu_row) {
 
-        const input_class = photo_option.dataset.photo === "take" ? ".def_photo_take" : ".def_photo_upload";
-        const input = photo_menu_row.querySelector(input_class);
-
+        const row = photo_menu_row;
         close_photo_menu();
-        input?.click();
+
+        // Tomar foto: abrir la cámara de la computadora o del teléfono.
+        if (photo_option.dataset.photo === "take") {
+
+            open_camera(function (file) {
+                row.photo_file = file;
+                mark_photo(row.querySelector(".btn_defect_photo"), file.name);
+            }, row.querySelector(".def_photo_take"));
+
+            return;
+        }
+
+        // Subir foto: abrir los archivos del renglón.
+        row.querySelector(".def_photo_upload")?.click();
         return;
     }
 
@@ -1162,5 +1529,11 @@ document.addEventListener("submit", function (event) {
     if (event.target.matches("#form_register_defects")) {
         event.preventDefault();
         save_defects(event.target);
+    }
+
+    // Reinspección: crear el siguiente intento.
+    if (event.target.matches("#form_reinspection")) {
+        event.preventDefault();
+        save_reinspection(event.target);
     }
 });

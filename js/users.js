@@ -32,11 +32,8 @@ document.addEventListener("input", function (event) {
         const name_sh = cells[2].textContent.toLowerCase();
         const user_sh = cells[3].textContent.toLowerCase();
 
-        // Comprobar si alguno de los campos coincide.
-        const equal =
-            id.includes(search) ||
-            name_sh.includes(search) ||
-            user_sh.includes(search);
+        // Comprobar si alguno de los campos coincide (número corto = ID).
+        const equal = matches_id_or_po(search, id, "", [name_sh, user_sh], rows.length);
 
         // Mostrar u ocultar la fila según la coincidencia.
         rows_search.style.display = equal ? "" : "none";

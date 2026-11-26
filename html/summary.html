@@ -1,5 +1,5 @@
 <!-- Contenido principal de Resumen -->
-<section class="pos_content">
+<section class="pos_content summary_page">
 
     <!-------------------- BLOQUE: Encabezado ---------------------->
     <div class="pos_header">
@@ -12,68 +12,80 @@
     </div>
 
 
-    <!--------------- BLOQUE: Inspección y descarga   ---------------------->
+    <!--------------- BLOQUE: PO y partes del reporte   ---------------------->
     <div class="summary_tools">
 
-        <!-- Select de inspección -->
+        <!-- Select de PO -->
         <div class="pos_filter">
-            <label for="summary_inspection">Inspección</label>
+            <label for="summary_po">PO</label>
 
             <div class="pos_dropdown">
-                <i class="bi bi-clipboard-check"></i>
-                <select id="summary_inspection">
-                    <option value="">Seleccione una inspección</option>
+                <i class="bi bi-file-text"></i>
+                <select id="summary_po">
+                    <option value="">Seleccione una PO</option>
                 </select>
             </div>
         </div>
 
-        <!-- Descargar PDF -->
-        <button type="button" id="btn_download_summary" class="pos_assign_btn pos_type_inspection" disabled>
-            <i class="bi bi-download"></i>
-            Descargar PDF
-        </button>
+        <!-- Qué incluye el reporte (el JS pone verde si está listo o amarillo si está pendiente) -->
+        <div class="summary_checks" aria-label="Partes del reporte">
+            <span class="summary_check" data-part="details">Detalles</span>
+            <span class="summary_check" data-part="result">Inspecciones</span>
+            <span class="summary_check" data-part="validations">Validaciones</span>
+            <span class="summary_check" data-part="defects">Defectos</span>
+            <span class="summary_check" data-part="evidence">Evidencias</span>
+        </div>
     </div>
 
 
-    <!--------------- BLOQUE: Qué incluye el reporte   ---------------------->
-    <div class="summary_content">
+    <!--------------- BLOQUE: Visor del reporte   ---------------------->
+    <section class="summary_viewer" id="summary_viewer" aria-label="Vista previa del reporte">
 
-        <h3 class="summary_title">¿Qué incluye el reporte?</h3>
+        <!-- Barra del visor -->
+        <div class="summary_viewer_bar">
 
-        <!-- Una tarjeta por sección (el JS pone Listo o Pendiente) -->
-        <div class="summary_checks">
-
-            <div class="summary_check" data-part="details">
-                <span>Detalles de PO y de inspección</span>
-                <strong class="summary_badge">—</strong>
+            <!-- Nombre del archivo -->
+            <div class="summary_viewer_name">
+                <i class="bi bi-file-earmark-pdf-fill"></i>
+                <strong id="summary_file_name">Reporte</strong>
             </div>
 
-            <div class="summary_check" data-part="result">
-                <span>Resultado AQL</span>
-                <strong class="summary_badge">—</strong>
+            <!-- Zoom -->
+            <div class="summary_viewer_zoom">
+                <button type="button" id="btn_zoom_out" aria-label="Alejar" disabled>
+                    <i class="bi bi-dash-lg"></i>
+                </button>
+                <span id="summary_zoom_value">100%</span>
+                <button type="button" id="btn_zoom_in" aria-label="Acercar" disabled>
+                    <i class="bi bi-plus-lg"></i>
+                </button>
             </div>
 
-            <div class="summary_check" data-part="validations">
-                <span>Validaciones</span>
-                <strong class="summary_badge">—</strong>
-            </div>
-
-            <div class="summary_check" data-part="defects">
-                <span>Defectos registrados</span>
-                <strong class="summary_badge">—</strong>
-            </div>
-
-            <div class="summary_check" data-part="evidence">
-                <span>Evidencias (fotos)</span>
-                <strong class="summary_badge">—</strong>
+            <!-- Descargar, imprimir y pantalla completa -->
+            <div class="summary_viewer_actions">
+                <button type="button" id="btn_download_summary" aria-label="Descargar PDF" title="Descargar PDF" disabled>
+                    <i class="bi bi-download"></i>
+                </button>
+                <button type="button" id="btn_print_summary" aria-label="Imprimir" title="Imprimir" disabled>
+                    <i class="bi bi-printer"></i>
+                </button>
+                <button type="button" id="btn_fullscreen_summary" aria-label="Pantalla completa" title="Pantalla completa">
+                    <i class="bi bi-arrows-fullscreen"></i>
+                </button>
             </div>
         </div>
 
-        <p class="summary_note">
-            <i class="bi bi-info-circle" aria-hidden="true"></i>
-            Lo que esté pendiente sale en el reporte como "Sin registrar". Para guardar el PDF, en la ventana de
-            impresión elige "Guardar como PDF".
-        </p>
-    </div>
+        <!-- Hoja del reporte -->
+        <div class="summary_viewer_body">
+
+            <!-- Sin PO elegida -->
+            <div class="summary_viewer_empty" id="summary_viewer_empty">
+                <i class="bi bi-file-earmark-text"></i>
+                Selecciona una PO para ver su reporte
+            </div>
+
+            <iframe id="summary_frame" title="Reporte de la PO" hidden></iframe>
+        </div>
+    </section>
 
 </section>

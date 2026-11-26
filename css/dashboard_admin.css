@@ -603,6 +603,141 @@ body.folded_panel .content{
 }
 
 
+/* ------------------------------------------------ BLOQUE: Modal CÁMARA --------------------------- */
+
+/* Fondo oscuro (encima de los otros modales) */
+.camera_modal_overlay {
+    position: fixed;
+    inset: 0;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.75);
+    z-index: 3000;
+    box-sizing: border-box;
+}
+
+.camera_modal_overlay[hidden] {
+    display: none;
+}
+
+/* Cuadro central */
+.camera_modal {
+    width: 100%;
+    max-width: 640px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+    box-sizing: border-box;
+}
+
+.camera_modal_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.camera_modal_header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    color: #142b49;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.camera_modal_header h2 i {
+    color: #0056b3;
+}
+
+.btn_close_camera {
+    border: none;
+    background: transparent;
+    color: #526789;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.btn_close_camera:hover {
+    color: #dc3545;
+}
+
+/* Vista de la cámara */
+.camera_view {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    border-radius: 10px;
+    background-color: #0b1d33;
+}
+
+.camera_view video,
+.camera_view img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.camera_view [hidden] {
+    display: none;
+}
+
+/* Botones */
+.camera_buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+}
+
+.camera_buttons[hidden] {
+    display: none;
+}
+
+.camera_buttons button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.camera_buttons button[hidden] {
+    display: none;
+}
+
+.btn_camera_primary {
+    border: 1px solid #142b49;
+    background-color: #142b49;
+    color: #ffffff;
+}
+
+.btn_camera_primary:hover {
+    background-color: #2454a6;
+}
+
+.btn_camera_secondary {
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #34476c;
+}
+
+.btn_camera_secondary:hover {
+    background-color: #f1f5f9;
+}
+
+
 /* ------------------------------------------------ BLOQUE: Opción MI PERFIL --------------------------- */
 
 /* Sangría de la página: separa el contenido del panel y de las orillas */
@@ -973,6 +1108,19 @@ body.folded_panel .content{
 }
 
 @media (max-width: 600px) {
+
+    .camera_modal {
+        padding: 14px;
+    }
+
+    .camera_view {
+        aspect-ratio: 3 / 4;
+    }
+
+    .camera_buttons button {
+        flex: 1;
+        padding: 10px 12px;
+    }
 
     .logout_buttons {
         flex-direction: column-reverse;

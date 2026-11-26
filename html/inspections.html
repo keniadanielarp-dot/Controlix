@@ -9,6 +9,14 @@
             <i class="bi bi-clipboard-check-fill"></i>
             <h2>Inspecciones</h2>
         </div>
+
+        <!-- Exportar la tabla a Excel -->
+        <div class="pos_header_buttons">
+            <button type="button" id="btn_export_inspections" class="pos_btn pos_btn_excel">
+                <i class="bi bi-file-earmark-excel"></i>
+                Exportar Excel
+            </button>
+        </div>
     </div>
 
 
@@ -23,13 +31,19 @@
                     autocomplete="off" aria-label="Buscar inspección">
             </div>
 
-            <!-- Filtro de mes y año -->
+            <!-- Filtro de fecha: un día o todo el mes -->
             <div class="pos_filter">
-                <label for="filter_ins_month">Mes</label>
+                <label for="filter_ins_month_btn">Fecha</label>
 
-                <div class="pos_dropdown">
+                <div class="pos_dropdown calendar_field">
                     <i class="bi bi-calendar3"></i>
-                    <input type="month" id="filter_ins_month">
+                    <input type="hidden" id="filter_ins_month">
+
+                    <button type="button" id="filter_ins_month_btn" class="calendar_toggle" data-target="filter_ins_month"
+                        aria-haspopup="dialog" aria-expanded="false">
+                        <span class="calendar_label">Todas las fechas</span>
+                        <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
 
@@ -153,7 +167,7 @@
                             <th>ID</th>
                             <th>Inspector</th>
                             <th>Estado</th>
-                            <th>Fecha y hora</th>
+                            <th>Asignada</th>
                         </tr>
                     </thead>
 
@@ -269,6 +283,19 @@
                     <i class="bi bi-check2-all"></i>
                     Marcar todo como Conforme
                 </button>
+            </div>
+
+            <!-- Cajas inspeccionadas -->
+            <div class="validations_boxes">
+                <label for="val_boxes">
+                    <i class="bi bi-box-seam" aria-hidden="true"></i>
+                    Cajas inspeccionadas <span class="optional_text">(opcional)</span>
+                </label>
+
+                <input type="text" id="val_boxes" placeholder="Ej. 1, 5, 12-14" autocomplete="off"
+                    aria-describedby="val_boxes_help">
+
+                <small id="val_boxes_help" class="validations_boxes_help"></small>
             </div>
 
             <!-- Secciones con sus puntos (las arma el JS) -->

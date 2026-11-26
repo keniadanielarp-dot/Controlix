@@ -234,6 +234,60 @@
 
 
     <!-------------------------------------------------------------------------------------------------------- -->
+    <!------------------------------- BLOQUE: Modal CÁMARA   --------------------------------------- -->
+    <!-------------------------------------------------------------------------------------------------------- -->
+    <div id="camera_js" class="camera_modal_overlay" hidden>
+
+        <div class="camera_modal" role="dialog" aria-modal="true" aria-labelledby="camera_title">
+
+            <!-- Encabezado -->
+            <div class="camera_modal_header">
+                <h2 id="camera_title">
+                    <i class="bi bi-camera-fill"></i>
+                    Tomar foto
+                </h2>
+
+                <button type="button" class="btn_close_camera" aria-label="Cerrar cámara">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Vista de la cámara y foto tomada -->
+            <div class="camera_view">
+                <video id="camera_video" autoplay playsinline muted></video>
+                <img id="camera_preview" alt="Foto tomada" hidden>
+            </div>
+
+            <!-- Botones mientras se ve la cámara -->
+            <div class="camera_buttons" id="camera_live_buttons">
+                <button type="button" id="btn_switch_camera" class="btn_camera_secondary" hidden>
+                    <i class="bi bi-arrow-repeat"></i>
+                    Cambiar cámara
+                </button>
+
+                <button type="button" id="btn_take_photo" class="btn_camera_primary">
+                    <i class="bi bi-camera-fill"></i>
+                    Tomar foto
+                </button>
+            </div>
+
+            <!-- Botones después de tomar la foto -->
+            <div class="camera_buttons" id="camera_photo_buttons" hidden>
+                <button type="button" id="btn_retake_photo" class="btn_camera_secondary">
+                    <i class="bi bi-arrow-counterclockwise"></i>
+                    Repetir
+                </button>
+
+                <button type="button" id="btn_use_photo" class="btn_camera_primary">
+                    <i class="bi bi-check-lg"></i>
+                    Usar foto
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-------------------------------------------------------------------------------------------------------- -->
     <!------------------------------- BLOQUE: Plantilla MI PERFIL   --------------------------------------- -->
     <!-------------------------------------------------------------------------------------------------------- -->
     <!-- <template> no se muestra: el JS copia su contenido en #module_content al abrir Mi Perfil -->
@@ -377,6 +431,12 @@
 
     <!-- Librería para leer archivos Excel -->
     <script src="../libs/xlsx.full.min.js"></script>
+
+    <!-- ExcelJS: exportar Excel con colores y bordes (Inspecciones) -->
+    <script src="../libs/exceljs.min.js"></script>
+    <!-- Calendario de los filtros de fecha (antes de pos.js) -->
+    <script src="../js/calendar.js"></script>
+
     <script src="../js/pos.js"></script>
 
     <!-- Opciones Inspecciones, Defectos, General y Resumen (usan funciones de pos.js) -->

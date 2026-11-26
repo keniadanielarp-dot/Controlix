@@ -35,10 +35,14 @@ if (
 
     try {
 
+        // El rol 2 no ve a los administradores (id_rol = 1) en los select de usuario
+        $hide_admins = (int) ($_SESSION['id_rol'] ?? 0) === 2;
+
         // Consultar solo los usuarios activos
         $sql = "SELECT id_user, name_user
                 FROM myr_users
-                WHERE status_user = 1
+                WHERE status_user = 1" .
+                ($hide_admins ? " AND id_rol <> 1" : "") . "
                 ORDER BY name_user ASC";
 
         // Ejecutar la consulta
@@ -66,6 +70,208 @@ if (
         echo json_encode([
             'success' => false,
             'message' => 'No se pudieron consultar los usuarios.'
+        ]);
+    }
+
+    exit;
+}
+
+// -------------------------------------------------------------------------------------------------------
+// Método GET para tomar las PO guardadas (con sus tallas y su usuario asignado)
+// Verificar si JavaScript solicita las PO
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'list_pos'
+) {
+
+    try {
+
+        // Consultar las PO activas con su usuario asignado
+        $sql = "SELECT p.id_po, p.number_po, p.model_po, p.art_po, p.color_po,
+                       p.unit_rqstd, p.unit_delvd, p.id_ins_type, t.name_ins,
+                       p.id_user, u.name_user,
+                       DATE(p.created_at) AS created_at,
+                       DATE(p.updated_at) AS updated_at
+                FROM pos AS p
+                LEFT JOIN myr_users AS u
+                    ON u.id_user = p.id_user
+                LEFT JOIN inspection_types AS t
+                    ON t.id_ins_type = p.id_ins_type
+                WHERE p.status_po = 1
+                ORDER BY p.id_po ASC";
+
+        $res = $connection->query($sql);
+
+        $pos = [];
+
+        while ($row = $res->fetch_assoc()) {
+            $row['sizes'] = [];
+            $pos[(int) $row['id_po']] = $row;
+        }
+
+        // Nombres del catálogo a los nombres de la tabla (XXL → 2XL)
+        $size_names = [
+            'XXL' => '2XL',
+            'XXXL' => '3XL',
+            'XXXXL' => '4XL'
+        ];
+
+        // Consultar las tallas de las PO
+        $sql = "SELECT sp.id_po, s.name_size, sp.pieces, sp.min_box, sp.max_box
+                FROM sizes_pos AS sp
+                INNER JOIN sizes AS s
+                    ON s.id_size = sp.id_size
+                WHERE sp.status_sp = 1";
+
+        $res = $connection->query($sql);
+
+        while ($row = $res->fetch_assoc()) {
+
+            $id_po = (int) $row['id_po'];
+            if (!isset($pos[$id_po])) continue;
+
+            $name_size = strtoupper(trim($row['name_size']));
+            $name_size = $size_names[$name_size] ?? $name_size;
+
+            $pos[$id_po]['sizes'][$name_size] = [
+                'pieces' => (int) $row['pieces'],
+                'min_box' => $row['min_box'] !== null ? (int) $row['min_box'] : null,
+                'max_box' => $row['max_box'] !== null ? (int) $row['max_box'] : null
+            ];
+        }
+
+        // Enviar las PO a JavaScript
+        echo json_encode([
+            'success' => true,
+            'pos' => array_values($pos)
+        ], JSON_UNESCAPED_UNICODE);
+
+    } catch (mysqli_sql_exception $error) {
+
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudieron consultar las PO.'
+        ]);
+    }
+
+    exit;
+}
+
+// -------------------------------------------------------------------------------------------------------
+// Método GET para tomar las inspecciones guardadas (ins_aqls) con sus datos y defectos
+// Verificar si JavaScript solicita las inspecciones
+if (
+    $_SERVER['REQUEST_METHOD'] === 'GET' && ($_GET['action'] ?? '') === 'list_inspections'
+) {
+
+    try {
+
+        // Inspecciones con resultado: PO, tipo, división, inspector y renglón AQL
+        $sql = "SELECT ia.id_ins_aql, ia.id_po, ia.id_ins_type, ia.id_aql,
+                       ia.result, ia.defects, ia.created_at,
+                       p.number_po, p.id_user, u.name_user,
+                       t.name_ins, t.level, d.division,
+                       a.load_size, a.sample_size, a.accept, a.reject
+                FROM ins_aqls AS ia
+                INNER JOIN pos AS p
+                    ON p.id_po = ia.id_po
+                   AND p.status_po = 1
+                INNER JOIN inspection_types AS t
+                    ON t.id_ins_type = ia.id_ins_type
+                LEFT JOIN divisions AS d
+                    ON d.id_divi = t.id_division
+                LEFT JOIN myr_users AS u
+                    ON u.id_user = p.id_user
+                LEFT JOIN aql AS a
+                    ON a.id_aql = ia.id_aql
+                WHERE ia.status_aql = 1
+                ORDER BY ia.id_po ASC, ia.created_at ASC, ia.id_ins_aql ASC";
+
+        $res = $connection->query($sql);
+
+        $inspections = [];
+
+        while ($row = $res->fetch_assoc()) {
+            $row['defect_details'] = [];
+            $inspections[(int) $row['id_ins_aql']] = $row;
+        }
+
+        // Defectos registrados de cada inspección (aql_def)
+        $sql = "SELECT ad.id_ins_aql, ad.img,
+                       df.id_def, df.num, df.def_class,
+                       c.id_ctq, c.num_ctq, c.name_ctq,
+                       cc.id_code_ctq, cc.code_ctq, cc.name_code
+                FROM aql_def AS ad
+                INNER JOIN defects AS df
+                    ON df.id_def = ad.id_def
+                INNER JOIN ctqs AS c
+                    ON c.id_ctq = df.id_ctq
+                INNER JOIN code_ctqs AS cc
+                    ON cc.id_code_ctq = df.id_code_ctq
+                WHERE ad.status_ad = 1
+                ORDER BY ad.id_ins_aql ASC";
+
+        $res = $connection->query($sql);
+
+        while ($row = $res->fetch_assoc()) {
+
+            $id_ins_aql = (int) $row['id_ins_aql'];
+            if (!isset($inspections[$id_ins_aql])) continue;
+
+            $inspections[$id_ins_aql]['defect_details'][] = [
+                'ctq' => (string) $row['id_ctq'],
+                'ctq_text' => $row['num_ctq'] . ' - ' . $row['name_ctq'],
+                'code' => (string) $row['id_code_ctq'],
+                'code_text' => $row['code_ctq'] . ' - ' . $row['name_code'],
+                'classification' => (string) $row['id_def'],
+                'classification_text' => $row['num'] . ' - ' . $row['def_class'],
+                'photo_path' => $row['img']
+            ];
+        }
+
+        // POs con tipo de inspección asignado que todavía no tienen resultado (Pendiente)
+        $sql = "SELECT p.id_po, p.number_po, p.id_ins_type, p.id_user, u.name_user,
+                       p.updated_at AS created_at,
+                       t.name_ins, t.level, d.division
+                FROM pos AS p
+                INNER JOIN inspection_types AS t
+                    ON t.id_ins_type = p.id_ins_type
+                LEFT JOIN divisions AS d
+                    ON d.id_divi = t.id_division
+                LEFT JOIN myr_users AS u
+                    ON u.id_user = p.id_user
+                WHERE p.status_po = 1
+                  AND NOT EXISTS (
+                      SELECT 1 FROM ins_aqls AS ia
+                      WHERE ia.id_po = p.id_po AND ia.status_aql = 1
+                  )
+                ORDER BY p.id_po ASC";
+
+        $res = $connection->query($sql);
+
+        $pending = [];
+
+        while ($row = $res->fetch_assoc()) {
+            $pending[] = $row;
+        }
+
+        // Enviar las inspecciones a JavaScript
+        echo json_encode([
+            'success' => true,
+            'inspections' => array_values($inspections),
+            'pending' => $pending
+        ], JSON_UNESCAPED_UNICODE);
+
+    } catch (mysqli_sql_exception $error) {
+
+        error_log($error->getMessage());
+        http_response_code(500);
+
+        echo json_encode([
+            'success' => false,
+            'message' => 'No se pudieron consultar las inspecciones.'
         ]);
     }
 
@@ -290,7 +496,9 @@ if (
     // País de la tabla AQL que usa cada tipo de inspección
     // id_ins_type => id_country
     $ins_type_countries = [
-        1 => 1    // REGULAR ORDERS → México
+        1 => 1,   // REGULAR ORDERS → México
+        2 => 2,   // JAPAN ORDERS → Japón (id_country = 2)
+        3 => 1    // 100% → usa la misma tabla que REGULAR ORDERS
     ];
 
     // Tipo de inspección sin tabla AQL
@@ -427,7 +635,7 @@ if (
         // Actualizar una PO existente
         $update_po = $connection->prepare(
             "UPDATE pos
-             SET id_user = ?,
+             SET id_user = COALESCE(?, id_user),
                  id_ins_type = COALESCE(?, id_ins_type),
                  model_po = ?,
                  art_po = ?,
@@ -460,6 +668,8 @@ if (
         );
 
         $inserted = 0;
+
+        $without_user = 0;
         $updated = 0;
 
         // --------------------------------------------------
@@ -480,10 +690,14 @@ if (
                 "options" => ["min_range" => 0]
             ]);
 
-            // Usuario asignado (obligatorio)
-            $id_user = filter_var($po['id_user'] ?? null, FILTER_VALIDATE_INT, [
-                "options" => ["min_range" => 1]
-            ]);
+            // Usuario asignado (opcional: NULL si todavía no se asigna)
+            $id_user = null;
+
+            if (($po['id_user'] ?? null) !== null && $po['id_user'] !== '') {
+                $id_user = filter_var($po['id_user'], FILTER_VALIDATE_INT, [
+                    "options" => ["min_range" => 1]
+                ]);
+            }
 
             // Tipo de inspección actual (opcional: NULL si todavía no tiene)
             $id_ins_type = null;
@@ -502,15 +716,20 @@ if (
             }
 
             if ($id_user === false) {
-                throw new InvalidArgumentException("La PO $po_label no tiene usuario asignado.");
+                throw new InvalidArgumentException("La PO $po_label tiene un usuario asignado no válido.");
             }
 
-            // Verificar que el usuario exista y esté activo
-            $find_user->bind_param("i", $id_user);
-            $find_user->execute();
+            // Si tiene usuario: verificar que exista y esté activo
+            if ($id_user !== null) {
 
-            if (!$find_user->get_result()->fetch_assoc()) {
-                throw new InvalidArgumentException("El usuario asignado a la PO $po_label no existe o está inactivo.");
+                $find_user->bind_param("i", $id_user);
+                $find_user->execute();
+
+                if (!$find_user->get_result()->fetch_assoc()) {
+                    throw new InvalidArgumentException("El usuario asignado a la PO $po_label no existe o está inactivo.");
+                }
+            } else {
+                $without_user++;
             }
 
             // Validar los datos obligatorios
@@ -640,9 +859,11 @@ if (
 
         echo json_encode([
             'success' => true,
-            'message' => "PO guardadas correctamente. Nuevas: $inserted. Actualizadas: $updated.",
+            'message' => "PO guardadas correctamente. Nuevas: $inserted. Actualizadas: $updated." .
+                ($without_user > 0 ? " Sin usuario asignado: $without_user." : ""),
             'inserted' => $inserted,
-            'updated' => $updated
+            'updated' => $updated,
+            'without_user' => $without_user
         ]);
 
     } catch (InvalidArgumentException $error) {
@@ -692,7 +913,17 @@ if (
         "options" => ["min_range" => 1]
     ]);
 
-    if ($number_po === '' || $id_ins_type === false || $id_aql === false) {
+    // Resultado (Aceptado / Rechazado) y defectos encontrados en la muestra
+    $result = trim((string) ($data_js['result'] ?? ''));
+
+    $defects = filter_var($data_js['defects'] ?? null, FILTER_VALIDATE_INT, [
+        "options" => ["min_range" => 0]
+    ]);
+
+    if (
+        $number_po === '' || $id_ins_type === false || $id_aql === false ||
+        !in_array($result, ['Aceptado', 'Rechazado'], true) || $defects === false
+    ) {
         http_response_code(400);
 
         echo json_encode([
@@ -743,15 +974,17 @@ if (
         // Registrar la inspección
         $insert_inspection = $connection->prepare(
             "INSERT INTO ins_aqls
-                (id_po, id_ins_type, id_aql, status_aql, created_by, updated_by)
-             VALUES (?, ?, ?, 1, ?, ?)"
+                (id_po, id_ins_type, id_aql, result, defects, status_aql, created_by, updated_by)
+             VALUES (?, ?, ?, ?, ?, 1, ?, ?)"
         );
 
         $insert_inspection->bind_param(
-            "iiiii",
+            "iiisiii",
             $id_po,
             $id_ins_type,
             $id_aql,
+            $result,
+            $defects,
             $id_admin,
             $id_admin
         );

@@ -28,6 +28,12 @@ fetch("../php/dashboard_admin.php")
         return res.json();
     })
     .then(data => {
+        // El inspector (id_rol = 3) tiene su propia interfaz
+        if (Number(data.id_rol) === 3) {
+            window.location.replace("dashboard_users.html");
+            return;
+        }
+
         // Saludo en barra superior derecha
         document.getElementById("user_welc").textContent = "Hola, " + data.name_user;
         //Rol
@@ -76,7 +82,7 @@ option_users.addEventListener("click", async function (ev) {
     try {
 
         // Solicita el contenido de users.html.
-        const res = await fetch("users.html");
+        const res = await fetch("users.html", { cache: "no-store" });
 
         // Obtiene el contenido HTML.
         const content = await res.text();
@@ -117,13 +123,18 @@ const option_pos = document.getElementById("option_pos");
 option_pos.addEventListener("click", async function (ev) {
     ev.preventDefault();
     try {
-        const res = await fetch("pos.html");
+        const res = await fetch("pos.html", { cache: "no-store" });
         const content = await res.text();
         const container = document.getElementById("module_content");
         container.innerHTML = content;
 
         // Volver a dibujar las PO que ya estaban cargadas.
         load_pos_table(pos_records);
+
+        // Si todavía no hay PO (por ejemplo, después de iniciar sesión), traerlas de la base de datos.
+        if (pos_records.length <= 1) {
+            await load_pos_from_db();
+        }
 
         const module_name = document.getElementById("module_name");
         if (module_name) {
@@ -143,7 +154,8 @@ option_pos.addEventListener("click", async function (ev) {
 // Cargar un archivo HTML dentro del Dashboard y actualizar la ruta.
 async function load_module(file, name, option) {
 
-    const res = await fetch(file);
+    // no-store: siempre traer la versión más nueva del archivo (sin usar la guardada del navegador).
+    const res = await fetch(file, { cache: "no-store" });
 
     // Detener si el archivo no existe (404).
     if (!res.ok) {
@@ -336,4 +348,174 @@ document.addEventListener("keydown", function (ev) {
 // Confirmar: el PHP cierra la sesión y manda al Login.
 document.getElementById("btn_confirm_logout").addEventListener("click", function () {
     window.location.href = "../php/dashboard_admin.php?action=logout";
+});
+
+
+/* ------------------------------------------------ CÁMARA (computadora o teléfono) -------------------------------------------------------------- */
+
+// Datos de la cámara abierta.
+let camera_stream = null;
+let camera_facing = "environment";   // "environment" = trasera, "user" = frontal
+let camera_on_photo = null;
+let camera_file = null;
+let camera_preview_url = null;
+
+
+// Abrir la cámara. on_photo recibe la foto (File) cuando el usuario da "Usar foto".
+// fallback_input: campo <input type="file" capture> que se usa si el navegador no deja abrir la cámara.
+async function open_camera(on_photo, fallback_input = null) {
+
+    // Sin HTTPS (por ejemplo el teléfono entrando por la IP de la computadora) el navegador
+    // no deja usar la cámara desde la página: abrir la cámara del teléfono con el campo de archivo.
+    if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) {
+        fallback_input?.click();
+        return;
+    }
+
+    camera_on_photo = on_photo;
+
+    const started = await start_camera_stream();
+
+    if (!started) {
+        fallback_input?.click();
+        return;
+    }
+
+    show_camera_live();
+    document.getElementById("camera_js").hidden = false;
+
+    // Mostrar "Cambiar cámara" solo si hay más de una.
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    document.getElementById("btn_switch_camera").hidden =
+        devices.filter(device => device.kind === "videoinput").length < 2;
+}
+
+
+// Encender la cámara y mostrarla en el video.
+async function start_camera_stream() {
+
+    stop_camera_stream();
+
+    try {
+        camera_stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: camera_facing },
+                width: { ideal: 1920 },
+                height: { ideal: 1080 }
+            },
+            audio: false
+        });
+
+        document.getElementById("camera_video").srcObject = camera_stream;
+        return true;
+
+    } catch (error) {
+
+        console.error("No se pudo abrir la cámara:", error);
+
+        alert(
+            error.name === "NotAllowedError"
+                ? "No se dio permiso para usar la cámara. Actívalo en el navegador e inténtalo de nuevo."
+                : "No se encontró una cámara disponible."
+        );
+
+        return false;
+    }
+}
+
+
+// Apagar la cámara.
+function stop_camera_stream() {
+
+    camera_stream?.getTracks().forEach(track => track.stop());
+    camera_stream = null;
+
+    const video = document.getElementById("camera_video");
+    if (video) video.srcObject = null;
+}
+
+
+// Mostrar la cámara en vivo (ocultar la foto tomada).
+function show_camera_live() {
+
+    if (camera_preview_url) URL.revokeObjectURL(camera_preview_url);
+    camera_preview_url = null;
+    camera_file = null;
+
+    document.getElementById("camera_video").hidden = false;
+    document.getElementById("camera_preview").hidden = true;
+    document.getElementById("camera_live_buttons").hidden = false;
+    document.getElementById("camera_photo_buttons").hidden = true;
+}
+
+
+// Tomar la foto del video.
+function take_camera_photo() {
+
+    const video = document.getElementById("camera_video");
+    if (!video.videoWidth) return;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+
+    canvas.toBlob(function (blob) {
+
+        if (!blob) return;
+
+        // Nombre con la fecha y hora: foto_20261125_091530.jpg
+        const stamp = new Date().toISOString().slice(0, 19).replace(/[-:]/g, "").replace("T", "_");
+        camera_file = new File([blob], `foto_${stamp}.jpg`, { type: "image/jpeg" });
+
+        camera_preview_url = URL.createObjectURL(blob);
+
+        const preview = document.getElementById("camera_preview");
+        preview.src = camera_preview_url;
+        preview.hidden = false;
+
+        video.hidden = true;
+        document.getElementById("camera_live_buttons").hidden = true;
+        document.getElementById("camera_photo_buttons").hidden = false;
+
+    }, "image/jpeg", 0.9);
+}
+
+
+// Cerrar la cámara.
+function close_camera() {
+
+    stop_camera_stream();
+    show_camera_live();
+
+    document.getElementById("camera_js").hidden = true;
+    camera_on_photo = null;
+}
+
+
+// Botones del modal de la cámara.
+document.getElementById("btn_take_photo").addEventListener("click", take_camera_photo);
+document.getElementById("btn_retake_photo").addEventListener("click", show_camera_live);
+document.querySelector(".btn_close_camera").addEventListener("click", close_camera);
+
+document.getElementById("btn_use_photo").addEventListener("click", function () {
+
+    const on_photo = camera_on_photo;
+    const file = camera_file;
+
+    close_camera();
+
+    if (file && on_photo) on_photo(file);
+});
+
+document.getElementById("btn_switch_camera").addEventListener("click", async function () {
+
+    camera_facing = camera_facing === "environment" ? "user" : "environment";
+    await start_camera_stream();
+    show_camera_live();
+});
+
+// Escape cierra la cámara.
+document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && !document.getElementById("camera_js").hidden) close_camera();
 });

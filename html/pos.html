@@ -54,13 +54,19 @@
                     aria-label="Buscar PO">
             </div>
 
-            <!-- Filtro de mes y año -->
+            <!-- Filtro de fecha: un día o todo el mes -->
             <div class="pos_filter">
-                <label for="dpdn_pos_mounth">Mes</label>
+                <label for="dpdn_pos_mounth_btn">Fecha</label>
 
-                <div class="pos_dropdown">
+                <div class="pos_dropdown calendar_field">
                     <i class="bi bi-calendar3"></i>
-                    <input type="month" id="dpdn_pos_mounth" name="filter_pos_month">
+                    <input type="hidden" id="dpdn_pos_mounth" name="filter_pos_month">
+
+                    <button type="button" id="dpdn_pos_mounth_btn" class="calendar_toggle" data-target="dpdn_pos_mounth"
+                        aria-haspopup="dialog" aria-expanded="false">
+                        <span class="calendar_label">Todas las fechas</span>
+                        <i class="bi bi-chevron-down" aria-hidden="true"></i>
+                    </button>
                 </div>
             </div>
 
